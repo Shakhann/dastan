@@ -154,9 +154,9 @@ h1,h2,h3{font-weight:800;line-height:1.15;letter-spacing:-.01em}
 
 /* flip card */
 .flip-card{position:relative;perspective:1000px;min-height:150px;cursor:pointer;overflow:hidden}
-.fc-front,.fc-back{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;transition:transform .4s var(--ease),opacity .3s}
-.fc-front{transform:rotateY(0)}
-.fc-back{transform:rotateY(180deg);background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;justify-content:center;align-items:center;text-align:center}
+.fc-front,.fc-back{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;transition:transform .4s var(--ease),opacity .3s;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fc-front{transform:rotateY(0);opacity:1}
+.fc-back{transform:rotateY(180deg);opacity:0;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;justify-content:center;align-items:center;text-align:center}
 .flip-card.flipped .fc-front{transform:rotateY(-180deg);opacity:0}
 .flip-card.flipped .fc-back{transform:rotateY(0);opacity:1}
 .fc-eyebrow{font-size:11px;font-weight:800;color:var(--azure2);text-transform:uppercase;letter-spacing:.06em}

@@ -215,6 +215,7 @@ VIEWS.proverbs = {
             <div class="fc-back">
               <div class="fc-eyebrow">${p.cat}</div>
               <div class="fc-word" style="font-size:14px">${esc(p.ru || "")}</div>
+              ${p.en ? `<div class="fc-sub" style="margin-top:6px">${esc(p.en)}</div>` : ""}
             </div>
           </div>
         `).join("")}

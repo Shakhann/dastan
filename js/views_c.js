@@ -222,6 +222,12 @@ VIEWS.encyclopedia = {
                style="flex:1;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font-weight:600;font-size:16px"/>
         <button id="encBtn" class="btn primary" style="padding:14px 22px">🔎 Табу</button>
       </div>
+      <div class="card" style="margin-bottom:16px;background:var(--line2);border-left:4px solid var(--gold)">
+        <b>💡 Мысалдар:</b>
+        <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">
+          ${["Абай Құнанбайұлы","Қазақ хандығы","Қобыланды батыр","Борсақ","Қымыз","Мағжан Жұмабаев"].map(s=>`<button class="btn ghost enc-example" data-s="${s}">${s}</button>`).join("")}
+        </div>
+      </div>
       <div id="encBody"></div>
     `;
   },
@@ -269,6 +275,11 @@ VIEWS.encyclopedia = {
     }
     document.getElementById("encBtn").addEventListener("click",doSearch);
     inp.addEventListener("keydown",e=>{ if(e.key==="Enter") doSearch(); });
+    // мысал батырмалары
+    document.querySelectorAll(".enc-example").forEach(b=>b.addEventListener("click",()=>{
+      inp.value = b.dataset.s;
+      doSearch();
+    }));
   }
 };
 

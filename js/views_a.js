@@ -31,7 +31,7 @@ VIEWS.home = {
       </div>
       <h3 style="margin:8px 0 12px;font-size:16px">Жалғастыру</h3>
       <div class="grid grid-3">
-        <button class="card mod-card" onclick="go('dict')"><span class="mod-ic">📖</span><b>Сөздік</b><span class="mod-sub">60 сөз, тақырып бойынша</span></button>
+        <button class="card mod-card" onclick="go('dict')"><span class="mod-ic">📖</span><b>Сөздік</b><span class="mod-sub">30 сөз, тақырып бойынша</span></button>
         <button class="card mod-card" onclick="go('quiz')"><span class="mod-ic">✅</span><b>Тест</b><span class="mod-sub">3 деңгей × 10 сұрақ</span></button>
         <button class="card mod-card" onclick="go('proverbs')"><span class="mod-ic">📜</span><b>Мақал-мәтел</b><span class="mod-sub">12 мақал, 6 бағыт</span></button>
       </div>
@@ -108,7 +108,7 @@ VIEWS.dict = {
     bindLearn();
     // flip
     document.querySelectorAll(".flip-card").forEach(c=>{
-      c.addEventListener("click",()=>{ if(!c.querySelector(".fc-act").contains(event.target)) c.classList.toggle("flipped"); });
+      c.addEventListener("click",(e)=>{ if(!c.querySelector(".fc-act").contains(e.target)) c.classList.toggle("flipped"); });
     });
   }
 };
