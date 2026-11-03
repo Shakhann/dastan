@@ -1,0 +1,143 @@
+[
+  {
+    "id": "abai_poeziya",
+    "title": "Абай қара сөздері",
+    "category": "jyr",
+    "page": "Абай Құнанбайұлы",
+    "source": "wikipedia",
+    "note": "Абай туралы толық мақала. Қара сөздерін алды."
+  },
+  {
+    "id": "kobylandy",
+    "title": "Қобыланды батыр (дастан)",
+    "category": "jyr",
+    "page": "Қобыланды батыр",
+    "source": "wikipedia"
+  },
+  {
+    "id": "er_tostik",
+    "title": "Ер Төстік",
+    "category": "jyr",
+    "page": "Ер Төстік",
+    "source": "wikipedia"
+  },
+  {
+    "id": "kozy_korpeshi",
+    "title": "Қозы Көрпеш – Баян сұлу",
+    "category": "jyr",
+    "page": "Қозы Көрпеш – Баян сұлу",
+    "source": "wikipedia"
+  },
+  {
+    "id": "qyz_zhibek",
+    "title": "Қыз Жібек",
+    "category": "jyr",
+    "page": "Қыз Жібек",
+    "source": "wikipedia"
+  },
+  {
+    "id": "tarikh_ezhelgi",
+    "title": "Ежелгі Қазақстан",
+    "category": "tarikh",
+    "page": "Ежелгі Қазақстан тарихы",
+    "source": "wikipedia"
+  },
+  {
+    "id": "tarikh_khanattar",
+    "title": "Үш хандық (15-18 ғғ.)",
+    "category": "tarikh",
+    "page": "Ұлыс",
+    "source": "wikipedia"
+  },
+  {
+    "id": "tarikh_kazakh_khanaty",
+    "title": "Қазақ хандығы",
+    "category": "tarikh",
+    "page": "Қазақ хандығы",
+    "source": "wikipedia"
+  },
+  {
+    "id": "tarikh_astana",
+    "title": "Тәуелсіз Қазақстан (1991-)",
+    "category": "tarikh",
+    "page": "Қазақстан Республикасы",
+    "source": "wikipedia"
+  },
+  {
+    "id": "taam_borsak",
+    "title": "Борсақ",
+    "category": "taam",
+    "page": "Борсақ",
+    "source": "wikipedia"
+  },
+  {
+    "id": "taam_shotki",
+    "title": "Шөткі",
+    "category": "taam",
+    "page": "Шөткі",
+    "source": "wikipedia"
+  },
+  {
+    "id": "taam_baursak",
+    "title": "Бауырсақ",
+    "category": "taam",
+    "page": "Бауырсақ",
+    "source": "wikipedia"
+  },
+  {
+    "id": "taam_kumys",
+    "title": "Қымыз",
+    "category": "taam",
+    "page": "Қымыз",
+    "source": "wikipedia"
+  },
+  {
+    "id": "taam_kysylu",
+    "title": "Қышқу (тағам)",
+    "category": "taam",
+    "page": "Қышқу",
+    "source": "wikipedia"
+  },
+  {
+    "id": "kijim_shapan",
+    "title": "Шапан",
+    "category": "kijim",
+    "page": "Шапан",
+    "source": "wikipedia"
+  },
+  {
+    "id": "kijim_shubnik",
+    "title": "Шұбар (киім)",
+    "category": "kijim",
+    "page": "Шұбар",
+    "source": "wikipedia"
+  },
+  {
+    "id": "tulgalar_aby_ai",
+    "title": "Абай Құнанбайұлы (тұлға)",
+    "category": "tulgalar",
+    "page": "Абай Құнанбайұлы",
+    "source": "wikipedia"
+  },
+  {
+    "id": "tulgalar_magzhan",
+    "title": "Мағжан Жұмабаев",
+    "category": "tulgalar",
+    "page": "Мағжан Жұмабаев",
+    "source": "wikipedia"
+  },
+  {
+    "id": "tulgalar_sattarbai",
+    "title": "Сәтбаев (ғалым)",
+    "category": "tulgalar",
+    "page": "Қанат Сәтбаев",
+    "source": "wikipedia"
+  },
+  {
+    "id": "oyu_qoshqar",
+    "title": "Қошқар мүйіз оюы",
+    "category": "oyu",
+    "page": "Қазақтың ою-өрнектері",
+    "source": "wikipedia"
+  }
+]

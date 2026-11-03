@@ -1,0 +1,22 @@
+
+=== 2026-11-03T17:18:04.788797 ===
+OK:   abai_poeziya  (46519 симв) → data/jyr/abai_poeziya.json
+OK:   kobylandy  (9869 симв) → data/jyr/kobylandy.json
+OK:   er_tostik  (1352 симв) → data/jyr/er_tostik.json
+MISS: kozy_korpeshi  (page: Қозы Көрпеш – Баян сұлу)
+OK:   qyz_zhibek  (22005 симв) → data/jyr/qyz_zhibek.json
+MISS: tarikh_ezhelgi  (page: Ежелгі Қазақстан тарихы)
+OK:   tarikh_khanattar  (998 симв) → data/tarikh/tarikh_khanattar.json
+OK:   tarikh_kazakh_khanaty  (40096 симв) → data/tarikh/tarikh_kazakh_khanaty.json
+OK:   tarikh_astana  (22203 симв) → data/tarikh/tarikh_astana.json
+OK:   taam_borsak  (610 симв) → data/taam/taam_borsak.json
+MISS: taam_shotki  (page: Шөткі)
+OK:   taam_baursak  (1159 симв) → data/taam/taam_baursak.json
+OK:   taam_kumys  (17075 симв) → data/taam/taam_kumys.json
+MISS: taam_kysylu  (page: Қышқу)
+OK:   kijim_shapan  (1150 симв) → data/kijim/kijim_shapan.json
+OK:   kijim_shubnik  (439 симв) → data/kijim/kijim_shubnik.json
+OK:   tulgalar_aby_ai  (46519 симв) → data/tulgalar/tulgalar_aby_ai.json
+OK:   tulgalar_magzhan  (15290 симв) → data/tulgalar/tulgalar_magzhan.json
+MISS: tulgalar_sattarbai  (page: Қанат Сәтбаев)
+OK:   oyu_qoshqar  (426 симв) → data/oyu/oyu_qoshqar.json
