@@ -1,0 +1,137 @@
+[
+ {
+  "path": "assets/heritage/shanyrak.jpg",
+  "use": "hero",
+  "caption_kk": "Шаңырақ арқылы көрінген аспан",
+  "author": "Alexandr frolov",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_Shangrak.jpg"
+ },
+ {
+  "path": "assets/heritage/interior_painting.jpg",
+  "use": "banner",
+  "caption_kk": "Николай Хлудов, «Қазақ киіз үйінің іші», 1914",
+  "author": "Nikolay Khludov",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:Nikolay_Khludov_%E2%80%94_Interior_of_a_Kazakh_Yurt_(1914).jpg"
+ },
+ {
+  "path": "assets/heritage/interior_museum.jpg",
+  "use": "banner",
+  "caption_kk": "Киіз үй ішінің көрмесі, Алматы, Орталық мемлекеттік музей",
+  "author": "Nurken",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Yurt_interior_replica_at_Almaty_Central_State_Museum_of_Kazakhstan.jpg"
+ },
+ {
+  "path": "assets/heritage/dombra_man.jpg",
+  "use": "banner",
+  "caption_kk": "Домбырашы, XIX ғасырдағы фото",
+  "author": "АҚШ Конгресс кітапханасының жинағы",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_man,_a_musician_with_a_dombra,_seated_LCCN99615631.tif"
+ },
+ {
+  "path": "assets/heritage/altybaqan.jpg",
+  "use": "banner",
+  "caption_kk": "Наурыздағы алтыбақан",
+  "author": "OlegShalun",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Nauryz,_Kazakh_national_swings_Altybaqan.jpg"
+ },
+ {
+  "path": "assets/heritage/syrmak.jpg",
+  "use": "banner",
+  "caption_kk": "Сырмақ",
+  "author": "Автор белгісіз",
+  "license": "CC0",
+  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Syrmaq._Kazakh_carpet.jpg"
+ },
+ {
+  "path": "assets/heritage/shashu.jpg",
+  "use": "tradition:shashu",
+  "caption_kk": "«Шашу» естелік монетасы, 2012",
+  "author": "National Bank of Kazakhstan",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:KZ-2017-500tenge-Shashu-b.png"
+ },
+ {
+  "path": "assets/heritage/bride.jpg",
+  "use": "tradition:betashar",
+  "caption_kk": "Қазақ қалыңдығы, тарихи фото",
+  "author": "historical public records photo",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:Historical_Kazakh_wedding_garb_photo.jpg"
+ },
+ {
+  "path": "assets/heritage/mirzhakyp-dulatov.jpg",
+  "use": "person:mirzhakyp-dulatov",
+  "caption_kk": "Міржақып Дулатұлы (Міржақып Дулатов)",
+  "author": "Қазпошта",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:Stamps_of_Kazakhstan,_2010-29.jpg"
+ },
+ {
+  "path": "assets/heritage/mukhamedzhan-tynyshbayev.jpg",
+  "use": "person:mukhamedzhan-tynyshbayev",
+  "caption_kk": "Мұхамеджан Тынышбаев (Мұхаметжан Тынышбайұлы)",
+  "author": "Автор белгісіз",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:Tynyshpayev_M.jpg"
+ },
+ {
+  "path": "assets/heritage/zhahansha-dosmukhamedov.jpg",
+  "use": "person:zhahansha-dosmukhamedov",
+  "caption_kk": "Жаһанша Досмұхамедов",
+  "author": "Фотограф белгісіз",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%96%D0%B0%D0%BD%D1%88%D0%B0_%D0%94%D0%BE%D1%81%D0%BC%D1%83%D1%85%D0%B0%D0%BC%D0%B5%D0%B4%D0%BE%D0%B2,_1920_%D0%B3%D0%BE%D0%B4.jpg"
+ },
+ {
+  "path": "assets/heritage/akkagaz-doszhanova.jpg",
+  "use": "person:akkagaz-doszhanova",
+  "caption_kk": "Аққағаз Досжанова",
+  "author": "Фотоателье белгісіз",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%90%D0%BA%D0%BA%D0%B0%D0%B3%D0%B0%D0%B7_%D0%94%D0%BE%D1%81%D0%B6%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0_(1893-1932).png"
+ },
+ {
+  "path": "assets/heritage/gulsim-asfendiyarova.jpg",
+  "use": "person:gulsim-asfendiyarova",
+  "caption_kk": "Гүлсім Асфендиярова (Гүлсім Сейітжафарқызы Асфендиярова)",
+  "author": "Автор белгісіз",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%90%D1%81%D1%84%D0%B5%D0%BD%D0%B4%D0%B8%D0%B0%D1%80%D0%BE%D0%B2%D0%B0_%D0%93._%D0%A4._(1880-1940).png"
+ },
+ {
+  "path": "assets/heritage/telzhan-shonanuly.jpg",
+  "use": "person:telzhan-shonanuly",
+  "caption_kk": "Телжан Шонанұлы (Телжан Шонанов)",
+  "author": "Автор белгісіз",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:Telzhan_Shonanuly.jpg"
+ },
+ {
+  "path": "assets/heritage/khiuaz-dospanova.jpg",
+  "use": "person:khiuaz-dospanova",
+  "caption_kk": "Хиуаз Доспанова (Хиуаз Қайырқызы Доспанова)",
+  "author": "Автор белгісіз",
+  "license": "Public domain",
+  "license_url": null,
+  "source_url": "https://commons.wikimedia.org/wiki/File:Khiuaz_Dospanova.jpg"
+ }
+]

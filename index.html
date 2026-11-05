@@ -1,136 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="kk">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>ДАСТАН — қазақ тілі және мәдениеті платформасы</title>
-<meta name="description" content="Қазақ тілін сөздік, тест және оқу тапсырмалары арқылы үйреніп, қазақ мәдениетімен танысыңыз."/>
-<meta property="og:type" content="website"/>
-<meta property="og:locale" content="kk_KZ"/>
-<meta property="og:site_name" content="ДАСТАН"/>
-<meta property="og:title" content="ДАСТАН — қазақ тілі және мәдениеті"/>
-<meta property="og:description" content="Қазақ тілін сөздік, тест және оқу тапсырмалары арқылы үйреніп, қазақ мәдениетімен танысыңыз."/>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230B1F3A'/%3E%3Cpath d='M20 6 C13 6 9 12 11 18 C12 15 15 13 17 15' stroke='%23F2B705' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M20 6 C27 6 31 12 29 18 C28 15 25 13 23 15' stroke='%2300AFCA' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3Crect x='16' y='16' width='8' height='8' transform='rotate(45 20 20)' fill='%23F2B705'/%3E%3C/svg%3E"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/style.css"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ДАСТАН — Қазақ мұрасы</title>
+<meta name="description" content="Қазақ мұрасы: ел тұлғалары, шежіре, салт-дәстүр, тарих пен тіл.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="kk_KZ">
+<meta property="og:site_name" content="ДАСТАН">
+<meta property="og:title" content="ДАСТАН — Қазақ мұрасы">
+<meta property="og:description" content="Қазақ тұлғалары мен салт-дәстүрінің ізімен. Еске алу, танып-білу және ұрпаққа жеткізу.">
+<meta property="og:image" content="assets/heritage/interior_museum.jpg">
+<meta property="og:image:alt" content="Мұражай көрінісі">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap&subset=cyrillic-ext" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script defer src="js/content.js"></script>
+<script defer src="js/app.js"></script>
+<script defer src="js/views_a.js"></script>
+<script defer src="js/views_b.js"></script>
+<script defer src="js/views_c.js"></script>
 </head>
 <body>
-<noscript><p class="card">ДАСТАН тапсырмаларын ашу үшін браузеріңізде JavaScript қосыңыз.</p></noscript>
-<div id="app">
-  <!-- ============ SIDEBAR (desktop) ============ -->
-  <aside id="sidebar">
-    <div class="sb-brand">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 40 40" fill="none"><path d="M20 6 C13 6 9 12 11 18 C12 15 15 13 17 15" stroke="#F2B705" stroke-width="2.4" stroke-linecap="round"/><path d="M20 6 C27 6 31 12 29 18 C28 15 25 13 23 15" stroke="#00AFCA" stroke-width="2.4" stroke-linecap="round"/><path d="M20 34 C13 34 9 28 11 22 C12 25 15 27 17 25" stroke="#00AFCA" stroke-width="2.4" stroke-linecap="round"/><path d="M20 34 C27 34 31 28 29 22 C28 25 25 27 23 25" stroke="#F2B705" stroke-width="2.4" stroke-linecap="round"/><rect x="16" y="16" width="8" height="8" transform="rotate(45 20 20)" fill="#F2B705"/></svg>
-      </span>
-      <span class="brand-t"><b>ДАСТАН</b><span>қазақ тілі · мәдениет</span></span>
-    </div>
-    <nav class="sb-nav" id="sbNav"></nav>
-    <div class="sb-foot">
-      <div class="sb-profile">
-        <span class="sb-avatar" id="sbAvatar">👤</span>
-        <span class="sb-pinfo">
-          <b id="sbName">Қонақ</b>
-          <span id="sbStreak">🔥 0 күн</span>
-        </span>
-      </div>
-      <div class="sb-actions">
-        <button class="sb-mini" id="btnProfile" aria-label="Профиль">⚙</button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ============ MOBILE TOP BAR ============ -->
-  <header id="topbar">
-    <button class="tb-burger" id="tbBurger" aria-label="Мәзір">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
-    <span class="tb-brand">ДАСТАН</span>
-    <button class="tb-avatar" id="tbAvatar" aria-label="Профиль">👤</button>
-  </header>
-
-  <!-- ============ MOBILE BOTTOM TAB BAR ============ -->
-  <nav id="tabbar">
-    <button data-mod="home" class="tb-btn" aria-label="Басты бет"><span>🏠</span><i>Басты</i></button>
-    <button data-mod="dict" class="tb-btn" aria-label="Сөздік"><span>📖</span><i>Сөздік</i></button>
-    <button data-mod="makan" class="tb-btn" aria-label="Мәдениет"><span>🎭</span><i>Мәдениет</i></button>
-    <button data-mod="encyclopedia" class="tb-btn" aria-label="Энциклопедия"><span>🔎</span><i>Іздеу</i></button>
-    <button data-mod="progress" class="tb-btn" aria-label="Прогресс"><span>⭐</span><i>Прогресс</i></button>
-  </nav>
-
-  <!-- ============ MAIN ============ -->
-  <main id="main"><div id="view"></div></main>
-</div>
-
-<!-- ============ MOBILE SLIDE-IN ============ -->
-<div id="sheet" role="dialog" aria-label="Мәзір" aria-modal="true" aria-hidden="true" inert>
-  <div class="sh-head">
-    <span class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 40 40" fill="none"><path d="M20 6 C13 6 9 12 11 18 C12 15 15 13 17 15" stroke="#F2B705" stroke-width="2.4" stroke-linecap="round"/><path d="M20 6 C27 6 31 12 29 18 C28 15 25 13 23 15" stroke="#00AFCA" stroke-width="2.4" stroke-linecap="round"/><rect x="16" y="16" width="8" height="8" transform="rotate(45 20 20)" fill="#F2B705"/></svg>
-    </span>
-    <span class="brand-t"><b>ДАСТАН</b></span>
-    <button class="sh-close" id="shClose" aria-label="Жабу">✕</button>
-  </div>
-  <nav class="sh-nav" id="shNav"></nav>
-</div>
-<div id="scrim" aria-hidden="true"></div>
-
-<!-- ============ PROGRESS SHEET (профиль/импорт-экспорт) ============ -->
-<div id="profSheet" role="dialog" aria-label="Профиль мен прогресс" aria-modal="true" aria-hidden="true" inert>
-  <div class="ps-head">
-    <h3>Профиль мен прогресс</h3>
-    <button class="sh-close" id="psClose" aria-label="Жабу">✕</button>
-  </div>
-  <div class="ps-body">
-    <label>Есіміңіз</label>
-    <input id="inpName" type="text" maxlength="24" placeholder="Мысалы: Айдар"/>
-    <label>Аватар (эмодзи)</label>
-    <div class="avatar-opts" id="avatarOpts"></div>
-    <hr/>
-    <label>Прогресті экспорттау (JSON)</label>
-    <button class="btn-primary" id="btnExport">.json жүктеп алу</button>
-    <label>Прогресті импорттау</label>
-    <input id="inpImport" type="file" accept=".json"/>
-    <button class="btn-primary" id="btnImport">Импорттау</button>
-    <hr/>
-    <p class="fine">Барлық деректер браузеріңізде (localStorage) сақталады. Ешқандай серверге жіберілмейді.</p>
-  </div>
-</div>
-
-<script src="js/content.js"></script>
-<script src="js/app.js"></script>
-<script src="js/views_a.js"></script>
-<script src="js/views_b.js"></script>
-<script src="js/views_c.js"></script>
-<script>
-// INIT
-(function(){
-  APP.renderNav();
-  APP.updateSidebar();
-  APP.streak.run();
-  APP.routeFromHash();
-  // mobile events
-  document.getElementById("tbBurger").addEventListener("click", openSheet);
-  document.getElementById("shClose").addEventListener("click", closeSheet);
-  document.getElementById("scrim").addEventListener("click", ()=>{ closeSheet(); closeProf(); });
-  document.getElementById("tbAvatar").addEventListener("click", openProf);
-  document.getElementById("btnProfile").addEventListener("click", openProf);
-  document.getElementById("psClose").addEventListener("click", closeProf);
-  document.getElementById("btnExport").addEventListener("click",()=>{
-    const blob = new Blob([JSON.stringify(APP.p,null,2)],{type:"application/json"});
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="dastan-progress.json"; a.click();
-  });
-  document.getElementById("btnImport").addEventListener("click",()=>{
-    const f = document.getElementById("inpImport").files[0];
-    if(!f) return;
-    const rd = new FileReader();
-    rd.onload = ()=>{ try{ APP.progress.importText(rd.result); if(APP.currentView === "progress") go("progress"); APP.toast("Импортталды"); closeProf(); }catch(e){ APP.toast("Файл қате"); } };
-    rd.readAsText(f);
-  });
-  document.getElementById("inpName").addEventListener("change", e=>{ APP.p.name = e.target.value.trim(); APP.progress.save(APP.p); APP.updateSidebar(); });
-})();
-</script>
+<a class="skip" href="#main">Мазмұнға өту</a>
+<header class="site-header">
+<a class="brand" href="#home" aria-label="ДАСТАН — басты бет">ДАСТАН<span>Қазақ мұрасы</span></a>
+<button id="menuToggle" aria-expanded="false" aria-controls="siteNav">Бөлімдер</button>
+<nav id="siteNav" aria-label="Негізгі бөлімдер"></nav>
+</header>
+<main id="main" tabindex="-1"><div id="view"><p role="status">Мұра беттері жүктелуде…</p></div></main>
+<noscript><p>Мұра беттерін ашу үшін браузеріңізде JavaScript қосыңыз.</p></noscript>
+<footer class="site-footer"><a class="brand" href="#home">ДАСТАН</a><p>Тарих, дәстүр және тіл.</p><a href="#credits">Суреттер мен дереккөздер</a></footer>
+<div id="notice" role="status" aria-live="polite"></div>
 </body>
 </html>

@@ -1,387 +1,150 @@
-/* ==== views_c.js: jyr, twisters, culture, ornaments, encyclopedia, progress, makan ==== */
-
-/* ---------- JYR (жырлар мен әдеби мұра) ---------- */
-let _jyrData = null;
-async function loadJyr(){
-  if(_jyrData && _jyrData.length) return _jyrData;
-  const ids = ["kobylandy","er_tostik","kozy_korpeshi","qyz_zhibek","abai_poeziya"];
-  _jyrData=await APP.fetchArticles(ids.map(id=>`data/jyr/${id}.json`));
-  return _jyrData;
+"use strict";
+function dictionaryWord(w) {
+  return `<article class="word patch"><p class="group-label">${esc(w.cat)}</p><h2>${esc(w.kk)}</h2><blockquote>${esc(w.ex)}</blockquote>${audioButton(w.kk, "d_" + w.id)}</article>`;
 }
-VIEWS.jyr = {
-  load:loadJyr,
-  render(){
-    if(!_jyrData) return APP.loadMessage("jyr");
-    if(!_jyrData.length) return `<div class="card">Жырлар табылмады. <button class="btn" data-retry>Қайта көру</button></div>`;
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Мәдениет · Жыр-дастан</div>
-        <h1 class="v-title">Жырлар мен әдеби мұра</h1>
-        <p class="v-sub">${_jyrData.length} әдеби тақырып · Лицензиясы әр мәтінде көрсетілген</p>
-      </div>
-      <div class="grid grid-2" style="margin-bottom:16px">
-        ${_jyrData.map((d,i)=>`
-          <button class="card jyr-card" data-j="${i}">
-            <div class="rc-cat">${esc(d.category||"jyr")}</div>
-            <b>${esc(d.title)}</b>
-            <p class="rc-prev">${esc((d.text||"").slice(0,140))}...</p>
-          </button>
-        `).join("")}
-      </div>
-      <div id="jyrBody"></div>
-    `;
+VIEWS.dict = {
+  render() { return searchableWords("Сөздік", "Күнделікті сөздердің қолданылуына үңіліп, айтылуын тыңдаңыз.", DICT, dictionaryWord); },
+  mount() { mountWordSearch(DICT, dictionaryWord, w => `${w.kk} ${w.cat} ${w.ex}`); }
+};
+VIEWS.proverbs = {
+  render() {
+    return heading("Мақал-мәтел", "Қысқа сөзге сыйған халық тәжірибесі.") + `<label for="proverbGroup">Тақырыбы</label><select id="proverbGroup"><option value="">Барлығы</option>${[...new Set(PROVERBS.map(p => p.cat))].map(cat => `<option>${esc(cat)}</option>`).join("")}</select><div class="word-grid" id="proverbResults">${PROVERBS.map(proverb).join("")}</div>`;
   },
-  mount(){
-    const el = document.getElementById("jyrBody");
-    document.querySelectorAll("[data-j]").forEach(b=>b.addEventListener("click",async()=>{
-      const d = _jyrData[+b.dataset.j];
-      el.innerHTML = `
-        <div class="card">
-          <h2>${esc(d.title)}</h2>
-          <p class="read-src">Дереккөз: ${esc(d.source_name)} · ${esc(d.license)}</p>
-          <div class="read-text">${esc(d.text).replace(/\n/g,"<br/>")}</div>
-          <div class="row" style="margin-top:14px">
-            <a href="${esc(d.source_url)}" target="_blank" rel="noopener" class="btn">📎 Түпнұсқа</a>
-            <button class="btn primary" data-listen>🔊 Тыңдау (басы)</button>
-          </div>
-        </div>`;
-      el.querySelector("[data-listen]").addEventListener("click",()=>speak((d.text||"").slice(0,500)));
-      el.querySelector(".card").scrollIntoView({behavior:"smooth",block:"start"});
-    }));
+  mount() {
+    document.getElementById("proverbGroup").addEventListener("change", e => {
+      document.getElementById("proverbResults").innerHTML = PROVERBS.filter(p => !e.target.value || p.cat === e.target.value).map(proverb).join("");
+    });
   }
 };
-
-/* ---------- TWISTERS ---------- */
+function proverb(p) { return `<article class="word patch"><p>${esc(p.cat)}</p><h2>${esc(p.kk)}</h2>${audioButton(p.kk, "p_" + p.id)}</article>`; }
 VIEWS.twisters = {
-  render(){
-    const lvs = [1,2,3];
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Мәдениет · Жаңылтпаш</div>
-        <h1 class="v-title">Жаңылтпаш</h1>
-        <p class="v-sub">${TWISTERS.length} жаңылтпаш, 3 деңгей</p>
-      </div>
-      <div class="row" style="gap:8px;margin-bottom:14px">
-        ${lvs.map(l=>`<button class="btn tw-lv ${l===1?'primary':'ghost'}" data-lv="${l}">${["","Жеңіл","Орташа","Күрделі"][l]}</button>`).join("")}
-      </div>
-      <div class="grid">
-        ${TWISTERS.map(t=>`
-          <div class="card twist-card" data-lv="${t.lv}">
-            <span class="tw-num">${t.lv}-деңгей</span>
-            <p class="tw-text">${esc(t.kk).replace(/\n/g,"<br/>")}</p>
-            <button class="btn" data-tw-listen="${t.id}">🔊 Тыңдау</button>
-          </div>
-        `).join("")}
-      </div>
-    `;
-  },
-  mount(){
-    document.querySelectorAll("[data-tw-listen]").forEach(b=>b.addEventListener("click",()=>{
-      speak(TWISTERS.find(t=>t.id===b.dataset.twListen).kk);
-    }));
-    let cur = 1;
-    function apply(){ document.querySelectorAll(".twist-card").forEach(c=>c.style.display = (+c.dataset.lv===cur) ? "" : "none"); }
-    document.querySelectorAll(".tw-lv").forEach(b=>b.addEventListener("click",()=>{
-      cur = +b.dataset.lv;
-      document.querySelectorAll(".tw-lv").forEach(x=>x.classList.remove("primary"));
-      b.classList.add("primary");
-      apply();
-    }));
-    apply();
+  title: "Жаңылтпаш",
+  render() { return heading("Жаңылтпаш", "Ауыз әдебиетінің тілге ширақтық беретін шағын үлгілері.") + `<div class="word-grid">${TWISTERS.map(t => `<article class="word patch"><p class="verse">${esc(t.kk)}</p>${audioButton(t.kk, "tw_" + t.id)}</article>`).join("")}</div>`; }
+};
+VIEWS.gram = {
+  title: "Тіл ережелері",
+  render() {
+    return heading("Тіл ережелері") + GRAMMAR.map(g => `<details class="patch rule"><summary>${esc(g.title)}</summary><p>${esc(g.rule)}</p><ul>${g.examples.map(e => `<li>${esc(e)}</li>`).join("")}</ul>${audioButton(g.title + ": " + g.rule, "gram_" + g.id)}</details>`).join("");
   }
 };
-
-/* ---------- CULTURE (Мәдени мұра) ---------- */
-let _cultureData = null;
-async function loadCulture(){
-  if(_cultureData) return _cultureData;
-  const cats = {taam:["taam_baursak","taam_kumys","taam_shubat","taam_qurt","taam_qazy"],
-                kijim:["kijim_shapan","kijim_ishik","kijim_saukele"],
-                tarikh:["tarikh_ezhelgi","tarikh_khandyq_zhuzder","tarikh_kazakh_khanaty","tarikh_astana"],
-                tulgalar:["tulgalar_aby_ai","tulgalar_magzhan","tulgalar_satbayev"]};
-  const next={};
-  await Promise.all(Object.entries(cats).map(async ([cat,ids])=>{
-    next[cat]=await APP.fetchArticles(ids.map(id=>`data/${cat}/${id}.json`));
-  }));
-  _cultureData=next;
-  return _cultureData;
+VIEWS.voice = {
+  title: "Тыңдау",
+  render() { return heading("Тыңдау", "Қазақша сөздердің айтылуын тыңдаңыз.") + `<div class="word-grid">${DICT.map(dictionaryWord).join("")}</div>`; }
+};
+const CATEGORIES = {jyr: "Жыр-дастан", taam: "Ұлттық тағамдар", kijim: "Ұлттық киімдер", tarikh: "Тарих", tulgalar: "Тұлғалар", oyu: "Ою-өрнек"};
+const ORNAMENT_NOTICE = "Төмендегі сақталған SVG сызбалары оюлардың дәл үлгісі емес. Оларды дәстүрлі ою пішінін жаттауға пайдаланбаңыз. Атаулар мен сипаттамалар зерттеу жинағынан берілген.";
+function ornamentNotice() {
+  return `<aside class="notice"><h2>Сызбалар туралы</h2><p>${esc(ORNAMENT_NOTICE)}</p><p>Сәйкес келмейтін сызбалар бұл бетте көрсетілмейді. Қазір тек атаулар мен сипаттамалар берілген.</p></aside>`;
 }
+function cleanExcerpt(text) {
+  return String(text || "").replace(/\[Толық мәтін Wikipedia-да:[^\]]*\]/g, "").replace(/Толық мәтін Wikipedia-да[^\n]*/g, "").trim();
+}
+function articleText(d) { return cleanExcerpt(d.text).split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join(""); }
+function article(d) {
+  return `<details class="patch article" data-article="${esc(d.id)}"><summary>${esc(d.title)}</summary><div class="article-body"><div class="prose" data-article-body>${articleText(d)}${attribution(d)}</div><div class="article-tools">${audioButton(cleanExcerpt(d.text).slice(0,500),d.id)}</div></div></details>`;
+}
+async function loadArticle(details) {
+  if (details.dataset.loaded === "true" || details.dataset.loading === "true") return;
+  details.dataset.loading = "true";
+  const body = details.querySelector("[data-article-body]");
+  const fallback = details._fallback || body.innerHTML; details._fallback = fallback;
+  body.innerHTML = '<p role="status">Толық мәтін жүктелуде…</p>';
+  try {
+    const full = await optionalFull("art_" + details.dataset.article);
+    if (!details.isConnected) return;
+    body.innerHTML = full ? fullSections(full) : fallback;
+    details.dataset.loaded = "true";
+  } catch {
+    if (details.isConnected) { body.innerHTML = '<p role="alert">Толық мәтін жүктелмеді.</p><button type="button" data-article-retry>Қайта көру</button>'; }
+  } finally { details.dataset.loading = "false"; }
+}
+document.addEventListener("toggle", e => {
+  if (e.target.matches("details[data-article]") && e.target.open) loadArticle(e.target);
+}, true);
+document.addEventListener("click", e => {
+  if (e.target.closest("[data-article-retry]")) loadArticle(e.target.closest("details"));
+});
+async function culturalArticles(category) {
+  const topics = await APP.cachedJSON("content_topics.json");
+  return Promise.all(topics.filter(t => category ? t.category === category : t.category !== "oyu").map(t => APP.cachedJSON(`data/${t.category}/${t.id}.json`)));
+}
+const CULTURE_LINKS = [["culture", "Мақалалар"], ["jyr", "Жыр-дастан"], ["ornaments", "Ою-өрнек"]];
+function subnav(links, label) { return `<nav class="subnav" aria-label="${esc(label)}">${links.map(([r,n])=>routeLink(r,n)).join("")}</nav>`; }
 VIEWS.culture = {
-  load:loadCulture,
-  render(){
-    if(!_cultureData) return APP.loadMessage("culture");
-    const c = _cultureData;
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Мәдениет · Мәдени мұра</div>
-        <h1 class="v-title">Мәдени мұра</h1>
-        <p class="v-sub">Тағам, Киім, Тарих, Тұлғалар</p>
-      </div>
-      <div class="row" style="gap:8px;margin-bottom:16px;flex-wrap:wrap">
-        <button class="btn primary c-tab" data-t="taam">🍽️ Тағам (${c.taam.length})</button>
-        <button class="btn ghost c-tab" data-t="kijim">👘 Киім (${c.kijim.length})</button>
-        <button class="btn ghost c-tab" data-t="tarikh">📜 Тарих (${c.tarikh.length})</button>
-        <button class="btn ghost c-tab" data-t="tulgalar">👤 Тұлғалар (${c.tulgalar.length})</button>
-      </div>
-      <div class="c-body" id="cBody"></div>
-    `;
-  },
-  mount(){
-    const body = document.getElementById("cBody");
-    if(!body){ return; }
-    let cur = "taam";
-    function render(){
-      const items = _cultureData[cur] || [];
-      body.innerHTML = `<div class="grid grid-2">` +
-        items.map((d,i)=>`
-          <button class="card c-item" data-ci="${cur}_${i}">
-            <div class="rc-cat">${cur}</div>
-            <b>${esc(d.title)}</b>
-            <p class="rc-prev">${esc((d.text||"").slice(0,120))}...</p>
-          </button>
-        `).join("") + `</div><div id="cDetail"></div>`;
-      const det = document.getElementById("cDetail");
-      body.querySelectorAll(".c-item").forEach(el=>el.addEventListener("click",async()=>{
-        const [cat,idx] = el.dataset.ci.split("_");
-        const d = _cultureData[cat][+idx];
-        det.innerHTML = `
-          <div class="card" style="margin-top:14px">
-            <h2>${esc(d.title)}</h2>
-            <p class="read-src">Дереккөз: ${esc(d.source_name)} · ${esc(d.license)}</p>
-            <div class="read-text">${esc(d.text).replace(/\n/g,"<br/>")}</div>
-            <a href="${esc(d.source_url)}" target="_blank" rel="noopener" class="btn" style="margin-top:12px">📎 Түпнұсқа</a>
-          </div>`;
-        det.querySelector(".card").scrollIntoView({behavior:"smooth",block:"start"});
-      }));
-    }
-    document.querySelectorAll(".c-tab").forEach(b=>b.addEventListener("click",()=>{
-      cur = b.dataset.t;
-      document.querySelectorAll(".c-tab").forEach(x=>x.classList.remove("primary"));
-      b.classList.add("primary");
-      render();
-    }));
-    render();
+  async render() {
+    const articles = await culturalArticles();
+    return heading("Мәдениет", "Әдебиет, тұрмыс және тарих туралы сақталған мақалалар.") + `<nav class="subnav" aria-label="Мәдениет бөлімдері">${CULTURE_LINKS.map(([r, n]) => routeLink(r, n)).join("")}</nav>` + Object.entries(CATEGORIES).filter(([key]) => key !== "oyu").map(([key, name]) => `<section class="article-group"><h2>${name}</h2>${articles.filter(d => d.category === key).map(article).join("")}</section>`).join("");
   }
 };
-
-/* ---------- ORNAMENTS ---------- */
-let _ornamentArticle = null;
+VIEWS.makan = {title: "Мәдениет", render: () => VIEWS.culture.render()};
+VIEWS.read = {
+  title: "Оқу мәтіндері",
+  async render() { return heading("Оқу мәтіндері") + (await culturalArticles("jyr")).map(article).join(""); }
+};
+VIEWS.jyr = {
+  title: "Жыр-дастан",
+  async render() { return heading("Жыр-дастан", "Әдеби мұраға арналған мәтіндер мен түйіндемелер.") + (await culturalArticles("jyr")).map(article).join(""); }
+};
 VIEWS.ornaments = {
-  async load(){
-    [_ornamentArticle]=await APP.fetchArticles(["data/oyu/oyu_qoshqar_muiiz.json"]);
-  },
-  render(){
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Мәдениет · Ою-өрнек</div>
-        <h1 class="v-title">Ою-өрнектер</h1>
-        <p class="v-sub">${ORNAMENTS.length} дәстүрлі ою атауы мен сипаттамасы</p>
-      </div>
-      <div class="card" style="margin-bottom:16px">
-        <b>Сызбалар туралы</b>
-        <p>Төмендегі сақталған SVG сызбалары оюлардың дәл үлгісі емес. Оларды дәстүрлі ою пішінін жаттауға пайдаланбаңыз. Атаулар мен сипаттамалар зерттеу жинағынан берілген.</p>
-      </div>
-      <div class="grid grid-3">
-        ${ORNAMENTS.map(o=>`
-          <div class="card orna-card">
-            <div class="orna-svg" aria-hidden="true">${o.svg}</div>
-            <b>${esc(o.name)}</b>
-            <p class="orna-mean">${esc(o.meaning)}</p>
-          </div>
-        `).join("")}
-      </div>
-      <div class="card" style="margin-top:16px;border-left:4px solid var(--gold)">
-        ${_ornamentArticle ? `
-          <h2>${esc(_ornamentArticle.title)}</h2>
-          <p class="read-src">${esc(_ornamentArticle.source_name)} · ${esc(_ornamentArticle.license)}</p>
-          <div class="read-text">${esc(_ornamentArticle.text).replace(/\n/g,"<br/>")}</div>
-          <a class="btn" href="${esc(_ornamentArticle.source_url)}" target="_blank" rel="noopener">📎 Дереккөз</a>
-        ` : APP.loadMessage("ornaments")}
-      </div>`;
+  title: "Ою-өрнек",
+  async render() {
+    const articles = await culturalArticles("oyu");
+    return heading("Ою-өрнек") + ornamentNotice() + `<div class="word-grid">${ORNAMENTS.map(o => `<article class="word patch"><h2>${esc(o.name)}</h2><p>${esc(o.meaning)}</p></article>`).join("")}</div>` + articles.map(article).join("");
   }
 };
-
-/* ---------- ENCYCLOPEDIA ---------- */
+function wikiSections(text) {
+  return text.split(/\n+/).filter(Boolean).map(line=>{
+    const h = line.match(/^(={2,})\s*(.*?)\s*\1$/);
+    if (h) { const tag=h[1].length>=3 ? "h3":"h2"; return `<${tag}>${esc(h[2])}</${tag}>`; }
+    return `<p>${esc(line)}</p>`;
+  }).join("");
+}
 VIEWS.encyclopedia = {
-  state:{q:"", result:null},
-  render(){
-    const st = VIEWS.encyclopedia.state;
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Ғылым · Энциклопедия</div>
-        <h1 class="v-title">Энциклопедия</h1>
-        <p class="v-sub">Қазақ Уикипедиясынан кез келген тақырыпты алыңыз</p>
-      </div>
-      <div class="row" style="gap:10px;margin-bottom:16px">
-        <input id="encq" type="search" placeholder="Мысалы: Алақозы, Көшпенділер, Қобланды..." value="${esc(st.q)}"
-               style="flex:1;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font-weight:600;font-size:16px"/>
-        <button id="encBtn" class="btn primary" style="padding:14px 22px">🔎 Табу</button>
-      </div>
-      <div class="card" style="margin-bottom:16px;background:var(--line2);border-left:4px solid var(--gold)">
-        <b>💡 Мысалдар:</b>
-        <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">
-          ${["Абай Құнанбайұлы","Қазақ хандығы","Қобыланды батыр","Бауырсақ","Қымыз","Мағжан Жұмабаев"].map(s=>`<button class="btn ghost enc-example" data-s="${s}">${s}</button>`).join("")}
-        </div>
-      </div>
-      <div id="encBody"></div>
-    `;
+  render() {
+    return heading("Энциклопедия", "Қазақ Уикипедиясының толық мәтіндерін осы бетте оқыңыз.") + `<form id="encyclopediaForm"><label for="articleSearch">Тақырып атауы</label><div class="search-row"><input id="articleSearch" type="search" required maxlength="200" placeholder="Мысалы: Домбыра"><button>Іздеу</button></div></form><div id="articleResult" aria-live="polite"></div>`;
   },
-  mount(){
-    const body = document.getElementById("encBody");
-    const inp = document.getElementById("encq");
+  mount() {
     let request=0;
-    async function doSearch(){
-      const version=++request;
-      const q = inp.value.trim();
-      if(!q){ body.innerHTML = `<div class="card" style="color:var(--ink3)">Тақырып жазыңыз</div>`; return; }
-      VIEWS.encyclopedia.state.q=q;
-      body.innerHTML = `<div class="card" role="status" style="text-align:center;color:var(--ink3)">Жүктелуде...</div>`;
-      try{
-        // кэш
-        const ck = "enc_" + q.toLowerCase();
-        try{
-          const cached=JSON.parse(localStorage.getItem(ck));
-          if(cached && typeof cached.title==="string" && typeof cached.text==="string"){
-            cached.url="https://kk.wikipedia.org/wiki/"+encodeURIComponent(cached.title.replace(/ /g,"_"));
-            renderResult(cached,true); return;
-          }
-        }catch(e){}
-        const url = "https://kk.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&origin=*&titles=" + encodeURIComponent(q);
-        const r = await fetch(url);
-        if(!r.ok) throw new Error("Жүктеу қатесі");
-        const data = await r.json();
-        if(version!==request || !body.isConnected) return;
-        const pages = data.query.pages;
-        const pg = Object.values(pages)[0];
-        if(!pg || Object.hasOwn(pg,"missing") || !pg.extract){
-          body.innerHTML = `<div class="card" style="color:var(--warn)">Табылмады: «${esc(q)}». Басқа атаумен көріңіз.</div>`;
+    const root=document.getElementById("articleResult");
+    const input=document.getElementById("articleSearch");
+    async function search(q) {
+      if (!q) return;
+      input.value=q; const version=++request;
+      root.innerHTML='<p role="status">Мақала жүктелуде…</p>';
+      const valid=()=>version===request && root.isConnected;
+      try {
+        const base="https://kk.wikipedia.org/w/api.php?format=json&origin=*&action=query&";
+        const data=await APP.json(base+"prop=extracts&explaintext=1&redirects=1&titles="+encodeURIComponent(q));
+        if (!valid()) return;
+        const page=Object.values(data.query.pages)[0];
+        if (!page?.extract) {
+          const similar=await APP.json(base+"list=search&srsearch="+encodeURIComponent(q)+"&srlimit=8");
+          if (!valid()) return;
+          const hits=similar.query.search || [];
+          root.innerHTML='<p>Мақала табылмады. Басқа атаумен іздеп көріңіз.</p>'+ (hits.length ? `<h2>Ұқсас атаулар</h2><ul>${hits.map(p=>`<li><button type="button" data-wiki-title="${esc(p.title)}">${esc(p.title)}</button></li>`).join("")}</ul>` : "");
           return;
         }
-        const rec = { title: pg.title, text: pg.extract, url: "https://kk.wikipedia.org/wiki/" + encodeURIComponent(pg.title.replace(/ /g,"_")), source:"Қазақ Уикипедиясы", license:"CC BY-SA 4.0" };
-        try{ localStorage.setItem(ck, JSON.stringify(rec)); }catch(e){}
-        renderResult(rec, false);
-      }catch(e){
-        if(version!==request || !body.isConnected) return;
-        body.innerHTML=`<div class="card" role="alert">«${esc(q)}» тақырыбын жүктеу мүмкін болмады. Байланысты тексеріңіз.
-          <button class="btn primary" id="encRetry">Қайта көру</button></div>`;
-        document.getElementById("encRetry").addEventListener("click",doSearch);
+        root.innerHTML=`<article class="prose search-result"><h2>${esc(page.title)}</h2>${wikiSections(page.extract)}${attribution({title:page.title,source_url:"https://kk.wikipedia.org/wiki/"+encodeURIComponent(page.title.replace(/ /g,"_"))})}</article>`;
+      } catch {
+        if (valid()) root.innerHTML='<p role="alert">Мақаланы жүктеу мүмкін болмады. Байланысты тексеріп, қайта көріңіз.</p><button type="button" data-wiki-retry>Қайта көру</button>';
       }
     }
-    function renderResult(rec, fromCache, inWrap){
-      const html = `
-        <div class="card enc-result">
-          <h2>${esc(rec.title)}</h2>
-          <p class="read-src">Дереккөз: ${esc(rec.source)} · ${esc(rec.license)} ${fromCache?'· <b style="color:var(--warn)">кэшттен</b>':''}</p>
-          <div class="read-text">${esc(rec.text).replace(/\n/g,"<br/>")}</div>
-          <a href="${esc(rec.url)}" target="_blank" rel="noopener" class="btn" style="margin-top:14px">📎 Уикипедияда ашу</a>
-        </div>`;
-      return inWrap ? html : (body.innerHTML = html, body.querySelector(".enc-result").scrollIntoView({behavior:"smooth",block:"start"}), html);
-    }
-    document.getElementById("encBtn").addEventListener("click",doSearch);
-    inp.addEventListener("keydown",e=>{ if(e.key==="Enter") doSearch(); });
-    // мысал батырмалары
-    document.querySelectorAll(".enc-example").forEach(b=>b.addEventListener("click",()=>{
-      inp.value = b.dataset.s;
-      doSearch();
-    }));
-  }
-};
-
-/* ---------- PROGRESS ---------- */
-VIEWS.progress = {
-  render(){
-    const p = APP.p;
-    const best = {};
-    for(const k in p.done){ if(k.startsWith("quiz_")) best[k.slice(5)] = p.done[k]; }
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Жеке · Прогресс</div>
-        <h1 class="v-title">Прогресіңіз</h1>
-        <p class="v-sub">Есіміңізді және аватарыңызды баптау, прогресті экспорттау/импорттау</p>
-      </div>
-      <div class="grid grid-2" style="margin-bottom:16px">
-        <div class="card" style="text-align:center">
-          <div style="font-size:56px;margin-bottom:6px">${esc(p.avatar || "🦁")}</div>
-          <b style="font-size:18px">${esc(p.name || "Қонақ")}</b>
-          <div class="v-sub" style="margin-top:4px">${APP.LEVELS[p.level]}</div>
-        </div>
-        <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:10px">
-          <div class="stat-row"><span>Жалпы XP</span><b>${esc(p.xp)}</b></div>
-          <div class="stat-row"><span>Күндік 🔥</span><b>${esc(p.streak)}</b></div>
-          <div class="stat-row"><span>Меңгерілген сөз</span><b>${Object.keys(p.learned).length}</b></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3 style="margin-bottom:12px">Дәреже</h3>
-        <div class="level-bar">
-          ${APP.LEVELS.map((l,i)=>`<div class="lv-seg ${i<=p.level?'on':''}"><span>${l}</span></div>`).join("")}
-        </div>
-      </div>
-      <div class="card" style="margin-top:14px">
-        <h3 style="margin-bottom:12px">Тест нәтижелері</h3>
-        ${Object.keys(best).length ? Object.entries(best).map(([k,v])=>`<div class="stat-row"><span>${esc(k)}-деңгей</span><b>${esc(v)} ұпай</b></div>`).join("") : `<p class="v-sub">Әлі тест тапсырылмады.</p>`}
-      </div>
-      <div class="card" style="margin-top:14px">
-        <h3 style="margin-bottom:12px">Прогресті экспорттау / импорттау</h3>
-        <div class="row" style="gap:8px;flex-wrap:wrap">
-          <button id="progressExport" class="btn primary">⬇️ .json жүктеп алу</button>
-          <label class="btn ghost">⬆️ Импорттау<input id="progressImport" type="file" accept=".json" style="display:none"/></label>
-          <button id="btnReset" class="btn ghost" style="color:var(--err)">🗑 Барлығын тазалау</button>
-        </div>
-      </div>
-    `;
-  },
-  mount(){
-    document.getElementById("progressExport").addEventListener("click",()=>{
-      const blob = new Blob([JSON.stringify(APP.p,null,2)],{type:"application/json"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "dastan-progress.json";
-      a.click();
-    });
-    document.getElementById("progressImport").addEventListener("change",e=>{
-      const f = e.target.files[0];
-      if(!f) return;
-      const rd = new FileReader();
-      rd.onload = ()=>{
-        try{
-          APP.progress.importText(rd.result);
-          APP.progress.save(APP.p);
-          APP.updateSidebar();
-          APP.toast("Импортталды!");
-          go("progress");
-        }catch(err){ APP.toast("Файл қате: " + err.message); }
-      };
-      rd.readAsText(f);
-    });
-    document.getElementById("btnReset").addEventListener("click",()=>{
-      if(confirm("Барлық прогресті өшірмісіз? Бұл қайтарылмайды.")){
-        APP.p = { name:"", avatar:"🦁", xp:0, level:0, streak:0, lastDate:"", done:{}, badges:[], learned:{} };
-        APP.progress.save(APP.p);
-        APP.updateSidebar();
-        APP.toast("Тазаланды");
-        go("progress");
-      }
+    document.getElementById("encyclopediaForm").addEventListener("submit", e=>{e.preventDefault();search(input.value.trim());});
+    root.addEventListener("click", e=>{
+      const b=e.target.closest("[data-wiki-title]");
+      if(b) search(b.dataset.wikiTitle);
+      if(e.target.closest("[data-wiki-retry]")) search(input.value.trim());
     });
   }
 };
-
-/* ---------- MAKAN (басты мәдениет) ---------- */
-VIEWS.makan = {
-  render(){
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Мәдениет</div>
-        <h1 class="v-title">Мәдениет орталығы</h1>
-        <p class="v-sub">Бағыт бойынша кіріңіз</p>
-      </div>
-      <div class="grid grid-2">
-        <button class="card mod-card" onclick="go('proverbs')"><span class="mod-ic">📜</span><b>Мақал-мәтел</b><span class="mod-sub">12 мақал, 6 бағыт</span></button>
-        <button class="card mod-card" onclick="go('jyr')"><span class="mod-ic">🎻</span><b>Жыр-дастан</b><span class="mod-sub">Қобланды, Ер Төстік, Қобыз Көпеш</span></button>
-        <button class="card mod-card" onclick="go('twisters')"><span class="mod-ic">🌀</span><b>Жаңылтпаш</b><span class="mod-sub">15 жаңылтпаш, 3 деңгей</span></button>
-        <button class="card mod-card" onclick="go('culture')"><span class="mod-ic">🍽️</span><b>Мәдени мұра</b><span class="mod-sub">Тағам, киім, тарих, тұлғалар</span></button>
-        <button class="card mod-card" onclick="go('ornaments')"><span class="mod-ic">🪡</span><b>Ою-өрнек</b><span class="mod-sub">8 ұлттық ою + ойын</span></button>
-      </div>
-    `;
-  }
-};
+const LANGUAGE_LINKS = [["dict","Сөздік"],["words","Көнерген сөздер"],["proverbs","Мақал-мәтел"],["twisters","Жаңылтпаш"],["gram","Тіл ережелері"],["voice","Тыңдау"]];
+VIEWS.language = {title:"Тіл", render() { return heading("Тіл", "Қазақ тілінің сөз байлығы мен айтылымы.") + `<div class="language-index">${LANGUAGE_LINKS.map(([r,n])=>routeLink(r,n)).join("")}</div>`; }};
+for (const [r, title] of LANGUAGE_LINKS) {
+  VIEWS[r].title = title;
+  const render = VIEWS[r].render;
+  VIEWS[r].render = function(id) { return subnav(LANGUAGE_LINKS,"Тіл бөлімдері") + render.call(this,id); };
+}
+for (const r of ["jyr","read","ornaments"]) {
+  const render = VIEWS[r].render;
+  VIEWS[r].render = async function(id) { return subnav(CULTURE_LINKS,"Мәдениет бөлімдері") + await render.call(this,id); };
+}

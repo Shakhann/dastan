@@ -1,141 +1,72 @@
-// ==== Қосымша view-тер (app.js-ке қосылады) ====
-
-/* ---------- HOME ---------- */
+"use strict";
+const GROUPS = {
+  "birth and childhood": "Дүниеге келу және балалық шақ",
+  marriage: "Үйлену және отбасын құру", hospitality: "Қонақжайлық",
+  seasons: "Жыл мезгілдері", mourning: "Аза тұту және еске алу", "mutual help": "Өзара көмек"
+};
 VIEWS.home = {
-  render(){
-    const today = new Date();
-    const dayWord = DICT[today.getDate() % DICT.length];
-    const dayProv = PROVERBS[today.getDate() % PROVERBS.length];
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Басты бет</div>
-        <h1 class="v-title">Сәлем, ${esc(APP.p.name || "Қонақ")}! 👋</h1>
-        <p class="v-sub">Бүгін ${APP.LEVELS[APP.p.level]} деңгейі. Статистика: ${APP.p.xp} XP · ${APP.p.streak} 🔥</p>
-      </div>
-      <div class="grid grid-3" style="margin-bottom:16px">
-        <div class="card"><div class="stat-num">${APP.p.xp}</div><div class="stat-lbl">Жалпы XP</div></div>
-        <div class="card"><div class="stat-num">${APP.p.streak}</div><div class="stat-lbl">Күндік 🔥</div></div>
-        <div class="card"><div class="stat-num">${APP.LEVELS[APP.p.level]}</div><div class="stat-lbl">Дәреже</div></div>
-      </div>
-      <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff">
-        <div class="v-eyebrow" style="color:var(--gold)">Күннің сөзі</div>
-        <h2 style="font-size:26px;margin:6px 0">${esc(dayWord.kk)}</h2>
-        <p style="opacity:.85">${esc(dayWord.ru)} · ${esc(dayWord.en)}</p>
-        <p style="margin-top:10px;font-style:italic;opacity:.75">"${esc(dayWord.ex)}"</p>
-        <button class="btn gold" style="margin-top:14px" onclick="speak('${esc(dayWord.kk)}','d_${dayWord.id}')">🔊 Дыбыстату</button>
-      </div>
-      <div class="card" style="margin-bottom:16px;border-left:4px solid var(--gold)">
-        <div class="v-eyebrow">Күннің мақалы</div>
-        <h2 style="font-size:20px;margin:6px 0">${esc(dayProv.kk)}</h2>
-        <p style="color:var(--ink2);font-size:14px">${esc(dayProv.ru || "")}</p>
-      </div>
-      <h3 style="margin:8px 0 12px;font-size:16px">Жалғастыру</h3>
-      <div class="grid grid-3">
-        <button class="card mod-card" onclick="go('dict')"><span class="mod-ic">📖</span><b>Сөздік</b><span class="mod-sub">30 сөз, тақырып бойынша</span></button>
-        <button class="card mod-card" onclick="go('quiz')"><span class="mod-ic">✅</span><b>Тест</b><span class="mod-sub">3 деңгейдегі сұрақтар</span></button>
-        <button class="card mod-card" onclick="go('proverbs')"><span class="mod-ic">📜</span><b>Мақал-мәтел</b><span class="mod-sub">12 мақал, 6 бағыт</span></button>
-      </div>
-    `;
+  title: "Қазақ мұрасы",
+  render() {
+    const day = Math.floor(Date.now() / 86400000);
+    const p = APP.data.people[day % APP.data.people.length];
+    const t = APP.data.traditions[day % APP.data.traditions.length];
+    return `<section class="hero"><div class="hero-copy"><h1>Қазақ мұрасы</h1><p>Елдің тарихы — адам тағдырында, дәстүрінде, тілінде.</p>${routeLink("culture", "Мұрамен танысу", "button")}</div>${imageFigure("assets/heritage/interior_museum.jpg", "hero-image", true)}</section>
+    <div class="home-content"><section class="heritage-paths" aria-label="Мұра бөлімдері"><a href="#shezhire" class="path-main"><h2>Шежіре</h2><p>Қазақтың ру-тайпалық құрылымы мен тарихи сабақтастығы.</p><span>Шежірені қарау</span></a><div class="path-side"><a href="#people"><h2>Ел тұлғалары</h2><p>Өмірі мен еңбегі ел тарихымен сабақтас ғұмырлар.</p></a><a href="#traditions"><h2>Салт-дәстүр</h2><p>Дәстүрдің шығу тегі, мәні мен бүгінгі жалғасы.</p></a></div></section><section class="featured"><h2>Бүгінгі танысу</h2><div class="featured-grid">${personPatch(p)}${traditionPatch(t)}</div></section></div>`;
   }
 };
-
-/* ---------- DICT ---------- */
-VIEWS.dict = {
-  state:{cat:"Барлығы", q:""},
-  render(){
-    const cats = ["Барлығы", ...new Set(DICT.map(d=>d.cat))];
-    const st = VIEWS.dict.state;
-    const items = DICT.filter(d => (st.cat==="Барлығы" || d.cat===st.cat) && (!st.q || d.kk.toLowerCase().includes(st.q.toLowerCase())));
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Тіл · Сөздік</div>
-        <h1 class="v-title">Сөздік</h1>
-        <p class="v-sub">${DICT.length} сөз, ${cats.length-1} тақырып</p>
-      </div>
-      <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:12px">
-        ${cats.map(c=>`<button class="btn ${c===st.cat?'primary':'ghost'}" data-cat="${c}">${c}</button>`).join("")}
-      </div>
-      <div class="row" style="margin-bottom:14px">
-        <input id="dictSearch" type="search" placeholder="Сөз іздеу..." value="${esc(st.q)}" style="flex:1;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:600"/>
-      </div>
-      <div class="grid grid-2" id="dictGrid">
-        ${items.map(d=>`
-          <div class="card flip-card" data-id="${d.id}">
-            <div class="fc-front">
-              <div class="fc-eyebrow">${d.cat}</div>
-              <div class="fc-word">${esc(d.kk)}</div>
-              <div class="fc-sub">${esc(d.ru)}</div>
-              <div class="fc-act">
-                <button class="btn" onclick="speak('${esc(d.kk)}','d_${d.id}')" aria-label="Дыбыстату">🔊</button>
-                <button class="btn" data-learn="${d.id}" aria-label="Меңгерілді">✓</button>
-              </div>
-            </div>
-            <div class="fc-back">
-              <div class="fc-eyebrow">${d.cat}</div>
-              <div class="fc-word">${esc(d.en)}</div>
-              <div class="fc-sub">${esc(d.ru)}</div>
-              <p class="fc-ex">"${esc(d.ex)}"</p>
-            </div>
-          </div>
-        `).join("") || `<div class="card" style="grid-column:1/-1;text-align:center;color:var(--ink3);padding:40px">Сөз табылмады</div>`}
-      </div>
-    `;
-  },
-  mount(){
-    const st = VIEWS.dict.state;
-    document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{ st.cat=b.dataset.cat; go("dict"); }));
-    const s = document.getElementById("dictSearch");
-    if(s) s.addEventListener("input",()=>{ st.q = s.value; const items = DICT.filter(d=>(st.cat==="Барлығы"||d.cat===st.cat)&&(!st.q||d.kk.toLowerCase().includes(st.q.toLowerCase())));
-      const g = document.getElementById("dictGrid");
-      g.innerHTML = items.map(d=>`
-        <div class="card flip-card" data-id="${d.id}">
-          <div class="fc-front"><div class="fc-eyebrow">${d.cat}</div><div class="fc-word">${esc(d.kk)}</div><div class="fc-sub">${esc(d.ru)}</div>
-          <div class="fc-act"><button class="btn" onclick="speak('${esc(d.kk)}','d_${d.id}')">🔊</button><button class="btn" data-learn="${d.id}">✓</button></div></div>
-          <div class="fc-back"><div class="fc-eyebrow">${d.cat}</div><div class="fc-word">${esc(d.en)}</div><div class="fc-sub">${esc(d.ru)}</div><p class="fc-ex">"${esc(d.ex)}"</p></div>
-        </div>`).join("") || `<div class="card" role="status">Сөз табылмады</div>`;
-      bindLearn();
-      APP.bindFlips(g);
-    });
-    function bindLearn(){
-      document.querySelectorAll("[data-learn]").forEach(b=>b.addEventListener("click",e=>{
-        e.stopPropagation();
-        const id = b.dataset.learn;
-        if(APP.p.learned[id]){ delete APP.p.learned[id]; APP.toast("Алынды"); }
-        else { APP.p.learned[id] = true; APP.progress.addXP(APP.p, 5); APP.toast("+5 XP"); }
-        APP.progress.save(APP.p); go("dict");
-      }));
+VIEWS.people = {
+  async render(id) {
+    if (!id) return heading("Ел тұлғалары", "Елге еңбек сіңірген жандардың өмірі мен мұрасына үңілейік.") + `<div class="people-grid">${APP.data.people.map(personPatch).join("")}</div>`;
+    const p = APP.data.people.find(x => x.id === id);
+    if (!p) return heading("Тұлға табылмады") + routeLink("people", "Тұлғалар тізіміне оралу");
+    const full = await optionalFull("people_" + p.id);
+    return routeLink("people", "Барлық тұлғалар", "back") + heading(p.name) + `<div class="person-detail"><aside>${p.image ? imageFigure(p.image, "portrait") : monogram(p)}</aside><article class="prose"><p class="years">${esc(p.years)}</p>${p.years_note_kk ? `<p class="note">${esc(p.years_note_kk)}</p>` : ""}<p><b>${esc(p.role)}</b></p><p>${esc(p.era)}</p><h2>Өмірі мен мұрасы</h2><p>${esc(p.summary_kk)}</p><h2>Тарихтағы орны</h2><p>${esc(p.why_forgotten_kk)}</p><h2>Толық өмірбаян</h2>${full ? fullSections(full) : `<p>Толық өмірбаян әзірге қолжетімсіз.</p>${attribution({title:p.name,source_url:p.wiki_url})}`}</article></div>`;
+  }
+};
+VIEWS.traditions = {
+  async render(id) {
+    if (id) {
+      const t = APP.data.traditions.find(x => x.id === id);
+      if (!t) return heading("Дәстүр табылмады") + routeLink("traditions", "Дәстүрлерге оралу");
+      const full = await optionalFull("trad_" + t.id);
+      return routeLink("traditions", "Барлық дәстүрлер", "back") + heading(t.name, GROUPS[t.group]) + `<div class="tradition-detail">${videoFacade(t.video)}<article class="prose tradition-text"><p>${esc(t.summary_kk)}</p>${t.image ? imageFigure(t.image) : ""}${[["Қалай шыққан",t.origin_kk],["Не үшін жасалады",t.purpose_kk]].map(([h,p]) => `<h2>${h}</h2><p>${esc(p)}</p>`).join("")}<h2>Қалай өтеді</h2><ol>${(t.steps_kk || []).map(p=>`<li>${esc(p)}</li>`).join("")}</ol><h2>Мәні</h2><p>${esc(t.meaning_kk)}</p><h2>Бүгінгі күні</h2><p>${esc(t.today_kk)}</p><h2>Қызық деректер</h2><ul>${(t.facts_kk || []).map(p=>`<li>${esc(p)}</li>`).join("")}</ul>${full ? `<details class="article"><summary>Толығырақ</summary><div class="article-body">${fullSections(full)}</div></details>` : attribution({title:t.name,source_url:t.source_url || t.wiki_url})}</article></div>`;
     }
-    bindLearn();
-
+    return heading("Салт-дәстүр", "Халықтың тұрмысынан, бір-біріне деген ықыласынан туған мұра.") + Object.entries(GROUPS).map(([key, name]) => `<section class="tradition-group"><h2>${esc(name)}</h2><div class="tradition-grid">${APP.data.traditions.filter(t => t.group === key).map(traditionPatch).join("")}</div></section>`).join("");
   }
 };
-
-/* ---------- GRAMMAR ---------- */
-VIEWS.gram = {
-  render(){
-    return `
-      <div class="v-head">
-        <div class="v-eyebrow">Тіл · Грамматика</div>
-        <h1 class="v-title">Грамматика сабақтары</h1>
-        <p class="v-sub">${GRAMMAR.length} негізгі ереже</p>
-      </div>
-      <div class="grid" style="gap:14px">
-        ${GRAMMAR.map((g,i)=>`
-          <details class="card gram-card" ${i===0?"open":""}>
-            <summary>
-              <span class="gram-num">${i+1}</span>
-              <b>${esc(g.title)}</b>
-            </summary>
-            <div class="gram-body">
-              <p class="gram-rule"><b>Ереже:</b> ${esc(g.rule)}</p>
-              <div class="gram-exs">
-                ${g.examples.map(e=>`<span class="gram-chip">${esc(e)}</span>`).join("")}
-              </div>
-              <button class="btn" style="margin-top:12px" onclick="speak('${esc(g.title)}: ${esc(g.rule)}')">🔊 Сабақты тыңдау</button>
-            </div>
-          </details>
-        `).join("")}
-      </div>
-    `;
+VIEWS.timeline = {
+  render() {
+    return heading("Тарих жолы", "Өткенге көз жүгіртіп, бүгіннің тамырын таниық.") + `<ol class="timeline">${APP.data.timeline.map(t => `<li><div class="date">${esc(t.year)}</div><article><h2>${esc(t.title_kk)}</h2><p>${esc(t.text_kk)}</p>${attribution({title:t.title_kk,source_url:t.source_url})}</article></li>`).join("")}</ol>`;
   }
 };
+function searchableWords(title, intro, items, renderer) {
+  return heading(title, intro) + `<label class="search-label" for="wordSearch">Сөз іздеу</label><input id="wordSearch" type="search" placeholder="Іздейтін сөзіңізді жазыңыз"><p id="searchCount" role="status">${items.length} сөз</p><div id="wordResults" class="word-grid">${items.map(renderer).join("")}</div>`;
+}
+function mountWordSearch(items, renderer, text) {
+  document.getElementById("wordSearch").addEventListener("input", event => {
+    const q = event.target.value.toLocaleLowerCase("kk").trim();
+    const matches = items.filter(item => text(item).toLocaleLowerCase("kk").includes(q));
+    document.getElementById("wordResults").innerHTML = matches.map(renderer).join("") || '<p>Сөз табылмады. Басқа сөзбен іздеп көріңіз.</p>';
+    document.getElementById("searchCount").textContent = `${matches.length} сөз`;
+  });
+}
+function oldWord(w) {
+  return `<article class="word patch"><h2>${esc(w.kk)}</h2><p>${esc(w.meaning_kk)}</p><blockquote>${esc(w.example_kk)}</blockquote></article>`;
+}
+VIEWS.words = {
+  render() { return searchableWords("Көнерген сөздер", "Көне сөздерді мағынасы мен қолданысы арқылы таныңыз.", APP.data.words, oldWord); },
+  mount() { mountWordSearch(APP.data.words, oldWord, w => `${w.kk} ${w.meaning_kk} ${w.example_kk}`); }
+};
+
+function videoFacade(video) {
+  if (!video || !/^[\w-]{11}$/.test(video.youtube_id)) return '<aside class="video-panel"><p>Бейне әзірге қолжетімсіз.</p></aside>';
+  return `<aside class="video-panel"><div class="video-frame"><button type="button" class="video-play" data-video="${esc(video.youtube_id)}" data-title="${esc(video.title)}" aria-label="${esc(video.title)} — бейнені ойнату"><img src="https://i.ytimg.com/vi/${esc(video.youtube_id)}/hqdefault.jpg" alt="" loading="lazy"><span>▶ Бейнені ойнату</span></button></div><p>${esc(video.title)}<br><small>${esc(video.channel)}</small></p></aside>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-video]");
+  if (!b || !/^[\w-]{11}$/.test(b.dataset.video)) return;
+  const f = document.createElement("iframe");
+  f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.video}?rel=0&autoplay=1`;
+  f.title = b.dataset.title; f.allow = "autoplay; encrypted-media; picture-in-picture"; f.allowFullscreen = true;
+  b.replaceWith(f);
+});
