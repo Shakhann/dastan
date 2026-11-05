@@ -18,14 +18,14 @@ VIEWS.home = {
         <div class="card"><div class="stat-num">${APP.LEVELS[APP.p.level]}</div><div class="stat-lbl">Дәреже</div></div>
       </div>
       <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff">
-        <div class="v-eyebrow" style="color:var(--gold)">Күнді сөзі</div>
+        <div class="v-eyebrow" style="color:var(--gold)">Күннің сөзі</div>
         <h2 style="font-size:26px;margin:6px 0">${esc(dayWord.kk)}</h2>
         <p style="opacity:.85">${esc(dayWord.ru)} · ${esc(dayWord.en)}</p>
         <p style="margin-top:10px;font-style:italic;opacity:.75">"${esc(dayWord.ex)}"</p>
         <button class="btn gold" style="margin-top:14px" onclick="speak('${esc(dayWord.kk)}','d_${dayWord.id}')">🔊 Дыбыстату</button>
       </div>
       <div class="card" style="margin-bottom:16px;border-left:4px solid var(--gold)">
-        <div class="v-eyebrow">Күнді мақалы</div>
+        <div class="v-eyebrow">Күннің мақалы</div>
         <h2 style="font-size:20px;margin:6px 0">${esc(dayProv.kk)}</h2>
         <p style="color:var(--ink2);font-size:14px">${esc(dayProv.ru || "")}</p>
       </div>
