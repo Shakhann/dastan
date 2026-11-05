@@ -3,7 +3,7 @@
 fetch_content.py — Қазақ Wikipedianың MediaWiki API-сі арқылы контент жинау.
 
 Пайдалану:
-  python3 fetch_content.py                # барлық тақырыпты жүктеу
+  python3 fetch_content.py                # қорғалмаған тақырыптарды жүктеу
   python3 fetch_content.py --id abai      # бір ғана тақырыпты жүктеу
   python3 fetch_content.py --dry-run      # тақырыптарды тексеру ғана
 
@@ -61,6 +61,11 @@ def save(rec):
     d = os.path.join(OUT, cat)
     os.makedirs(d, exist_ok=True)
     path = os.path.join(d, rec["id"] + ".json")
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            current = json.load(f)
+        if current.get("source_name") == "ДАСТАН редакциясы":
+            raise ValueError(f"Редакциялық мақала қорғалған: {path}")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(rec, f, ensure_ascii=False, indent=2)
     return path
@@ -79,19 +84,24 @@ def main():
             print(f"  [{t['category']:10}] {t['id']:20}  ← {t['page']}")
         return
 
-    log = open("fetch_log.txt", "a", encoding="utf-8")
-    log.write(f"\n=== {datetime.datetime.now().isoformat()} ===\n")
-
     ok = miss = 0
     for t in topics:
         if args.id and t["id"] != args.id:
             continue
+        if t.get("preserve_local") or t.get("source") == "editorial":
+            print(f"SKIP: {t['id']} — жергілікті редакция қорғалған")
+            continue
+        path = os.path.join(OUT, t["category"], t["id"] + ".json")
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                if json.load(f).get("source_name") == "ДАСТАН редакциясы":
+                    print(f"SKIP: {t['id']} — редакциялық мақала қорғалған")
+                    continue
         print(f"→ {t['id']}: {t['page']} ...", end=" ", flush=True)
         try:
             r = fetch_page(t["source"], t["page"])
             if not r or len(r["text"]) < 200:
                 miss += 1
-                log.write(f"MISS: {t['id']}  (page: {t['page']})\n")
                 print("MISS")
                 continue
             rec = {
@@ -106,15 +116,12 @@ def main():
             }
             path = save(rec)
             ok += 1
-            log.write(f"OK:   {t['id']}  ({len(r['text'])} симв) → {path}\n")
             print(f"OK ({len(r['text'])} симв)")
         except Exception as e:
             miss += 1
-            log.write(f"ERR:  {t['id']}  {e}\n")
             print(f"ERR: {e}")
         time.sleep(1)  # API-ге құрметпен
 
-    log.close()
     print(f"\nНәтиже: {ok} табылды, {miss} табылмады. Файлдар: {OUT}/")
 
 if __name__ == "__main__":

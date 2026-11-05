@@ -8,22 +8,50 @@ const APP = {};
 /* ============ PROGRESS (localStorage) ============ */
 const PKEY = "dastan.v1";
 APP.progress = {
-  load(){
-    try{
-      const raw = localStorage.getItem(PKEY);
-      if(raw){ const d = JSON.parse(raw);
-        return Object.assign({
-          name:"", avatar:"🦁", xp:0, level:0, streak:0, lastDate:"",
-          done:{}, badges:[], learned:{}
-        }, d);
+  defaults(){ return {name:"", avatar:"🦁", xp:0, level:0, streak:0, lastDate:"", done:{}, badges:[], learned:{}}; },
+  validate(d){
+    const plain = x => x && typeof x === "object" && !Array.isArray(x);
+    if(!plain(d)) throw new Error("Прогресс нысан болуы керек");
+    const p = APP.progress.defaults();
+    const fail = ()=>{ throw new Error("Прогресс пішімі жарамсыз"); };
+    if(d.name !== undefined){ if(typeof d.name !== "string" || d.name.length > 24) fail(); p.name=d.name; }
+    if(d.avatar !== undefined){ if(!["🦁","🦅","🐺","🦌","🐎","🐫","🐏","🦉"].includes(d.avatar)) fail(); p.avatar=d.avatar; }
+    for(const k of ["xp","streak","level"]){
+      if(d[k] !== undefined && (!Number.isSafeInteger(d[k]) || d[k]<0)) fail();
+      if(d[k] !== undefined) p[k]=d[k];
+    }
+    p.level=APP.progress.levelFor(p.xp);
+    if(d.lastDate !== undefined){ if(typeof d.lastDate!=="string" || (d.lastDate!=="" && !/^\d{4}-\d{2}-\d{2}$/.test(d.lastDate))) fail(); p.lastDate=d.lastDate; }
+    for(const k of ["done","learned"]){
+      if(d[k] === undefined) continue;
+      if(!plain(d[k])) fail();
+      for(const [key,value] of Object.entries(d[k])){
+        if(k==="done"){
+          if(!/^quiz_[123]$/.test(key) || !Number.isInteger(value) || value<0 || value>100) fail();
+        }else if(!DICT.some(x=>String(x.id)===key) || typeof value!=="boolean") fail();
+        p[k][key]=value;
       }
-    }catch(e){ console.warn("progress load fail", e); }
-    return { name:"", avatar:"🦁", xp:0, level:0, streak:0, lastDate:"", done:{}, badges:[], learned:{} };
+    }
+    if(d.badges !== undefined){
+      if(!Array.isArray(d.badges) || !d.badges.every(x=>typeof x==="string" && x.length<=100)) fail();
+      p.badges=d.badges.slice();
+    }
+    return p;
+  },
+  load(){
+    try{ const raw=localStorage.getItem(PKEY); if(raw) return APP.progress.validate(JSON.parse(raw)); }
+    catch(e){ console.warn("progress load fail", e); }
+    return APP.progress.defaults();
+  },
+  importText(text){
+    const next=APP.progress.validate(JSON.parse(text));
+    APP.p=next;
+    APP.progress.saveProgress();
   },
   save(p){ try{ localStorage.setItem(PKEY, JSON.stringify(p)); }catch(e){ console.warn("save fail", e); } },
-  addXP(p,n){ p.xp += n; const lv = APP.levelFor(p.xp);
+  addXP(p,n){ p.xp += n; const lv = APP.progress.levelFor(p.xp);
     if(lv > p.level){ p.level = lv; APP.toast(`Дәреже өсті! ${APP.LEVELS[lv]}`); }
-    APP.saveProgress();
+    APP.progress.saveProgress();
   },
   levelFor(xp){ return Math.min(4, Math.floor(xp/100)); },
   saveProgress(){ APP.progress.save(APP.p); APP.updateSidebar(); }
@@ -34,9 +62,12 @@ APP.p = APP.progress.load();
 /* streak: бүгінгі дата соңғы датамен салыстырылып, streak жаңартылады */
 APP.streak = {
   run(){
-    const today = new Date().toISOString().slice(0,10);
+    const now = new Date();
+    const dayKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    const today = dayKey(now);
     if(APP.p.lastDate === today) return;
-    const yest = new Date(Date.now()-864e5).toISOString().slice(0,10);
+    const previous = new Date(now); previous.setDate(previous.getDate()-1);
+    const yest = dayKey(previous);
     if(APP.p.lastDate === yest) APP.p.streak += 1;
     else if(APP.p.lastDate !== today) APP.p.streak = 1;
     APP.p.lastDate = today;
@@ -61,40 +92,46 @@ function toRuKk(text){
 APP.audioCache = {};
 async function speak(text, key){
   if(!text) return;
-  // 1) MP3
-  const k = key || text;
-  if(APP.audioCache[k]){ APP.audioCache[k].currentTime = 0; APP.audioCache[k].play().catch(()=>{}); return; }
+  const fallback = ()=>{
+    try{
+      if(!window.speechSynthesis) throw new Error("Дауыс жоқ");
+      const u=new SpeechSynthesisUtterance(toRuKk(text));
+      u.lang="ru-RU"; u.rate=0.9;
+      const ru=window.speechSynthesis.getVoices().find(v=>/^ru/i.test(v.lang));
+      if(ru) u.voice=ru;
+      u.onerror=()=>APP.toast("Дыбыстау қолжетімсіз. Қайта басып көріңіз.");
+      window.speechSynthesis.speak(u);
+    }catch(e){ APP.toast("Дыбыстау қолжетімсіз. Қайта басып көріңіз."); }
+  };
+  const tts = ()=>{
+    try{
+      const kk=window.speechSynthesis.getVoices().find(v=>/^kk(?:[-_]|$)/i.test(v.lang));
+      if(!kk){ fallback(); return; }
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang="kk-KZ"; u.voice=kk; u.rate=0.92;
+      u.onerror=fallback;
+      window.speechSynthesis.speak(u);
+    }catch(e){ fallback(); }
+  };
+  const k=key || text;
   try{
-    const r = await fetch("audio/manifest.json");
-    if(r.ok){
-      const m = await r.json();
-      const file = (m[k] || m._) ? m[k] : null;
-      if(file){
-        const a = new Audio("audio/" + file);
-        APP.audioCache[k] = a;
-        a.play().catch(()=>{});
-        return;
+    let a=APP.audioCache[k];
+    if(!a){
+      const r=await fetch("audio/manifest.json");
+      if(r.ok){
+        const m=await r.json();
+        if(typeof m[k]==="string") a=APP.audioCache[k]=new Audio("audio/"+m[k]);
       }
     }
+    if(a){
+      let failed=false;
+      const onFailure=()=>{ if(!failed){ failed=true; a.onerror=null; tts(); } };
+      a.onerror=onFailure; a.currentTime=0;
+      try{ await a.play(); }catch(e){ onFailure(); }
+      return;
+    }
   }catch(e){}
-  // 2) Web Speech API kk-KZ
-  try{
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "kk-KZ";
-    u.rate = 0.92;
-    const voices = window.speechSynthesis.getVoices();
-    const kk = voices.find(v=>/kk[-_]KZ/i.test(v.lang)) || voices.find(v=>/kk/i.test(v.lang));
-    if(kk) u.voice = kk;
-    window.speechSynthesis.speak(u);
-    return;
-  }catch(e){}
-  // 3) Fallback: орыс транскрипция + орыс дауыс
-  try{
-    const u = new SpeechSynthesisUtterance(toRuKk(text));
-    u.lang = "ru-RU";
-    u.rate = 0.9;
-    window.speechSynthesis.speak(u);
-  }catch(e){ console.warn("speak fallback fail", e); }
+  tts();
 }
 // voices cache
 if("speechSynthesis" in window){
@@ -149,7 +186,7 @@ APP.renderNav = function(){
   document.getElementById("sbNav").innerHTML = html;
   document.getElementById("shNav").innerHTML = html;
   // events
-  document.querySelectorAll(".sb-item[data-mod]").forEach(b=>{
+  document.querySelectorAll(".sb-item[data-mod], .tb-btn[data-mod]").forEach(b=>{
     b.addEventListener("click",()=>{ APP.go(b.dataset.mod); closeSheet(); });
   });
 };
@@ -161,13 +198,39 @@ APP.updateSidebar = function(){
 };
 
 /* ============ SHEET (mobile) ============ */
-function openSheet(){ document.getElementById("sheet").classList.add("open"); document.getElementById("scrim").classList.add("on"); }
-function closeSheet(){ document.getElementById("sheet").classList.remove("open"); document.getElementById("scrim").classList.remove("on"); }
-function openProf(){ document.getElementById("profSheet").classList.add("open"); document.getElementById("scrim").classList.add("on");
-  document.getElementById("inpName").value = APP.p.name || "";
-  renderAvatarOpts();
+let panelFocus=null;
+function setPanel(id, open){
+  const panel=document.getElementById(id);
+  if(open){
+    if(document.querySelector("#sheet.open, #profSheet.open")) return;
+    panelFocus=document.activeElement;
+  }
+  panel.classList.toggle("open",open);
+  panel.setAttribute("aria-hidden",String(!open));
+  panel.inert=!open;
+  document.getElementById("app").inert=open;
+  document.getElementById("scrim").classList.toggle("on",open);
+  if(open) panel.querySelector("button, input").focus();
+  else if(panelFocus){ panelFocus.focus(); panelFocus=null; }
 }
-function closeProf(){ document.getElementById("profSheet").classList.remove("open"); document.getElementById("scrim").classList.remove("on"); }
+function openSheet(){ setPanel("sheet",true); }
+function closeSheet(){ if(document.getElementById("sheet").classList.contains("open")) setPanel("sheet",false); }
+function openProf(){
+  document.getElementById("inpName").value=APP.p.name || "";
+  renderAvatarOpts(); setPanel("profSheet",true);
+}
+function closeProf(){ if(document.getElementById("profSheet").classList.contains("open")) setPanel("profSheet",false); }
+document.addEventListener("keydown",e=>{
+  const panel=document.querySelector("#sheet.open, #profSheet.open");
+  if(!panel) return;
+  if(e.key==="Escape"){ closeSheet(); closeProf(); }
+  if(e.key==="Tab"){
+    const nodes=Array.from(panel.querySelectorAll("button, input, a[href]")).filter(x=>!x.disabled);
+    const first=nodes[0], last=nodes[nodes.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  }
+});
 function renderAvatarOpts(){
   const opts = ["🦁","🦅","🐺","🦌","🐎","🐫","🐏","🦉"];
   const el = document.getElementById("avatarOpts");
@@ -179,22 +242,73 @@ function renderAvatarOpts(){
 
 /* ============ ROUTER ============ */
 const VIEWS = {};
+APP.currentView=null;
+APP.navigation=0;
 function go(id){
-  const v = VIEWS[id] || VIEWS.home;
-  const main = document.getElementById("view");
-  main.innerHTML = `<div class="view-anim">${v.render()}</div>`;
-  v.mount && v.mount();
-  document.getElementById("main").scrollTop = 0;
-  // active nav
-  document.querySelectorAll(".sb-item").forEach(b=>b.classList.toggle("active", b.dataset.mod === id));
-  document.querySelectorAll(".tb-btn").forEach(b=>b.classList.toggle("active", b.dataset.mod === id));
-  // async content: read/jyr/culture мәліметін жүктеп, қайта рендерлеу
-  if(id === "read" && !_readData){ loadRead().then(()=>go("read")); }
-  if(id === "jyr" && !_jyrData){ loadJyr().then(()=>go("jyr")); }
-  if(id === "culture" && !_cultureData.taam.length){ loadCulture().then(()=>go("culture")); }
+  id=Object.hasOwn(VIEWS,id)?id:"home";
+  const hash="#"+id;
+  if(location.hash!==hash) history.pushState(null,"",hash);
+  if(APP.currentView && VIEWS[APP.currentView].unmount) VIEWS[APP.currentView].unmount();
+  APP.currentView=id;
+  const version=++APP.navigation;
+  const v=VIEWS[id], main=document.getElementById("view");
+  const draw=()=>{
+    main.innerHTML=`<div class="view-anim">${v.render()}</div>`;
+    if(v.mount) v.mount();
+    APP.bindFlips(main);
+    const retry=main.querySelector("[data-retry]");
+    if(retry) retry.addEventListener("click",()=>{ APP.dataState[id]={status:"idle"}; go(id); });
+  };
+  if(v.load && !APP.dataState[id]) APP.dataState[id]={status:"idle"};
+  draw();
+  document.getElementById("main").scrollTop=0;
+  document.querySelectorAll(".sb-item, .tb-btn").forEach(b=>b.classList.toggle("active",b.dataset.mod===id));
+  if(v.load){
+    const state=APP.dataState[id];
+    if(state.status==="idle"){
+      state.status="loading";
+      state.promise=v.load().then(()=>{ state.status="ready"; },()=>{ state.status="error"; });
+    }
+    if(state.status==="loading") state.promise.then(()=>{
+      if(APP.currentView===id && APP.navigation===version) draw();
+    });
+  }
 }
+APP.routeFromHash=()=>{
+  const id=location.hash.slice(1);
+  if(!Object.hasOwn(VIEWS,id)) history.replaceState(null,"","#home");
+  go(Object.hasOwn(VIEWS,id)?id:"home");
+};
+window.addEventListener("hashchange",APP.routeFromHash);
+APP.dataState={};
+APP.fetchArticles=async paths=>Promise.all(paths.map(async path=>{
+  const r=await fetch(path);
+  if(!r.ok) throw new Error("Жүктеу қатесі");
+  const d=await r.json();
+  if(!d || typeof d.id!=="string" || typeof d.title!=="string" || typeof d.text!=="string") throw new Error("Дерек пішімі қате");
+  return d;
+}));
+APP.loadMessage=id=>{
+  const state=APP.dataState[id];
+  if(state && state.status==="error") return `<div class="card" role="alert">Деректерді жүктеу мүмкін болмады. <button class="btn primary" data-retry>Қайта көру</button></div>`;
+  return `<div class="card" role="status">Деректер жүктелуде…</div>`;
+};
+APP.bindFlips=root=>root.querySelectorAll(".flip-card").forEach(c=>{
+  const button=document.createElement("button");
+  button.className="btn flip-toggle"; button.textContent="Карточканы аудару";
+  button.setAttribute("aria-pressed","false");
+  const sync=()=>{
+    const flipped=c.classList.contains("flipped");
+    button.setAttribute("aria-pressed",String(flipped));
+    c.querySelector(".fc-front").inert=flipped;
+    c.querySelector(".fc-back").inert=!flipped;
+  };
+  const flip=()=>{ c.classList.toggle("flipped"); sync(); }; sync();
+  button.addEventListener("click",flip); c.appendChild(button);
+  c.addEventListener("click",e=>{ if(!e.target.closest("button")) flip(); });
+});
 APP.go = go;
 
 /* ============ HELPERS ============ */
 function el(html){ const d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstElementChild; }
-function esc(s){ return String(s||"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }

@@ -249,3 +249,11 @@ h1,h2,h3{font-weight:800;line-height:1.15;letter-spacing:-.01em}
 @media (max-width:520px){
   .grid-2,.grid-3{grid-template-columns:1fr}
 }
+
+/* Accessible controls retain the existing card and panel design. */
+.flip-card{padding-bottom:44px;min-height:194px}
+.flip-card .fc-front,.flip-card .fc-back{bottom:44px}
+.flip-toggle{position:absolute;bottom:8px;left:12px;z-index:2;font-size:12px}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--azure2);outline-offset:3px}
+#sheet[aria-hidden="true"],#profSheet[aria-hidden="true"]{visibility:hidden}
+#sheet.open,#profSheet.open{visibility:visible}

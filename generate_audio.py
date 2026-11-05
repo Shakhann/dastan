@@ -5,6 +5,8 @@ generate_audio.py — edge-tts (kk-KZ-AigulNeural) арқылы MP3 дауыс �
 Пайдалану:
   python3 -m edge_tts --voice kk-KZ-AigulNeural --text "Сәлем" --write-media out.mp3
 
+JavaScript массивтерін оқу үшін Node.js қажет (қосымша npm пакеттері қажет емес).
+
 Бұл скрипт:
 1) /data JSON файлдарынан мәтіндерді оқиды
 2) Әр тақырыптың басын (алғашқы ~500 символ) MP3-ке жазады
@@ -13,7 +15,8 @@ generate_audio.py — edge-tts (kk-KZ-AigulNeural) арқылы MP3 дауыс �
 
 Нәтиже: /audio/*.mp3 + /audio/manifest.json
 """
-import asyncio, json, os, re, glob, sys
+import asyncio, json, os, re, glob, sys, subprocess
+from pathlib import Path
 
 VOICE = "kk-KZ-AigulNeural"
 OUT = "audio"
@@ -31,47 +34,52 @@ def collect_items():
     """Барлық дауысталады контентты жинайды: (key, text)"""
     items = []
 
-    # 1) Сөздік (content.js-тен DICT)
-    try:
-        src = open("js/content.js", encoding="utf-8").read()
-        # DICT, PROVERBS, TWISTERS, GRAMMAR массивтерін табу
-        for arr_name in ["DICT","PROVERBS","TWISTERS"]:
-            m = re.search(rf'const {arr_name}\s*=\s*\[(.*?)\];', src, re.S)
-            if not m: continue
-            # JSON-ға айналдыру үшін object literal → JSON
-            block = m.group(1)
-            # кавычка мен virgula реттеу
-            try:
-                # object literal-дан JSON жасау: key: value → "key":"value"
-                cleaned = re.sub(r'(\w+):', r'"\1":', block)
-                cleaned = re.sub(r'"(.*?)":\s*"([^"]*)"', r'"\1": "\2"', cleaned)
-                arr = json.loads("[" + cleaned + "]")
-            except Exception:
-                continue
-            for it in arr:
-                if "kk" in it:
-                    items.append((f"{arr_name[0].lower()}_{it.get('id','x')}", it["kk"]))
-                if "text" in it:
-                    items.append((f"{arr_name[0].lower()}_{it.get('id','x')}", it["text"][:MAX_LEN]))
-    except Exception as e:
-        print(f"content.js parse: {e}")
+    # Parse JavaScript with Node, including multiline arrays and trailing commas.
+    # A parse failure aborts collection before any audio or manifest is written.
+    parser = r"""
+const fs = require('node:fs');
+const vm = require('node:vm');
+const src = fs.readFileSync('js/content.js', 'utf8');
+const arrays = vm.runInNewContext(src + '\n;({DICT, PROVERBS, TWISTERS})', {}, {timeout: 1000});
+process.stdout.write(JSON.stringify(arrays));
+"""
+    result = subprocess.run(["node", "-e", parser], check=True, capture_output=True, text=True)
+    arrays = json.loads(result.stdout)
+    for name, prefix in [("DICT", "d"), ("PROVERBS", "p"), ("TWISTERS", "tw")]:
+        entries = arrays[name]
+        if not isinstance(entries, list) or not entries:
+            raise ValueError(f"Empty or invalid content array: {name}")
+        for entry in entries:
+            text = entry.get("kk") or entry.get("text")
+            if not entry.get("id") or not isinstance(text, str) or not text.strip():
+                raise ValueError(f"Invalid audio item in {name}")
+            items.append((f"{prefix}_{entry['id']}", text[:MAX_LEN]))
 
     # 2) /data JSON файлдары
-    for f in glob.glob("data/*/*.json"):
-        try:
-            d = json.load(open(f, encoding="utf-8"))
-            key = d["id"]
-            text = (d.get("text") or "")[:MAX_LEN]
-            if text.strip():
-                items.append((key, text))
-        except Exception as e:
-            print(f"skip {f}: {e}")
+    for f in sorted(glob.glob("data/*/*.json")):
+        with open(f, encoding="utf-8") as source:
+            d = json.load(source)
+        key = d["id"]
+        text = (d.get("text") or "")[:MAX_LEN]
+        if not text.strip():
+            raise ValueError(f"Empty audio text: {f}")
+        items.append((key, text))
+
+    keys = [key for key, _ in items]
+    if len(keys) != len(set(keys)):
+        raise ValueError("Duplicate audio keys")
+    manifest_path = Path(OUT) / "manifest.json"
+    if manifest_path.exists():
+        previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+        missing = set(previous) - set(keys)
+        if missing:
+            raise ValueError(f"Refusing incomplete collection; missing keys: {sorted(missing)}")
 
     return items
 
 async def main():
-    os.makedirs(OUT, exist_ok=True)
     items = collect_items()
+    os.makedirs(OUT, exist_ok=True)
     print(f"Барлығы {len(items)} дауысталады тақырып")
 
     manifest = {}
@@ -97,8 +105,11 @@ async def main():
         if i % 5 == 4:
             await asyncio.sleep(1)
 
-    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as f:
-        json.dump(manifest, f, ensure_ascii=False, indent=2)
+    if len(manifest) != len(items):
+        raise RuntimeError("Audio generation incomplete; existing manifest preserved")
+    temporary = Path(OUT) / "manifest.json.tmp"
+    temporary.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(temporary, Path(OUT) / "manifest.json")
     print(f"\nНәтиже: {ok} MP3 файл, manifest.json жасалды")
 
 if __name__ == "__main__":

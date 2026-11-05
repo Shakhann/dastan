@@ -1,22 +1,23 @@
 /* ==== views_c.js: jyr, twisters, culture, ornaments, encyclopedia, progress, makan ==== */
 
-/* ---------- JYR (Wikipedia-дан) ---------- */
+/* ---------- JYR (жырлар мен әдеби мұра) ---------- */
 let _jyrData = null;
 async function loadJyr(){
-  if(_jyrData) return _jyrData;
+  if(_jyrData && _jyrData.length) return _jyrData;
   const ids = ["kobylandy","er_tostik","kozy_korpeshi","qyz_zhibek","abai_poeziya"];
-  const r = await Promise.all(ids.map(id=>fetch(`data/jyr/${id}.json`).then(r=>r.ok?r.json():null)));
-  _jyrData = r.filter(Boolean);
+  _jyrData=await APP.fetchArticles(ids.map(id=>`data/jyr/${id}.json`));
   return _jyrData;
 }
 VIEWS.jyr = {
+  load:loadJyr,
   render(){
-    if(!_jyrData) return `<div class="v-head"><div class="v-eyebrow">Мәдениет · Жыр-дастан</div><h1 class="v-title">Жыр-дастан</h1></div><p>Жүктелуде...</p>`;
+    if(!_jyrData) return APP.loadMessage("jyr");
+    if(!_jyrData.length) return `<div class="card">Жырлар табылмады. <button class="btn" data-retry>Қайта көру</button></div>`;
     return `
       <div class="v-head">
         <div class="v-eyebrow">Мәдениет · Жыр-дастан</div>
-        <h1 class="v-title">Жыр-дастандар</h1>
-        <p class="v-sub">${_jyrData.length} дастан · ${esc(_jyrData[0].license || "CC BY-SA 4.0")}</p>
+        <h1 class="v-title">Жырлар мен әдеби мұра</h1>
+        <p class="v-sub">${_jyrData.length} әдеби тақырып · Лицензиясы әр мәтінде көрсетілген</p>
       </div>
       <div class="grid grid-2" style="margin-bottom:16px">
         ${_jyrData.map((d,i)=>`
@@ -41,9 +42,10 @@ VIEWS.jyr = {
           <div class="read-text">${esc(d.text).replace(/\n/g,"<br/>")}</div>
           <div class="row" style="margin-top:14px">
             <a href="${esc(d.source_url)}" target="_blank" rel="noopener" class="btn">📎 Түпнұсқа</a>
-            <button class="btn primary" onclick="speak(${JSON.stringify((d.text||"").slice(0,500))},'jyr_${d.id}')">🔊 Тыңдау (басы)</button>
+            <button class="btn primary" data-listen>🔊 Тыңдау (басы)</button>
           </div>
         </div>`;
+      el.querySelector("[data-listen]").addEventListener("click",()=>speak((d.text||"").slice(0,500)));
       el.querySelector(".card").scrollIntoView({behavior:"smooth",block:"start"});
     }));
   }
@@ -66,14 +68,17 @@ VIEWS.twisters = {
         ${TWISTERS.map(t=>`
           <div class="card twist-card" data-lv="${t.lv}">
             <span class="tw-num">${t.lv}-деңгей</span>
-            <p class="tw-text">${esc(t.kk)}</p>
-            <button class="btn" onclick="speak('${esc(t.kk)}','tw_${t.id}')">🔊 Тыңдау</button>
+            <p class="tw-text">${esc(t.kk).replace(/\n/g,"<br/>")}</p>
+            <button class="btn" data-tw-listen="${t.id}">🔊 Тыңдау</button>
           </div>
         `).join("")}
       </div>
     `;
   },
   mount(){
+    document.querySelectorAll("[data-tw-listen]").forEach(b=>b.addEventListener("click",()=>{
+      speak(TWISTERS.find(t=>t.id===b.dataset.twListen).kk);
+    }));
     let cur = 1;
     function apply(){ document.querySelectorAll(".twist-card").forEach(c=>c.style.display = (+c.dataset.lv===cur) ? "" : "none"); }
     document.querySelectorAll(".tw-lv").forEach(b=>b.addEventListener("click",()=>{
@@ -87,22 +92,24 @@ VIEWS.twisters = {
 };
 
 /* ---------- CULTURE (Мәдени мұра) ---------- */
-let _cultureData = { taam:[], kijim:[], tarikh:[], tulgalar:[] };
+let _cultureData = null;
 async function loadCulture(){
-  if(_cultureData.taam.length) return _cultureData;
-  const cats = {taam:["taam_borsak","taam_shotki","taam_baursak","taam_kumys","taam_kysylu"],
-                kijim:["kijim_shapan","kijim_shubnik"],
-                tarikh:["tarikh_ezhelgi","tarikh_khanattar","tarikh_kazakh_khanaty","tarikh_astana"],
-                tulgalar:["tulgalar_aby_ai","tulgalar_magzhan","tulgalar_sattarbai"]};
-  for(const [cat,ids] of Object.entries(cats)){
-    const rs = await Promise.all(ids.map(id=>fetch(`data/${cat}/${id}.json`).then(r=>r.ok?r.json():null)));
-    _cultureData[cat] = rs.filter(Boolean);
-  }
+  if(_cultureData) return _cultureData;
+  const cats = {taam:["taam_baursak","taam_kumys","taam_shubat","taam_qurt","taam_qazy"],
+                kijim:["kijim_shapan","kijim_ishik","kijim_saukele"],
+                tarikh:["tarikh_ezhelgi","tarikh_khandyq_zhuzder","tarikh_kazakh_khanaty","tarikh_astana"],
+                tulgalar:["tulgalar_aby_ai","tulgalar_magzhan","tulgalar_satbayev"]};
+  const next={};
+  await Promise.all(Object.entries(cats).map(async ([cat,ids])=>{
+    next[cat]=await APP.fetchArticles(ids.map(id=>`data/${cat}/${id}.json`));
+  }));
+  _cultureData=next;
   return _cultureData;
 }
 VIEWS.culture = {
+  load:loadCulture,
   render(){
-    if(!_cultureData.taam.length) return `<div class="v-head"><div class="v-eyebrow">Мәдениет · Мәдени мұра</div><h1 class="v-title">Мәдени мұра</h1></div><p>Жүктелуде...</p>`;
+    if(!_cultureData) return APP.loadMessage("culture");
     const c = _cultureData;
     return `
       <div class="v-head">
@@ -127,11 +134,11 @@ VIEWS.culture = {
       const items = _cultureData[cur] || [];
       body.innerHTML = `<div class="grid grid-2">` +
         items.map((d,i)=>`
-          <div class="card c-item" data-ci="${cur}_${i}">
+          <button class="card c-item" data-ci="${cur}_${i}">
             <div class="rc-cat">${cur}</div>
             <b>${esc(d.title)}</b>
             <p class="rc-prev">${esc((d.text||"").slice(0,120))}...</p>
-          </div>
+          </button>
         `).join("") + `</div><div id="cDetail"></div>`;
       const det = document.getElementById("cDetail");
       body.querySelectorAll(".c-item").forEach(el=>el.addEventListener("click",async()=>{
@@ -158,51 +165,39 @@ VIEWS.culture = {
 };
 
 /* ---------- ORNAMENTS ---------- */
+let _ornamentArticle = null;
 VIEWS.ornaments = {
+  async load(){
+    [_ornamentArticle]=await APP.fetchArticles(["data/oyu/oyu_qoshqar_muiiz.json"]);
+  },
   render(){
     return `
       <div class="v-head">
         <div class="v-eyebrow">Мәдениет · Ою-өрнек</div>
         <h1 class="v-title">Ою-өрнектер</h1>
-        <p class="v-sub">${ORNAMENTS.length} ұлттық ою, SVG-де</p>
+        <p class="v-sub">${ORNAMENTS.length} дәстүрлі ою атауы мен сипаттамасы</p>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <b>Сызбалар туралы</b>
+        <p>Төмендегі сақталған SVG сызбалары оюлардың дәл үлгісі емес. Оларды дәстүрлі ою пішінін жаттауға пайдаланбаңыз. Атаулар мен сипаттамалар зерттеу жинағынан берілген.</p>
       </div>
       <div class="grid grid-3">
         ${ORNAMENTS.map(o=>`
           <div class="card orna-card">
-            <div class="orna-svg">${o.svg}</div>
+            <div class="orna-svg" aria-hidden="true">${o.svg}</div>
             <b>${esc(o.name)}</b>
             <p class="orna-mean">${esc(o.meaning)}</p>
           </div>
         `).join("")}
       </div>
       <div class="card" style="margin-top:16px;border-left:4px solid var(--gold)">
-        <b>🎮 «Ою тап» ойыны</b>
-        <p class="v-sub" style="margin:8px 0 12px">Аты берілген ою-өрнекті табыңыз</p>
-        <div id="ornaGame"></div>
-      </div>
-    `;
-  },
-  mount(){
-    function newRound(){
-      const correct = ORNAMENTS[Math.floor(Math.random()*ORNAMENTS.length)];
-      const pool = [correct, ...ORNAMENTS.filter(o=>o.id!==correct.id).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
-      const box = document.getElementById("ornaGame");
-      box.innerHTML = `<p style="font-weight:800;font-size:18px;margin-bottom:10px">Атауы: <span style="color:var(--azure2)">${esc(correct.name)}</span></p>
-        <div class="grid grid-2 orna-opts">
-          ${pool.map(o=>`<button class="card orna-opt" data-oid="${o.id}">${o.svg}</button>`).join("")}
-        </div>
-        <div id="ornaFx" style="margin-top:10px"></div>`;
-      box.querySelectorAll(".orna-opt").forEach(b=>b.addEventListener("click",()=>{
-        const ok = b.dataset.oid === correct.id;
-        box.querySelectorAll(".orna-opt").forEach(x=>x.style.borderColor = ok ? (x.dataset.oid===correct.id?"var(--ok)":"var(--line)") : "var(--line)");
-        box.querySelector("#ornaFx").innerHTML = ok
-          ? `<p style="color:var(--ok);font-weight:800">✅ Дұрыс! +15 XP</p><button class="btn primary" id="ornaNext">Келесі ою</button>`
-          : `<p style="color:var(--err);font-weight:800">❌ Қате. Дұрысы: ${esc(correct.name)}</p>`;
-        if(ok){ APP.progress.addXP(APP.p, 15); const nb = box.querySelector("#ornaNext"); if(nb) nb.addEventListener("click",newRound); }
-        else { setTimeout(newRound, 1200); }
-      }));
-    }
-    newRound();
+        ${_ornamentArticle ? `
+          <h2>${esc(_ornamentArticle.title)}</h2>
+          <p class="read-src">${esc(_ornamentArticle.source_name)} · ${esc(_ornamentArticle.license)}</p>
+          <div class="read-text">${esc(_ornamentArticle.text).replace(/\n/g,"<br/>")}</div>
+          <a class="btn" href="${esc(_ornamentArticle.source_url)}" target="_blank" rel="noopener">📎 Дереккөз</a>
+        ` : APP.loadMessage("ornaments")}
+      </div>`;
   }
 };
 
@@ -225,7 +220,7 @@ VIEWS.encyclopedia = {
       <div class="card" style="margin-bottom:16px;background:var(--line2);border-left:4px solid var(--gold)">
         <b>💡 Мысалдар:</b>
         <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">
-          ${["Абай Құнанбайұлы","Қазақ хандығы","Қобыланды батыр","Борсақ","Қымыз","Мағжан Жұмабаев"].map(s=>`<button class="btn ghost enc-example" data-s="${s}">${s}</button>`).join("")}
+          ${["Абай Құнанбайұлы","Қазақ хандығы","Қобыланды батыр","Бауырсақ","Қымыз","Мағжан Жұмабаев"].map(s=>`<button class="btn ghost enc-example" data-s="${s}">${s}</button>`).join("")}
         </div>
       </div>
       <div id="encBody"></div>
@@ -234,33 +229,42 @@ VIEWS.encyclopedia = {
   mount(){
     const body = document.getElementById("encBody");
     const inp = document.getElementById("encq");
+    let request=0;
     async function doSearch(){
+      const version=++request;
       const q = inp.value.trim();
       if(!q){ body.innerHTML = `<div class="card" style="color:var(--ink3)">Тақырып жазыңыз</div>`; return; }
-      body.innerHTML = `<div class="card" style="text-align:center;color:var(--ink3)">Жүктелуде...</div>`;
+      VIEWS.encyclopedia.state.q=q;
+      body.innerHTML = `<div class="card" role="status" style="text-align:center;color:var(--ink3)">Жүктелуде...</div>`;
       try{
         // кэш
         const ck = "enc_" + q.toLowerCase();
-        const cached = localStorage.getItem(ck);
-        if(cached){ renderResult(JSON.parse(cached), true); return; }
+        try{
+          const cached=JSON.parse(localStorage.getItem(ck));
+          if(cached && typeof cached.title==="string" && typeof cached.text==="string"){
+            cached.url="https://kk.wikipedia.org/wiki/"+encodeURIComponent(cached.title.replace(/ /g,"_"));
+            renderResult(cached,true); return;
+          }
+        }catch(e){}
         const url = "https://kk.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&origin=*&titles=" + encodeURIComponent(q);
         const r = await fetch(url);
+        if(!r.ok) throw new Error("Жүктеу қатесі");
         const data = await r.json();
+        if(version!==request || !body.isConnected) return;
         const pages = data.query.pages;
         const pg = Object.values(pages)[0];
-        if(!pg || pg.missing || !pg.extract){
+        if(!pg || Object.hasOwn(pg,"missing") || !pg.extract){
           body.innerHTML = `<div class="card" style="color:var(--warn)">Табылмады: «${esc(q)}». Басқа атаумен көріңіз.</div>`;
           return;
         }
         const rec = { title: pg.title, text: pg.extract, url: "https://kk.wikipedia.org/wiki/" + encodeURIComponent(pg.title.replace(/ /g,"_")), source:"Қазақ Уикипедиясы", license:"CC BY-SA 4.0" };
-        localStorage.setItem(ck, JSON.stringify(rec));
+        try{ localStorage.setItem(ck, JSON.stringify(rec)); }catch(e){}
         renderResult(rec, false);
       }catch(e){
-        // интернет жоқ
-        const ck = "enc_" + q.toLowerCase();
-        const cached = localStorage.getItem(ck);
-        if(cached){ body.innerHTML = `<div class="card" style="border-left:4px solid var(--warn);background:#FFF8E8"><b>⚠️ Интернет жоқ, кэштен көрсетіледі.</b><div style="margin-top:12px">${renderResult(JSON.parse(cached),true,true)}</div></div>`; }
-        else { body.innerHTML = `<div class="card" style="color:var(--err)">❌ Интернет қосылмаған. «${esc(q)}» тақырыбы кэштен табылмады.</div>`; }
+        if(version!==request || !body.isConnected) return;
+        body.innerHTML=`<div class="card" role="alert">«${esc(q)}» тақырыбын жүктеу мүмкін болмады. Байланысты тексеріңіз.
+          <button class="btn primary" id="encRetry">Қайта көру</button></div>`;
+        document.getElementById("encRetry").addEventListener("click",doSearch);
       }
     }
     function renderResult(rec, fromCache, inWrap){
@@ -297,13 +301,13 @@ VIEWS.progress = {
       </div>
       <div class="grid grid-2" style="margin-bottom:16px">
         <div class="card" style="text-align:center">
-          <div style="font-size:56px;margin-bottom:6px">${p.avatar || "🦁"}</div>
+          <div style="font-size:56px;margin-bottom:6px">${esc(p.avatar || "🦁")}</div>
           <b style="font-size:18px">${esc(p.name || "Қонақ")}</b>
           <div class="v-sub" style="margin-top:4px">${APP.LEVELS[p.level]}</div>
         </div>
         <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:10px">
-          <div class="stat-row"><span>Жалпы XP</span><b>${p.xp}</b></div>
-          <div class="stat-row"><span>Күндік 🔥</span><b>${p.streak}</b></div>
+          <div class="stat-row"><span>Жалпы XP</span><b>${esc(p.xp)}</b></div>
+          <div class="stat-row"><span>Күндік 🔥</span><b>${esc(p.streak)}</b></div>
           <div class="stat-row"><span>Меңгерілген сөз</span><b>${Object.keys(p.learned).length}</b></div>
         </div>
       </div>
@@ -315,34 +319,33 @@ VIEWS.progress = {
       </div>
       <div class="card" style="margin-top:14px">
         <h3 style="margin-bottom:12px">Тест нәтижелері</h3>
-        ${Object.keys(best).length ? Object.entries(best).map(([k,v])=>`<div class="stat-row"><span>${k}-деңгей</span><b>${v} ұпай</b></div>`).join("") : `<p class="v-sub">Әлі тест тапсырылмады.</p>`}
+        ${Object.keys(best).length ? Object.entries(best).map(([k,v])=>`<div class="stat-row"><span>${esc(k)}-деңгей</span><b>${esc(v)} ұпай</b></div>`).join("") : `<p class="v-sub">Әлі тест тапсырылмады.</p>`}
       </div>
       <div class="card" style="margin-top:14px">
         <h3 style="margin-bottom:12px">Прогресті экспорттау / импорттау</h3>
         <div class="row" style="gap:8px;flex-wrap:wrap">
-          <button id="btnExport" class="btn primary">⬇️ Скачать .json</button>
-          <label class="btn ghost">⬆️ Импорттау<input id="inpImport" type="file" accept=".json" style="display:none"/></label>
+          <button id="progressExport" class="btn primary">⬇️ .json жүктеп алу</button>
+          <label class="btn ghost">⬆️ Импорттау<input id="progressImport" type="file" accept=".json" style="display:none"/></label>
           <button id="btnReset" class="btn ghost" style="color:var(--err)">🗑 Барлығын тазалау</button>
         </div>
       </div>
     `;
   },
   mount(){
-    document.getElementById("btnExport").addEventListener("click",()=>{
+    document.getElementById("progressExport").addEventListener("click",()=>{
       const blob = new Blob([JSON.stringify(APP.p,null,2)],{type:"application/json"});
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = "dastan-progress.json";
       a.click();
     });
-    document.getElementById("inpImport").addEventListener("change",e=>{
+    document.getElementById("progressImport").addEventListener("change",e=>{
       const f = e.target.files[0];
       if(!f) return;
       const rd = new FileReader();
       rd.onload = ()=>{
         try{
-          const d = JSON.parse(rd.result);
-          APP.p = Object.assign(APP.p, d);
+          APP.progress.importText(rd.result);
           APP.progress.save(APP.p);
           APP.updateSidebar();
           APP.toast("Импортталды!");

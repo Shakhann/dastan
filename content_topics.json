@@ -1,143 +1,182 @@
 [
   {
     "id": "abai_poeziya",
-    "title": "Абай қара сөздері",
+    "title": "Абайдың қара сөздері",
     "category": "jyr",
-    "page": "Абай Құнанбайұлы",
-    "source": "wikipedia",
-    "note": "Абай туралы толық мақала. Қара сөздерін алды."
-  },
-  {
-    "id": "kobylandy",
-    "title": "Қобыланды батыр (дастан)",
-    "category": "jyr",
-    "page": "Қобыланды батыр",
-    "source": "wikipedia"
+    "page": "Абайдың_қара_сөздері",
+    "source": "editorial",
+    "source_url": "https://kk.wikipedia.org/wiki/Абайдың_қара_сөздері",
+    "preserve_local": true
   },
   {
     "id": "er_tostik",
     "title": "Ер Төстік",
     "category": "jyr",
     "page": "Ер Төстік",
-    "source": "wikipedia"
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "kobylandy",
+    "title": "Қобыланды батыр (дастан)",
+    "category": "jyr",
+    "page": "Қобыланды Тоқтарбайұлы",
+    "source": "editorial",
+    "preserve_local": true,
+    "source_url": "https://kk.wikipedia.org/wiki/%D2%9A%D0%BE%D0%B1%D1%8B%D0%BB%D0%B0%D0%BD%D0%B4%D1%8B_%D0%A2%D0%BE%D2%9B%D1%82%D0%B0%D1%80%D0%B1%D0%B0%D0%B9%D2%B1%D0%BB%D1%8B"
   },
   {
     "id": "kozy_korpeshi",
     "title": "Қозы Көрпеш – Баян сұлу",
     "category": "jyr",
-    "page": "Қозы Көрпеш – Баян сұлу",
-    "source": "wikipedia"
+    "page": "Қозы_Көрпеш_-_Баян_Сұлу",
+    "source": "editorial",
+    "source_url": "https://kk.wikipedia.org/wiki/Қозы_Көрпеш_-_Баян_Сұлу",
+    "preserve_local": true
   },
   {
     "id": "qyz_zhibek",
     "title": "Қыз Жібек",
     "category": "jyr",
     "page": "Қыз Жібек",
-    "source": "wikipedia"
+    "source": "wikipedia",
+    "preserve_local": true
   },
   {
-    "id": "tarikh_ezhelgi",
-    "title": "Ежелгі Қазақстан",
-    "category": "tarikh",
-    "page": "Ежелгі Қазақстан тарихы",
-    "source": "wikipedia"
+    "id": "kijim_ishik",
+    "title": "Ішік",
+    "category": "kijim",
+    "source": "editorial",
+    "page": "Ішік",
+    "source_url": "https://kk.wikipedia.org/wiki/Ішік",
+    "preserve_local": true
   },
   {
-    "id": "tarikh_khanattar",
-    "title": "Үш хандық (15-18 ғғ.)",
-    "category": "tarikh",
-    "page": "Ұлыс",
-    "source": "wikipedia"
-  },
-  {
-    "id": "tarikh_kazakh_khanaty",
-    "title": "Қазақ хандығы",
-    "category": "tarikh",
-    "page": "Қазақ хандығы",
-    "source": "wikipedia"
-  },
-  {
-    "id": "tarikh_astana",
-    "title": "Тәуелсіз Қазақстан (1991-)",
-    "category": "tarikh",
-    "page": "Қазақстан Республикасы",
-    "source": "wikipedia"
-  },
-  {
-    "id": "taam_borsak",
-    "title": "Борсақ",
-    "category": "taam",
-    "page": "Борсақ",
-    "source": "wikipedia"
-  },
-  {
-    "id": "taam_shotki",
-    "title": "Шөткі",
-    "category": "taam",
-    "page": "Шөткі",
-    "source": "wikipedia"
-  },
-  {
-    "id": "taam_baursak",
-    "title": "Бауырсақ",
-    "category": "taam",
-    "page": "Бауырсақ",
-    "source": "wikipedia"
-  },
-  {
-    "id": "taam_kumys",
-    "title": "Қымыз",
-    "category": "taam",
-    "page": "Қымыз",
-    "source": "wikipedia"
-  },
-  {
-    "id": "taam_kysylu",
-    "title": "Қышқу (тағам)",
-    "category": "taam",
-    "page": "Қышқу",
-    "source": "wikipedia"
+    "id": "kijim_saukele",
+    "title": "Сәукеле",
+    "category": "kijim",
+    "source": "editorial",
+    "page": "Сәукеле",
+    "source_url": "https://kk.wikipedia.org/wiki/Сәукеле",
+    "preserve_local": true
   },
   {
     "id": "kijim_shapan",
     "title": "Шапан",
     "category": "kijim",
     "page": "Шапан",
-    "source": "wikipedia"
+    "source": "wikipedia",
+    "preserve_local": true
   },
   {
-    "id": "kijim_shubnik",
-    "title": "Шұбар (киім)",
-    "category": "kijim",
-    "page": "Шұбар",
-    "source": "wikipedia"
+    "id": "oyu_qoshqar_muiiz",
+    "title": "Қошқармүйіз",
+    "category": "oyu",
+    "source": "editorial",
+    "page": "Қошқармүйіз",
+    "source_url": "https://kk.wikipedia.org/wiki/Қошқармүйіз",
+    "preserve_local": true
+  },
+  {
+    "id": "taam_baursak",
+    "title": "Бауырсақ",
+    "category": "taam",
+    "page": "Бауырсақ",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "taam_kumys",
+    "title": "Қымыз",
+    "category": "taam",
+    "page": "Қымыз",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "taam_qazy",
+    "title": "Қазы",
+    "category": "taam",
+    "source": "editorial",
+    "page": "Қазы",
+    "source_url": "https://kk.wikipedia.org/wiki/Қазы",
+    "preserve_local": true
+  },
+  {
+    "id": "taam_qurt",
+    "title": "Құрт",
+    "category": "taam",
+    "source": "editorial",
+    "page": "Құрт_(тағам)",
+    "source_url": "https://kk.wikipedia.org/wiki/Құрт_(тағам)",
+    "preserve_local": true
+  },
+  {
+    "id": "taam_shubat",
+    "title": "Шұбат",
+    "category": "taam",
+    "source": "editorial",
+    "page": "Шұбат",
+    "source_url": "https://kk.wikipedia.org/wiki/Шұбат",
+    "preserve_local": true
+  },
+  {
+    "id": "tarikh_astana",
+    "title": "Тәуелсіз Қазақстан (1991-)",
+    "category": "tarikh",
+    "page": "Қазақстан Республикасы",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "tarikh_ezhelgi",
+    "title": "Ежелгі Қазақстан",
+    "category": "tarikh",
+    "page": "Қазақстан_тарихы",
+    "source": "editorial",
+    "source_url": "https://kk.wikipedia.org/wiki/Қазақстан_тарихы",
+    "preserve_local": true
+  },
+  {
+    "id": "tarikh_kazakh_khanaty",
+    "title": "Қазақ хандығы",
+    "category": "tarikh",
+    "page": "Қазақ хандығы",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "tarikh_khandyq_zhuzder",
+    "title": "Қазақ хандығының негізін қалаушылар және Үш жүз",
+    "category": "tarikh",
+    "source": "editorial",
+    "page": "Қазақ_хандығы",
+    "source_url": "https://kk.wikipedia.org/wiki/Қазақ_хандығы",
+    "preserve_local": true
   },
   {
     "id": "tulgalar_aby_ai",
     "title": "Абай Құнанбайұлы (тұлға)",
     "category": "tulgalar",
     "page": "Абай Құнанбайұлы",
-    "source": "wikipedia"
+    "source": "wikipedia",
+    "preserve_local": true
   },
   {
     "id": "tulgalar_magzhan",
     "title": "Мағжан Жұмабаев",
     "category": "tulgalar",
     "page": "Мағжан Жұмабаев",
-    "source": "wikipedia"
+    "source": "wikipedia",
+    "preserve_local": true
   },
   {
-    "id": "tulgalar_sattarbai",
-    "title": "Сәтбаев (ғалым)",
+    "id": "tulgalar_satbayev",
+    "title": "Қаныш Сәтбаев",
     "category": "tulgalar",
-    "page": "Қанат Сәтбаев",
-    "source": "wikipedia"
-  },
-  {
-    "id": "oyu_qoshqar",
-    "title": "Қошқар мүйіз оюы",
-    "category": "oyu",
-    "page": "Қазақтың ою-өрнектері",
-    "source": "wikipedia"
+    "source": "editorial",
+    "page": "Қаныш_Имантайұлы_Сәтбаев",
+    "source_url": "https://kk.wikipedia.org/wiki/Қаныш_Имантайұлы_Сәтбаев",
+    "preserve_local": true
   }
 ]

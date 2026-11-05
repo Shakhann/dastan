@@ -32,7 +32,7 @@ VIEWS.home = {
       <h3 style="margin:8px 0 12px;font-size:16px">Жалғастыру</h3>
       <div class="grid grid-3">
         <button class="card mod-card" onclick="go('dict')"><span class="mod-ic">📖</span><b>Сөздік</b><span class="mod-sub">30 сөз, тақырып бойынша</span></button>
-        <button class="card mod-card" onclick="go('quiz')"><span class="mod-ic">✅</span><b>Тест</b><span class="mod-sub">3 деңгей × 10 сұрақ</span></button>
+        <button class="card mod-card" onclick="go('quiz')"><span class="mod-ic">✅</span><b>Тест</b><span class="mod-sub">3 деңгейдегі сұрақтар</span></button>
         <button class="card mod-card" onclick="go('proverbs')"><span class="mod-ic">📜</span><b>Мақал-мәтел</b><span class="mod-sub">12 мақал, 6 бағыт</span></button>
       </div>
     `;
@@ -58,7 +58,7 @@ VIEWS.dict = {
       <div class="row" style="margin-bottom:14px">
         <input id="dictSearch" type="search" placeholder="Сөз іздеу..." value="${esc(st.q)}" style="flex:1;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:600"/>
       </div>
-      <div class="grid grid-2">
+      <div class="grid grid-2" id="dictGrid">
         ${items.map(d=>`
           <div class="card flip-card" data-id="${d.id}">
             <div class="fc-front">
@@ -86,15 +86,15 @@ VIEWS.dict = {
     document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{ st.cat=b.dataset.cat; go("dict"); }));
     const s = document.getElementById("dictSearch");
     if(s) s.addEventListener("input",()=>{ st.q = s.value; const items = DICT.filter(d=>(st.cat==="Барлығы"||d.cat===st.cat)&&(!st.q||d.kk.toLowerCase().includes(st.q.toLowerCase())));
-      // қайта рендер (тек торды)
-      const g = s.closest(".view-anim").querySelectorAll(".grid")[1];
+      const g = document.getElementById("dictGrid");
       g.innerHTML = items.map(d=>`
         <div class="card flip-card" data-id="${d.id}">
           <div class="fc-front"><div class="fc-eyebrow">${d.cat}</div><div class="fc-word">${esc(d.kk)}</div><div class="fc-sub">${esc(d.ru)}</div>
           <div class="fc-act"><button class="btn" onclick="speak('${esc(d.kk)}','d_${d.id}')">🔊</button><button class="btn" data-learn="${d.id}">✓</button></div></div>
           <div class="fc-back"><div class="fc-eyebrow">${d.cat}</div><div class="fc-word">${esc(d.en)}</div><div class="fc-sub">${esc(d.ru)}</div><p class="fc-ex">"${esc(d.ex)}"</p></div>
-        </div>`).join("");
+        </div>`).join("") || `<div class="card" role="status">Сөз табылмады</div>`;
       bindLearn();
+      APP.bindFlips(g);
     });
     function bindLearn(){
       document.querySelectorAll("[data-learn]").forEach(b=>b.addEventListener("click",e=>{
@@ -106,10 +106,7 @@ VIEWS.dict = {
       }));
     }
     bindLearn();
-    // flip
-    document.querySelectorAll(".flip-card").forEach(c=>{
-      c.addEventListener("click",(e)=>{ if(!c.querySelector(".fc-act").contains(e.target)) c.classList.toggle("flipped"); });
-    });
+
   }
 };
 
@@ -134,7 +131,7 @@ VIEWS.gram = {
               <div class="gram-exs">
                 ${g.examples.map(e=>`<span class="gram-chip">${esc(e)}</span>`).join("")}
               </div>
-              <button class="btn" style="margin-top:12px" onclick="speak('${esc(g.title)}: ${esc(g.rule)}','gram_${i}')">🔊 Сабақты тыңдау</button>
+              <button class="btn" style="margin-top:12px" onclick="speak('${esc(g.title)}: ${esc(g.rule)}')">🔊 Сабақты тыңдау</button>
             </div>
           </details>
         `).join("")}
