@@ -41,7 +41,8 @@ function cleanExcerpt(text) {
 }
 function articleText(d) { return cleanExcerpt(d.text).split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join(""); }
 function article(d) {
-  return `<details class="patch article" data-article="${esc(d.id)}"><summary>${esc(d.title)}</summary><div class="article-body"><div class="prose" data-article-body>${articleText(d)}${attribution(d)}</div><div class="article-tools">${audioButton(cleanExcerpt(d.text).slice(0,500),d.id)}</div></div></details>`;
+  const image = APP.visuals.articles?.[d.id] || (d.category === "jyr" ? APP.visuals.articles?.jyr_default : "");
+  return `<details class="patch article" data-article="${esc(d.id)}"><summary>${image ? imageFigure(image,"article-cover") : ""}<span class="article-title">${esc(d.title)}</span></summary><div class="article-body"><div class="prose" data-article-body>${articleText(d)}${attribution(d)}</div><div class="article-tools">${saveButton("article", d.id)}${audioButton(cleanExcerpt(d.text).slice(0,500),d.id)}</div></div></details>`;
 }
 async function loadArticle(details) {
   if (details.dataset.loaded === "true" || details.dataset.loading === "true") return;
@@ -59,7 +60,10 @@ async function loadArticle(details) {
   } finally { details.dataset.loading = "false"; }
 }
 document.addEventListener("toggle", e => {
-  if (e.target.matches("details[data-article]") && e.target.open) loadArticle(e.target);
+  if (e.target.matches("details[data-article]") && e.target.open) {
+    APP.visit("article", e.target.dataset.article);
+    loadArticle(e.target);
+  }
 }, true);
 document.addEventListener("click", e => {
   if (e.target.closest("[data-article-retry]")) loadArticle(e.target.closest("details"));
@@ -71,9 +75,22 @@ async function culturalArticles(category) {
 const CULTURE_LINKS = [["culture", "Мақалалар"], ["jyr", "Жыр-дастан"], ["ornaments", "Ою-өрнек"]];
 function subnav(links, label) { return `<nav class="subnav" aria-label="${esc(label)}">${links.map(([r,n])=>routeLink(r,n)).join("")}</nav>`; }
 VIEWS.culture = {
-  async render() {
+  async render(id) {
     const articles = await culturalArticles();
-    return heading("Мәдениет", "Әдебиет, тұрмыс және тарих туралы сақталған мақалалар.") + `<nav class="subnav" aria-label="Мәдениет бөлімдері">${CULTURE_LINKS.map(([r, n]) => routeLink(r, n)).join("")}</nav>` + Object.entries(CATEGORIES).filter(([key]) => key !== "oyu").map(([key, name]) => `<section class="article-group"><h2>${name}</h2>${articles.filter(d => d.category === key).map(article).join("")}</section>`).join("");
+    if (id && !articles.some(a => a.id === id)) {
+      const extra = APP.profileArticles.find(a => a.id === id);
+      if (extra) articles.push(await APP.cachedJSON(`data/${extra.category}/${extra.id}.json`));
+    }
+    return heading("Мәдениет", "Әдебиет, тұрмыс және тарих туралы сақталған мақалалар.") + `<nav class="subnav" aria-label="Мәдениет бөлімдері">${CULTURE_LINKS.map(([r, n]) => routeLink(r, n)).join("")}</nav>` + Object.entries(CATEGORIES).filter(([key]) => key !== "oyu" || articles.some(a => a.category === "oyu")).map(([key, name]) => `<section class="article-group"><h2>${name}</h2>${articles.filter(d => d.category === key).map(article).join("")}</section>`).join("");
+  },
+  async mount(id) {
+    if (!id) return;
+    const details = [...document.querySelectorAll("details[data-article]")].find(d => d.dataset.article === id);
+    if (!details) return;
+    details.open = true;
+    APP.visit("article", id);
+    await loadArticle(details);
+    if (details.isConnected) details.scrollIntoView({block:"start"});
   }
 };
 VIEWS.makan = {title: "Мәдениет", render: () => VIEWS.culture.render()};

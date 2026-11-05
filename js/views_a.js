@@ -6,12 +6,14 @@ const GROUPS = {
 };
 VIEWS.home = {
   title: "Қазақ мұрасы",
-  render() {
-    const day = Math.floor(Date.now() / 86400000);
-    const p = APP.data.people[day % APP.data.people.length];
-    const t = APP.data.traditions[day % APP.data.traditions.length];
-    return `<section class="hero"><div class="hero-copy"><h1>Қазақ мұрасы</h1><p>Елдің тарихы — адам тағдырында, дәстүрінде, тілінде.</p>${routeLink("culture", "Мұрамен танысу", "button")}</div>${imageFigure("assets/heritage/interior_museum.jpg", "hero-image", true)}</section>
-    <div class="home-content"><section class="heritage-paths" aria-label="Мұра бөлімдері"><a href="#shezhire" class="path-main"><h2>Шежіре</h2><p>Қазақтың ру-тайпалық құрылымы мен тарихи сабақтастығы.</p><span>Шежірені қарау</span></a><div class="path-side"><a href="#people"><h2>Ел тұлғалары</h2><p>Өмірі мен еңбегі ел тарихымен сабақтас ғұмырлар.</p></a><a href="#traditions"><h2>Салт-дәстүр</h2><p>Дәстүрдің шығу тегі, мәні мен бүгінгі жалғасы.</p></a></div></section><section class="featured"><h2>Бүгінгі танысу</h2><div class="featured-grid">${personPatch(p)}${traditionPatch(t)}</div></section></div>`;
+  async render() {
+    const d = await APP.cachedJSON("data/shezhire.json");
+    return `<section class="hero"><div class="hero-shanyrak">${imageFigure(APP.visuals.home.hero, "hero-image", true)}${shanyrakSVG({extended:true})}</div><div class="hero-copy"><h1>ДАСТАН</h1><p class="hero-subtitle">Қазақ мұрасы</p><p>Елдің тарихы — адам тағдырында, дәстүрінде, тілінде.</p><div class="hero-actions">${routeLink("shezhire", "Шежірені тану", "button")}${routeLink("traditions", "Салт-дәстүр", "button button-light")}</div></div></section>
+    <div class="home-content"><section><div class="section-heading"><h2>Дала. Ел. Шежіре.</h2>${routeLink("shezhire", "Шежірені қарау")}</div><div class="zhuz-grid">${d.zhuzes.map(z=>imageCard(z.image,z.name,"shezhire/"+encodeURIComponent(z.id))).join("")}</div></section>
+    <section><div class="section-heading"><h2>Ел тұлғалары</h2>${routeLink("people", "Барлық тұлғалар")}</div><div class="people-grid">${APP.data.people.filter(p=>p.image).slice(0,4).map(personPatch).join("")}</div></section>
+    <section><div class="section-heading"><h2>Салт-дәстүр</h2>${routeLink("traditions", "Барлық дәстүрлер")}</div><div class="tradition-grid">${APP.data.traditions.filter(t=>t.image).slice(0,4).map(traditionPatch).join("")}</div></section>
+    <section><div class="section-heading"><h2>Мұра көріністері</h2><p>Дала, өнер және күнделікті өмір.</p></div><div class="gallery">${APP.visuals.home.gallery.map(path=>imageFigure(path)).join("")}</div></section>
+    <section><div class="section-heading"><h2>Тарихтан таңдама</h2>${routeLink("timeline", "Тарих жолы")}</div><div class="history-selection">${APP.data.timeline.filter(t=>t.image).slice(0,2).map(t=>imageCard(t.image,t.title_kk,"timeline","",String(t.year))).join("")}</div></section></div>`;
   }
 };
 VIEWS.people = {
@@ -20,7 +22,7 @@ VIEWS.people = {
     const p = APP.data.people.find(x => x.id === id);
     if (!p) return heading("Тұлға табылмады") + routeLink("people", "Тұлғалар тізіміне оралу");
     const full = await optionalFull("people_" + p.id);
-    return routeLink("people", "Барлық тұлғалар", "back") + heading(p.name) + `<div class="person-detail"><aside>${p.image ? imageFigure(p.image, "portrait") : monogram(p)}</aside><article class="prose"><p class="years">${esc(p.years)}</p>${p.years_note_kk ? `<p class="note">${esc(p.years_note_kk)}</p>` : ""}<p><b>${esc(p.role)}</b></p><p>${esc(p.era)}</p><h2>Өмірі мен мұрасы</h2><p>${esc(p.summary_kk)}</p><h2>Тарихтағы орны</h2><p>${esc(p.why_forgotten_kk)}</p><h2>Толық өмірбаян</h2>${full ? fullSections(full) : `<p>Толық өмірбаян әзірге қолжетімсіз.</p>${attribution({title:p.name,source_url:p.wiki_url})}`}</article></div>`;
+    return routeLink("people", "Барлық тұлғалар", "back") + heading(p.name) + saveButton("person", p.id) + `<div class="person-detail"><aside>${p.image ? imageFigure(p.image, "portrait") : monogram(p)}</aside><article class="prose"><p class="years">${esc(p.years)}</p>${p.years_note_kk ? `<p class="note">${esc(p.years_note_kk)}</p>` : ""}<p><b>${esc(p.role)}</b></p><p>${esc(p.era)}</p><h2>Өмірі мен мұрасы</h2><p>${esc(p.summary_kk)}</p><h2>Тарихтағы орны</h2><p>${esc(p.why_forgotten_kk)}</p><h2>Толық өмірбаян</h2>${full ? fullSections(full) : `<p>Толық өмірбаян әзірге қолжетімсіз.</p>${attribution({title:p.name,source_url:p.wiki_url})}`}</article></div>`;
   }
 };
 VIEWS.traditions = {
@@ -29,14 +31,14 @@ VIEWS.traditions = {
       const t = APP.data.traditions.find(x => x.id === id);
       if (!t) return heading("Дәстүр табылмады") + routeLink("traditions", "Дәстүрлерге оралу");
       const full = await optionalFull("trad_" + t.id);
-      return routeLink("traditions", "Барлық дәстүрлер", "back") + heading(t.name, GROUPS[t.group]) + `<div class="tradition-detail">${videoFacade(t.video)}<article class="prose tradition-text"><p>${esc(t.summary_kk)}</p>${t.image ? imageFigure(t.image) : ""}${[["Қалай шыққан",t.origin_kk],["Не үшін жасалады",t.purpose_kk]].map(([h,p]) => `<h2>${h}</h2><p>${esc(p)}</p>`).join("")}<h2>Қалай өтеді</h2><ol>${(t.steps_kk || []).map(p=>`<li>${esc(p)}</li>`).join("")}</ol><h2>Мәні</h2><p>${esc(t.meaning_kk)}</p><h2>Бүгінгі күні</h2><p>${esc(t.today_kk)}</p><h2>Қызық деректер</h2><ul>${(t.facts_kk || []).map(p=>`<li>${esc(p)}</li>`).join("")}</ul>${full ? `<details class="article"><summary>Толығырақ</summary><div class="article-body">${fullSections(full)}</div></details>` : attribution({title:t.name,source_url:t.source_url || t.wiki_url})}</article></div>`;
+      return routeLink("traditions", "Барлық дәстүрлер", "back") + heading(t.name, GROUPS[t.group], t.image) + saveButton("tradition", t.id) + `<div class="tradition-detail">${videoFacade(t.video)}<article class="prose tradition-text"><p>${esc(t.summary_kk)}</p>${[["Қалай шыққан",t.origin_kk],["Не үшін жасалады",t.purpose_kk]].map(([h,p]) => `<h2>${h}</h2><p>${esc(p)}</p>`).join("")}<h2>Қалай өтеді</h2><ol>${(t.steps_kk || []).map(p=>`<li>${esc(p)}</li>`).join("")}</ol><h2>Мәні</h2><p>${esc(t.meaning_kk)}</p><h2>Бүгінгі күні</h2><p>${esc(t.today_kk)}</p><h2>Қызық деректер</h2><ul>${(t.facts_kk || []).map(p=>`<li>${esc(p)}</li>`).join("")}</ul>${full ? `<details class="article"><summary>Толығырақ</summary><div class="article-body">${fullSections(full)}</div></details>` : attribution({title:t.name,source_url:t.source_url || t.wiki_url})}</article></div>`;
     }
     return heading("Салт-дәстүр", "Халықтың тұрмысынан, бір-біріне деген ықыласынан туған мұра.") + Object.entries(GROUPS).map(([key, name]) => `<section class="tradition-group"><h2>${esc(name)}</h2><div class="tradition-grid">${APP.data.traditions.filter(t => t.group === key).map(traditionPatch).join("")}</div></section>`).join("");
   }
 };
 VIEWS.timeline = {
   render() {
-    return heading("Тарих жолы", "Өткенге көз жүгіртіп, бүгіннің тамырын таниық.") + `<ol class="timeline">${APP.data.timeline.map(t => `<li><div class="date">${esc(t.year)}</div><article><h2>${esc(t.title_kk)}</h2><p>${esc(t.text_kk)}</p>${attribution({title:t.title_kk,source_url:t.source_url})}</article></li>`).join("")}</ol>`;
+    return heading("Тарих жолы", "Өткенге көз жүгіртіп, бүгіннің тамырын таниық.") + `<ol class="timeline">${APP.data.timeline.map(t => `<li><div class="date">${esc(t.year)}</div><article>${t.image ? imageFigure(t.image, "timeline-image") : ""}<h2>${esc(t.title_kk)}</h2><p>${esc(t.text_kk)}</p>${attribution({title:t.title_kk,source_url:t.source_url})}</article></li>`).join("")}</ol>`;
   }
 };
 function searchableWords(title, intro, items, renderer) {

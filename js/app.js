@@ -1,5 +1,5 @@
 "use strict";
-const APP = {data: null, credits: [], navigation: 0, sources: new Map()};
+const APP = {data: null, credits: [], visuals: {}, navigation: 0, sources: new Map()};
 const VIEWS = Object.create(null);
 const NAV = [["home", "Басты бет"], ["people", "Ел тұлғалары"], ["shezhire", "Шежіре"], ["traditions", "Салт-дәстүр"], ["timeline", "Тарих жолы"], ["culture", "Мәдениет"], ["language", "Тіл"], ["encyclopedia", "Энциклопедия"]];
 function esc(value) {
@@ -13,8 +13,10 @@ function sourceLink(url, label = "Дереккөз") {
   const href = safeURL(url);
   return href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)}</a>` : "";
 }
-function heading(title, intro = "") {
-  return `<header class="page-head"><h1>${esc(title)}</h1>${intro ? `<p>${esc(intro)}</p>` : ""}</header>`;
+function heading(title, intro = "", image) {
+  const path = image || APP.visuals.sections?.[navParent(APP.route)];
+  if (!path) return `<header class="page-head"><h1>${esc(title)}</h1>${intro ? `<p>${esc(intro)}</p>` : ""}</header>`;
+  return `<header class="section-banner"><div class="banner-copy"><h1>${esc(title)}</h1>${intro ? `<p>${esc(intro)}</p>` : ""}</div><div class="section-shanyrak">${imageFigure(path, "banner-image", true)}${shanyrakSVG()}</div></header>`;
 }
 function routeLink(route, label, cls = "") {
   return `<a class="${esc(cls)}" href="#${esc(route)}">${esc(label)}</a>`;
@@ -39,27 +41,34 @@ APP.cachedJSON = path => {
   return APP.cache.get(path);
 };
 APP.loadHeritage = async () => {
-  const [data, credits] = await Promise.all([APP.cachedJSON("data/heritage.json"), APP.cachedJSON("data/image_credits.json")]);
-  APP.data = data; APP.credits = credits;
+  const [data, credits, visuals] = await Promise.all([APP.cachedJSON("data/heritage.json"), APP.cachedJSON("data/image_credits.json"), APP.cachedJSON("data/visuals.json")]);
+  APP.data = data; APP.credits = credits; APP.visuals = visuals;
 };
 function imageCredit(c) {
   if (!c) return "";
   return `${esc(c.caption_kk)}<span class="credit">Сурет авторы: ${esc(c.author)}. ${esc(c.license === "Public domain" ? "Қоғам игілігі" : c.license)}.</span>`;
 }
-function imageFigure(path, cls = "", eager = false) {
+function imageFigure(path, cls = "", eager = false, overlay = "") {
   const c = APP.credits.find(x => x.path === path);
   if (!c || !/^assets\/heritage\/[a-zA-Z0-9_.-]+$/.test(path)) return "";
-  return `<figure class="${esc(cls)}"><img src="${esc(path)}" alt="${esc(c.caption_kk)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"><figcaption>${imageCredit(c)}</figcaption></figure>`;
+  return `<figure class="${esc(cls)}"><div class="image-frame"><img src="${esc(path)}" alt="${esc(c.caption_kk)}" ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async">${overlay}</div><figcaption>${imageCredit(c)}</figcaption></figure>`;
 }
 function monogram(person) {
-  return `<div class="monogram" role="img" aria-label="${esc(person.name)}: портреті жоқ"><span aria-hidden="true">${esc(Array.from(person.name)[0])}</span></div>`;
+  return `<div class="monogram" role="img" aria-label="${esc(person.name)}: портреті жоқ"><span aria-hidden="true">${esc(person.name.split(/\s+/).slice(0,2).map(n=>Array.from(n)[0]).join(""))}</span></div>`;
+}
+function imageCard(path, title, route, cls = "", description = "") {
+  return `<article class="image-card ${esc(cls)}">${imageFigure(path, "card-visual")}<div class="card-copy"><h2 class="card-title">${routeLink(route,title)}</h2>${description ? `<p class="card-description">${esc(description)}</p>` : ""}</div></article>`;
 }
 function personPatch(p) {
-  return `<article class="person patch">${p.image ? imageFigure(p.image, "portrait") : monogram(p)}<div class="patch-body"><p class="years">${esc(p.years)}</p><h2>${routeLink("people/" + encodeURIComponent(p.id), p.name)}</h2><p>${esc(p.role)}</p></div></article>`;
+  const route = "people/" + encodeURIComponent(p.id);
+  if (p.image) return imageCard(p.image, p.name, route, "person portrait", `${p.years}. ${p.role}`);
+  return `<article class="image-card person">${monogram(p)}<div class="card-copy"><h2 class="card-title">${routeLink(route,p.name)}</h2><p class="card-description">${esc(p.years)}. ${esc(p.role)}</p></div></article>`;
 }
 function traditionPatch(t) {
-  return `<article class="patch tradition"><div class="patch-body"><p class="group-label">${esc(GROUPS[t.group] || "Дәстүр")}</p><h2>${routeLink("traditions/" + encodeURIComponent(t.id), t.name)}</h2><p>${esc(t.summary_kk)}</p></div></article>`;
+  if (t.image) return imageCard(t.image, t.name, "traditions/" + encodeURIComponent(t.id), "tradition", t.summary_kk);
+  return `<article class="patch"><div class="patch-body"><h2>${routeLink("traditions/" + encodeURIComponent(t.id), t.name)}</h2><p>${esc(t.summary_kk)}</p></div></article>`;
 }
+
 let activeAudio = null;
 let speechVersion = 0;
 async function speak(text, key) {
@@ -102,27 +111,44 @@ async function renderRoute() {
   if (!Object.hasOwn(VIEWS, route)) {
     route = "home"; id = undefined; history.replaceState(null, "", "#home");
   }
+  APP.route = route;
+  const menuFocus = closeMenu() || APP.menuFocusAfterNavigation;
+  APP.menuFocusAfterNavigation = false;
+  document.body.classList.toggle("home-top", route === "home");
+  document.body.classList.toggle("auth-route", ["login","register","reset","new-password"].includes(route));
   const version = ++APP.navigation;
   stopAudio();
   const root = document.getElementById("view");
   const main = document.getElementById("main");
-  const nav = document.getElementById("siteNav");
-  nav.classList.remove("open"); document.getElementById("menuToggle").setAttribute("aria-expanded", "false");
-  nav.querySelectorAll("a").forEach(a => {
+  document.querySelectorAll("#siteNav a, #footerNav a, .menu-profile").forEach(a => {
     if (a.getAttribute("href") === "#" + navParent(route)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
   root.innerHTML = '<div class="page"><p role="status">Мұра беттері жүктелуде…</p></div>';
   try {
     await APP.loadHeritage();
+    if (version !== APP.navigation) return;
+    await APP.initProfile();
+    if (version !== APP.navigation) return;
+    await APP.initAuth();
+    if (version !== APP.navigation) return;
+    const authRoute = APP.authRoute?.(route) || route;
+    if (authRoute !== route) {
+      if (location.hash === "#" + authRoute) return renderRoute();
+      location.hash = "#" + authRoute;
+      return;
+    }
     const view = VIEWS[route];
     const html = await view.render(id);
     if (version !== APP.navigation) return;
     root.innerHTML = `<div class="${route === "home" ? "home-page" : "page"}">${html}</div>`;
+    if ((route === "people" || route === "traditions") && id) APP.visit(route === "people" ? "person" : "tradition", id);
+    window.scrollTo(0, 0);
     if (view.mount) await view.mount(id);
     if (version !== APP.navigation) return;
     document.title = `ДАСТАН — ${view.title || NAV.find(n => n[0] === route)?.[1] || "Қазақ мұрасы"}`;
-    main.focus({preventScroll: true});
-    window.scrollTo(0, 0);
+    (menuFocus ? document.getElementById("menuToggle") : main).focus({preventScroll: true});
+    APP.updateAuthUI();
+    updateHeader();
   } catch {
     if (version !== APP.navigation) return;
     root.innerHTML = '<div class="page"><h1>Бет жүктелмеді</h1><p role="alert">Деректерді ашу мүмкін болмады. Интернет байланысын тексеріп, қайта көріңіз.</p><button id="retry">Қайта көру</button></div>';
@@ -139,19 +165,17 @@ document.addEventListener("click", event => {
 });
 window.addEventListener("hashchange", renderRoute);
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("siteNav").innerHTML = NAV.map(([id, name]) => routeLink(id, name)).join("");
-  const toggle = document.getElementById("menuToggle");
-  toggle.addEventListener("click", () => {
-    const open = toggle.getAttribute("aria-expanded") !== "true";
-    toggle.setAttribute("aria-expanded", String(open)); document.getElementById("siteNav").classList.toggle("open", open);
-  });
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
-      toggle.setAttribute("aria-expanded", "false"); document.getElementById("siteNav").classList.remove("open"); toggle.focus();
-    }
-  });
+  document.getElementById("siteNav").innerHTML = NAV.map(([id, name], i) => `<a href="#${esc(id)}" style="--i:${i}">${esc(name)}</a>`).join("");
+  document.getElementById("footerNav").innerHTML = NAV.map(([id, name]) => routeLink(id, name)).join("");
+  document.querySelector(".menu-icon").innerHTML = shanyrakSVG({rays:12});
+  document.querySelector(".menu-shanyrak").innerHTML = shanyrakSVG();
+  setupMenu();
   renderRoute();
 });
+function updateHeader() {
+  document.body.classList.toggle("home-top", APP.route === "home" && window.scrollY < 48);
+}
+window.addEventListener("scroll", updateHeader, {passive:true});
 
 function navParent(route) {
   if (["dict","words","proverbs","twisters","gram","voice"].includes(route)) return "language";
