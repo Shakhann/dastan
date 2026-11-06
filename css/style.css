@@ -333,7 +333,8 @@ body.menu-open { overflow: hidden; }
 .site-footer .brand { display: inline-block; font-size: clamp(3rem,7vw,6rem); line-height: 1; margin-bottom: 1.5rem; }
 .site-footer p { font-family: var(--ui); }
 .site-footer a { color: var(--ak); }
-#footerNav { display: flex; flex-wrap: wrap; gap: .5rem 2rem; border-top: 1px solid var(--ak); margin-top: 2rem; padding-top: 1.5rem; }
+.footer-notice { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--ak); font-size: .85rem; opacity: .85; }
+#footerNav { display: flex; flex-wrap: wrap; gap: .5rem 2rem; margin-top: 2rem; padding-top: 1.5rem; }
 #footerNav a { display: inline-flex; align-items: center; min-height: 44px; font: 500 1rem/1.4 var(--ui); }
 #footerNav a[aria-current] { text-decoration-thickness: 3px; }
 .site-footer :focus-visible { outline-color: var(--ak); }
