@@ -52,7 +52,7 @@ APP.toast = message => {
   APP.noticeTimer = setTimeout(() => { node.textContent = ""; }, 6000);
 };
 APP.json = async path => {
-  const response = await fetch(/^https?:/.test(path) ? path : path + (path.includes("?") ? "&" : "?") + "v=40");
+  const response = await fetch(/^https?:/.test(path) ? path : path + (path.includes("?") ? "&" : "?") + "v=50");
   if (!response.ok) throw new Error("Деректер жүктелмеді");
   return response.json();
 };
@@ -129,6 +129,7 @@ async function renderRoute() {
   catch { parts = ["home"]; history.replaceState(null, "", "#home"); }
   let [route, id] = parts;
   route ||= "home";
+  if (route === "map") { route = "timeline"; id = undefined; parts = ["timeline"]; history.replaceState(null, "", "#timeline"); }
   if (route === "lineage" || route === "elders") { route = "shezhire"; id = undefined; history.replaceState(null, "", "#shezhire"); }
   if (!Object.hasOwn(VIEWS, route)) {
     route = "notfound"; id = undefined;
@@ -139,6 +140,8 @@ async function renderRoute() {
   document.body.classList.toggle("home-top", route === "home");
   document.body.classList.toggle("auth-route", ["login","register","reset","new-password"].includes(route));
   const version = ++APP.navigation;
+  APP.cleanupAtlas?.(); APP.cleanupAtlas = null;
+  APP.cleanupHistory?.(); APP.cleanupHistory = null;
   APP.cleanupYurt?.(); APP.cleanupYurt = null;
   APP.cleanupYurtUI?.(); APP.cleanupYurtUI = null;
   if (typeof EXPERIENCE !== "undefined") EXPERIENCE.cleanup();
@@ -163,7 +166,7 @@ async function renderRoute() {
       return;
     }
     const view = VIEWS[route];
-    const html = await view.render(id);
+    const html = await view.render(id, parts[2]);
     if (version !== APP.navigation) return;
     const replaceView = () => {
       if (version !== APP.navigation) return;
@@ -181,14 +184,14 @@ async function renderRoute() {
     if (version !== APP.navigation) return;
     if ((route === "people" || route === "traditions") && id) APP.visit(route === "people" ? "person" : "tradition", id);
     window.scrollTo(0, 0);
-    if (view.mount) await view.mount(id);
+    if (view.mount) await view.mount(id, parts[2]);
     if (typeof LAB !== "undefined") LAB.ensureKeyboards?.(document.getElementById("view"));
     if (version !== APP.navigation) return;
     root.removeAttribute?.("aria-busy");
     if (typeof EXPERIENCE !== "undefined") EXPERIENCE.mount(root);
     if (route === "yurt") {
       const host = root.querySelector?.("[data-yurt]");
-      if (host) import("./yurt3d.js?v=45").then(module => {
+      if (host) import("./yurt3d.js?v=66").then(module => {
         if (version === APP.navigation && host.isConnected) {
           APP.cleanupYurt = module.mountYurt(host);
           if (YURT.find(id)) host.dispatchEvent(new CustomEvent("yurtselect", {detail:{id}}));
@@ -265,7 +268,7 @@ function detailsLabel() {
 }
 function fullDetails(key, content = "", {summary = "", articleID = "", fallback = ""} = {}) {
   if ((NO_FULL_TEXT.has(key) || APP.missingFull.has(key)) && !content && !fallback) return "";
-  return `<details class="article full-details" data-full="${esc(key)}"${articleID ? ` data-article="${esc(articleID)}"` : ""}><summary>${summary}${detailsLabel()}</summary><div class="article-body">${content}<div class="prose" data-full-body>${fallback}</div></div></details>`;
+  return `<details class="article full-details" data-full="${esc(key)}"${articleID ? ` data-article="${esc(articleID)}"` : ""}><summary>${summary || detailsLabel()}</summary><div class="article-body">${content}<div class="prose" data-full-body>${fallback}</div></div></details>`;
 }
 async function loadArticle(details) {
   if (!details.open || details.dataset.loaded === "true" || details.dataset.loading === "true") return;

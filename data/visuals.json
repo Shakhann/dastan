@@ -1,46 +1,54 @@
 {
- "home": {
-  "hero": "assets/heritage/hero-horseman.jpg",
-  "gallery": [
-   "assets/heritage/eagle-hunters.jpg",
-   "assets/heritage/mangystau-three-brothers.jpg",
-   "assets/heritage/gold-ibex.jpg",
-   "assets/heritage/charyn.jpg",
-   "assets/heritage/yasawi.jpg",
-   "assets/heritage/dombra-zhambyl.jpg",
-   "assets/heritage/otrar.jpg",
-   "assets/heritage/kymyz-offering.jpg"
+  "home": {
+    "hero": "assets/heritage/hero-horseman.jpg",
+    "gallery": [
+      "assets/heritage/eagle-hunters.jpg",
+      "assets/heritage/mangystau-three-brothers.jpg",
+      "assets/heritage/gold-ibex.jpg",
+      "assets/heritage/charyn.jpg",
+      "assets/heritage/yasawi.jpg",
+      "assets/heritage/dombra-zhambyl.jpg",
+      "assets/heritage/otrar.jpg",
+      "assets/heritage/kymyz-offering.jpg"
+    ]
+  },
+  "sections": {
+    "people": "assets/heritage/alash-1918.jpg",
+    "shezhire": "assets/heritage/altyn-emel.jpg",
+    "traditions": "assets/heritage/kymyz-offering.jpg",
+    "timeline": "assets/heritage/otrar.jpg",
+    "culture": "assets/heritage/shanyrak.jpg",
+    "language": "assets/heritage/dombra-zhambyl.jpg",
+    "encyclopedia": "assets/heritage/gold-ibex.jpg"
+  },
+  "articles": {
+    "taam_baursak": "assets/heritage/baursak-nauryz.jpg",
+    "taam_qazy": "assets/heritage/et-nan.jpg",
+    "taam_kumys": "assets/heritage/kymyz-ladles.jpg",
+    "kijim_shapan": "assets/heritage/kazakh-dress.jpg",
+    "kijim_saukele": "assets/heritage/women-saukele.jpg",
+    "tarikh_ezhelgi": "assets/heritage/golden-man.jpg",
+    "tarikh_kazakh_khanaty": "assets/heritage/otrar.jpg",
+    "tarikh_khandyq_zhuzder": "assets/heritage/yasawi.jpg",
+    "jyr_default": "assets/heritage/dombra-zhambyl.jpg",
+    "oyu_qoshqar_muiiz": "assets/heritage/syrmak-pattern.jpg",
+    "dombyra": "assets/heritage/dombra-zhambyl.jpg",
+    "kiiz-ui": "assets/heritage/yurt-assembling.jpg",
+    "abai_poeziya": "assets/heritage/jyr-abai.jpg",
+    "kobylandy": "assets/heritage/jyr-kobylandy.jpg",
+    "kozy_korpeshi": "assets/heritage/jyr-kozy-korpesh.jpg",
+    "qyz_zhibek": "assets/heritage/jyr-qyz-zhibek.jpg",
+    "er_tostik": "assets/heritage/jyr-er-tostik.jpg",
+    "qobyz": "assets/heritage/oner-qobyz.jpg",
+    "kui": "assets/heritage/oner-kui.jpg",
+    "aitys": "assets/heritage/oner-aitys.jpg"
+  },
+  "ornaments": [
+    "assets/heritage/oyu-felt-carpet.jpg",
+    "assets/heritage/oyu-felt-west.jpg",
+    "assets/heritage/syrmak.jpg",
+    "assets/heritage/oyu-syrmak-kanaeva.jpg",
+    "assets/heritage/oyu-yurt-door.jpg",
+    "assets/heritage/oyu-yurt-door-detail.jpg"
   ]
- },
- "sections": {
-  "people": "assets/heritage/alash-1918.jpg",
-  "shezhire": "assets/heritage/altyn-emel.jpg",
-  "traditions": "assets/heritage/kymyz-offering.jpg",
-  "timeline": "assets/heritage/otrar.jpg",
-  "culture": "assets/heritage/shanyrak.jpg",
-  "language": "assets/heritage/dombra-zhambyl.jpg",
-  "encyclopedia": "assets/heritage/gold-ibex.jpg"
- },
- "articles": {
-  "taam_baursak": "assets/heritage/baursak-nauryz.jpg",
-  "taam_qazy": "assets/heritage/et-nan.jpg",
-  "taam_kumys": "assets/heritage/kymyz-ladles.jpg",
-  "kijim_shapan": "assets/heritage/kazakh-dress.jpg",
-  "kijim_saukele": "assets/heritage/women-saukele.jpg",
-  "tarikh_ezhelgi": "assets/heritage/golden-man.jpg",
-  "tarikh_kazakh_khanaty": "assets/heritage/otrar.jpg",
-  "tarikh_khandyq_zhuzder": "assets/heritage/yasawi.jpg",
-  "jyr_default": "assets/heritage/dombra-zhambyl.jpg",
-  "oyu_qoshqar_muiiz": "assets/heritage/syrmak-pattern.jpg",
-  "dombyra": "assets/heritage/dombra-zhambyl.jpg",
-  "kiiz-ui": "assets/heritage/yurt-assembling.jpg"
- },
- "ornaments": [
-  "assets/heritage/oyu-felt-carpet.jpg",
-  "assets/heritage/oyu-felt-west.jpg",
-  "assets/heritage/syrmak.jpg",
-  "assets/heritage/oyu-syrmak-kanaeva.jpg",
-  "assets/heritage/oyu-yurt-door.jpg",
-  "assets/heritage/oyu-yurt-door-detail.jpg"
- ]
 }

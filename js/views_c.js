@@ -43,7 +43,8 @@ function article(d) {
   const image = APP.visuals.articles?.[d.id] || (d.category === "jyr" ? APP.visuals.articles?.jyr_default : "");
   const summary = `${image ? imageFigure(image,"article-cover") : ""}<span class="article-title">${esc(d.title)}</span><span class="article-excerpt">${esc(shortText(cleanExcerpt(d.text)))}</span>`;
   const tools = `<div class="article-tools">${saveButton("article", d.id)}${audioButton(cleanExcerpt(d.text).slice(0,500),d.id)}</div>`;
-  return fullDetails("art_" + d.id, tools, {summary, articleID:d.id, fallback:articleText(d) + attribution(d)});
+  const aside = (d.category === "jyr" || d.category === "oner") && image ? `<aside class="article-reader-figure">${imageFigure(image,"plate-md")}${tools}</aside>` : tools;
+  return fullDetails("art_" + d.id, aside, {summary, articleID:d.id, fallback:articleText(d) + attribution(d)});
 }
 
 async function culturalArticles(category) {

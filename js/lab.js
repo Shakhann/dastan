@@ -50,7 +50,7 @@ const LAB = (() => {
   let keyboardID=0;
   function ensureKeyboards(root=document) {
     root.querySelectorAll('input[type="search"], [data-lab-input]').forEach(input=>{
-      if(input.disabled || input.readOnly || input.id==="clanSearch") return;
+      if(input.disabled || input.readOnly || input.id==="clanSearch"||input.id==="articleSearch") return;
       if(!input.id) { let id; do { id="kazakh-input-"+(++keyboardID); } while(document.getElementById(id)); input.id=id; }
       if([...root.querySelectorAll("[data-kazakh-key]")].some(key=>key.dataset.input===input.id)) return;
       input.insertAdjacentHTML("afterend",keyboard(input.id));

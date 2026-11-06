@@ -52,8 +52,10 @@ function timelineRail(preview = false) {
   return `<p class="rail-hint">Уақыт бойымен сүйреңіз немесе көрсеткі пернелерін қолданыңыз.</p><ol class="timeline timeline-rail" data-drag-rail tabindex="0" aria-label="Тарих кезеңдері">${APP.data.timeline.map(t => `<li><div class="date">${esc(t.year)}</div><article>${t.image ? imageFigure(t.image, "timeline-image") : ""}<h2>${esc(t.title_kk)}</h2><p>${esc(preview ? shortText(t.text_kk) : t.text_kk)}</p>${preview ? routeLink("timeline", "Кезеңді оқу") : fullDetails("tl_" + t.year)}${attribution({title:t.title_kk,source_url:t.source_url})}</article></li>`).join("")}</ol>`;
 }
 VIEWS.timeline = {
-  render() {
-    return heading("Тарих жолы", "Өткенге көз жүгіртіп, бүгіннің тамырын таниық.") + timelineRail();
+  render(id) { return HISTORY.render(id); },
+  mount(id) {
+    if (id) APP.cleanupHistory = HISTORY.mount(id);
+    else APP.cleanupAtlas = ATLAS.mount();
   }
 };
 function searchableWords(title, intro, items, renderer) {

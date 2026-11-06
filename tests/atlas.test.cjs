@@ -1,0 +1,50 @@
+'use strict';
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const context=vm.createContext({console,esc:v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),heading:t=>`<h1>${t}</h1>`});
+const run=s=>vm.runInContext(s,context);
+run(fs.readFileSync('js/history-map-data.js','utf8'));
+context.APP={data:JSON.parse(fs.readFileSync('data/heritage.json','utf8'))};
+run(fs.readFileSync('js/history.js','utf8'));
+run(fs.readFileSync('js/atlas.js','utf8'));
+context.sourceLink=url=>`<a href="${url}">Дереккөз</a>`;
+const atlas=run('ATLAS');
+const name=v=>v?.name??v??null;
+const intervals=(text)=>text.split(';').map(row=>{const [start,end,...n]=row.trim().split(' ');return [+start,+end,n.join(' ')];});
+const regions=intervals('-700 -300 Сақтар;-300 400 Үйсіндер;-300 400 Қаңлы;552 603 Түрік қағанаты;603 704 Батыс Түрік қағанаты;704 756 Түргеш қағанаты;756 940 Қарлұқ қағанаты;766 1040 Оғыз мемлекеті;800 1050 Қимақ қағанаты;942 1212 Қарахан мемлекеті;1050 1219 Қыпшақ хандығы;1224 1360 Алтын Орда;1360 1428 Ақ Орда;1346 1462 Моғолстан;1428 1468 Әбілқайыр хандығы;1440 1600 Ноғай Ордасы;1465 1847 Қазақ хандығы;1635 1758 Жоңғар хандығы;1801 1845 Бөкей Ордасы;1847 1917 Ресей империясы құрамы;1917 1920 Алаш автономиясы;1920 1936 Қазақ АКСР;1936 1991 Қазақ КСР;1991 2024 Қазақстан Республикасы');
+const rulers=intervals('1465 1474 Керей хан;1474 1480 Жәнібек хан;1480 1511 Бұрындық хан;1511 1521 Қасым хан;1538 1580 Хақназар хан;1582 1598 Тәуекел хан;1598 1628 Есім хан;1628 1652 Жәңгір хан;1680 1715 Тәуке хан;1718 1748 Әбілқайыр хан (Кіші жүз);1771 1781 Абылай хан;1841 1847 Кенесары хан');
+const capitals=intervals('1465 1599 Сығанақ;1599 1729 Түркістан;1920 1925 Орынбор;1925 1929 Қызылорда;1929 1997 Алматы;1997 2024 Астана');
+const cities=[[500,'Тараз'],[500,'Отырар'],[500,'Түркістан'],[900,'Сауран'],[1000,'Сығанақ'],[1200,'Шымкент'],[1613,'Орал'],[1640,'Атырау'],[1718,'Семей'],[1720,'Өскемен'],[1752,'Петропавл'],[1820,'Қызылорда'],[1830,'Астана'],[1854,'Алматы'],[1861,'Павлодар'],[1869,'Ақтөбе'],[1879,'Қостанай'],[1934,'Қарағанды'],[1961,'Ақтау']];
+const renames={Астана:[[1830,'Ақмола'],[1961,'Целиноград'],[1992,'Ақмола'],[1997,'Астана']],Алматы:[[1854,'Верный'],[1921,'Алматы']],Қызылорда:[[1820,'Ақмешіт'],[1925,'Қызылорда']],Ақтау:[[1961,'Ақтау'],[1964,'Шевченко'],[1991,'Ақтау']],Атырау:[[1640,'Гурьев'],[1991,'Атырау']],Орал:[[1613,'Яицк'],[1775,'Уральск'],[1991,'Орал']],Семей:[[1718,'Семипалат'],[1991,'Семей']]};
+const censuses=[[1897,4.1,null],[1926,6.2,57],[1939,6.1,38],[1959,9.3,30],[1970,13,33],[1979,14.7,36],[1989,16.2,40],[1999,15,53],[2009,16,63],[2021,19.2,70]];
+const active=(table,y)=>table.filter(([a,b])=>a<=y&&(y<b||(b===2024&&y===2024))).map(r=>r[2]);
+for(let y=-700;y<=2024;y++) {
+  const state=atlas.state(y);
+  assert.equal(state.year,y);
+  assert.deepEqual(Array.from(state.regions,name).sort(),active(regions,y).sort(),`regions in ${y}`);
+  assert.equal(name(state.ruler),active(rulers,y)[0]??null,`ruler in ${y}`);
+  assert.equal(name(state.capital),active(capitals,y)[0]??null,`capital in ${y}`);
+  const expectedCities=cities.filter(([start])=>y>=start).map(([,n])=>renames[n]?.filter(([start])=>start<=y).at(-1)?.[1]??n).sort();
+  assert.deepEqual(Array.from(state.cities,c=>c.label).sort(),expectedCities,`city names in ${y}`);
+  for(const city of state.cities) assert.equal(city.old, y>({Отырар:1700,Сауран:1800,Сығанақ:1600}[city.name]??Infinity),`old status ${city.name} in ${y}`);
+  if(y<1897) assert.equal(state.census,null,`no pre-census estimate in ${y}`);
+  else {
+    const distance=Math.min(...censuses.map(c=>Math.abs(c[0]-y)));
+    assert.ok(censuses.some(c=>c[0]===state.census.year&&Math.abs(c[0]-y)===distance),`nearest census in ${y}`);
+    const expected=censuses.find(c=>c[0]===state.census.year);
+    assert.equal(state.census.million,expected[1],`census population in ${y}`);
+    assert.equal(state.census.kazakhPercent,expected[2],`census share in ${y}`);
+  }
+}
+const page=atlas.render();
+assert.match(page,/<input[^>]*type="range"[^>]*min="0"[^>]*max="20"[^>]*step="1"/);
+assert.equal((page.match(/data-event-index=/g)||[]).length,21);
+assert.ok(page.indexOf('data-event-map')<page.indexOf('data-event-slider'),'slider below map');
+assert.match(page,/aria-live="polite"/);
+assert.match(page,/Шекаралар шамамен \(historical-basemaps\)/);assert.doesNotMatch(page,/atlas-modern-border|history-kz|marker/);
+assert.doesNotMatch(page,/Сенімді дерек жоқ|#map|data-atlas-play|Осы жылы/);
+assert.match(page,/Дереккөз/);
+assert.match(page,/viewBox="0 0 1000 620"/);
+assert.doesNotMatch(atlas.facts(atlas.state(1750)),/Билеуші|Астана|Халық санағы/,'unknown fact rows omitted');
+assert.match(atlas.facts(atlas.state(1465)),/Керей хан/);
+assert.match(atlas.facts(atlas.state(1997)),/Астана|1999 санағы/);
+console.log('PASS: atlas interval context, historical city names, census data, compact discrete event page and omitted unknown facts');

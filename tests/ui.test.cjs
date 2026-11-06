@@ -19,7 +19,7 @@ const context = vm.createContext({
 const run = source => vm.runInContext(source, context);
 for (const path of ['content','app','lab','menu','profile']) run(fs.readFileSync(`js/${path}.js`,'utf8'));
 run('const AUTH = {user:null,message:""}; function authAccountHTML(){return "";}');
-for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readFileSync(`js/${path}.js`,'utf8'));
+for (const path of ['history-map-data','history','atlas','yurt','views_a','views_b','views_c','search']) run(fs.readFileSync(`js/${path}.js`,'utf8'));
 (async () => {
   await run('APP.loadHeritage();');
   await run('APP.initProfile();');
@@ -119,16 +119,24 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
     assert.equal(run('validateProfile({saved:[{type:"article",id:onerID}]}).saved.length'),1);
     assert.match(run('profileCard({type:"article",id:onerID},true)'),new RegExp('href="#culture/'+id+'"'));
   }
-  for (const [id,name] of [['dombyra','dombra-zhambyl.jpg'],['kiiz-ui','yurt-assembling.jpg']]) {
+  for (const [id,name] of [['dombyra','dombra-zhambyl.jpg'],['kiiz-ui','yurt-assembling.jpg'],['qobyz','oner-qobyz.jpg'],['kui','oner-kui.jpg'],['aitys','oner-aitys.jpg']]) {
     context.onerID=id;
     assert.equal(run('APP.visuals.articles[onerID]'),'assets/heritage/'+name);
     assert.equal(run('APP.credits.some(c=>c.path===APP.visuals.articles[onerID])'),true);
   }
-  for (const id of ['qobyz','kui','aitys']) {
+  for (const id of []) {
     context.onerID=id;
     assert.equal(run('APP.visuals.articles[onerID]'),undefined);
   }
   const routes = run('Object.keys(VIEWS)');
+  // Атлас тақырыбы ықшам: карта алдындағы бос сәндік алаң қайтпайды.
+  const atlasMarkup=run('ATLAS.render()');
+  assert.doesNotMatch(atlasMarkup,/<header|banner-pattern|banner-visual/);
+  assert.equal((atlasMarkup.match(/data-event-index=/g)||[]).length,21);
+  const atlasSkinCSS=fs.readFileSync('css/skins.css','utf8');
+  assert.match(atlasSkinCSS,/\.timeline-heading\{[^}]*margin:0 0 12px/);
+  assert.match(atlasSkinCSS,/\.atlas-event-slider input\[type="range"\]/);
+
   let count = 0;
   async function render(route,id) {
     context.testRoute=route; context.testID=id;
@@ -137,12 +145,17 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
     assert.ok(html.length > 50,route);
     for (const [,path] of html.matchAll(/<img[^>]*src="(assets\/[^\"]+)"/g)) assert.ok(fs.existsSync(path),path);
     if (route !== 'credits') {
-      for(const [,url] of html.matchAll(/<a\b[^>]*href="(https?:[^"]+)"/g)) assert.match(url,/^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/);
+      const eventSources=new Set(Array.from(run('ATLAS.events'),event=>new URL(event.source_url).href));
+      for(const [,url] of html.matchAll(/<a\b[^>]*href="(https?:[^"]+)"/g)) {
+        if(route==='timeline' && eventSources.has(url)) continue;
+        assert.match(url,/^https:\/\/tumalas\.kz\/$|^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/);
+      }
     }
     assert.doesNotMatch(html,/<(?:img|iframe)\b[^>]*src="https?:(?!\/\/i\.ytimg\.com\/)/);
     assert.doesNotMatch(html,/class="image-action"/);
     assert.doesNotMatch(html,/shanyrak-svg|hero-shanyrak|section-shanyrak|menu-orbit/);
     for (const [,classes] of html.matchAll(/<figure class="([^"]*)"/g)) {
+      if (classes === "atlas-census") continue; // Санақ графигі сурет карточкасы емес.
       assert.equal((classes.match(/\bplate-(?:lg|md|sm)\b/g)||[]).length,1,'Әр суретте бір пештақ өлшемі бар');
     }
     count++;
@@ -196,7 +209,32 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
     assert.ok(html.indexOf('class="video-panel"')<html.indexOf('<details'));
     assert.match(html,/data-save-type="tradition"/);
   }
+  assert.equal(run('NAV.some(([id])=>id === "map")'),false);
+  assert.equal(run('Object.hasOwn(VIEWS,"map")'),false);
+  const customSummary=run('fullDetails("tl_1465", "", {summary:"Толығырақ оқу"})');
+  assert.match(customSummary,/<summary>Толығырақ оқу<\/summary>/);
+  assert.doesNotMatch(customSummary,/details-more/);
+  assert.match(run('fullDetails("tl_1465")'),/details-more/);
   const timeline=await render('timeline');
+  assert.match(timeline,/^<header class="timeline-heading"><h1>Тарих жолы<\/h1><\/header>/);
+  assert.doesNotMatch(timeline,/banner-pattern|history-overview-player/);
+  assert.match(timeline,/data-atlas-events/);
+  assert.match(timeline,/type="range"/);
+  assert.ok(timeline.includes('data-atlas-events'));assert.ok(!timeline.includes('data-history-section'));
+
+  assert.equal(run('HISTORY.sections.length'),5);
+  const historyYears=run('HISTORY.sections.flatMap(s=>s.scenes.map(e=>e.year))');
+  assert.equal(historyYears.length,14);
+  assert.deepEqual([...historyYears].sort((a,b)=>a-b),[...timelineYears].sort((a,b)=>a-b));
+  for(const section of run('HISTORY.sections')) {
+    const page=await render('timeline',section.id);
+    assert.match(page,new RegExp('data-section="'+section.id+'"'));
+    for(const scene of section.scenes) assert.ok(page.includes('>'+scene.year+'</button>'));
+    assert.match(page,/data-history-remember hidden/);
+    assert.match(page,/aria-live="polite"/);
+    assert.ok(run('HISTORY.sceneSVG(HISTORY.find("'+section.id+'").scenes[0])').length>0);
+  }
+  assert.match(await render('timeline','missing'),/Бөлім табылмады/);
   assert.equal((timeline.match(/<details\b/g)||[]).length,14);
   for (const year of timelineYears) assert.match(timeline,new RegExp('data-full="tl_'+year+'"'));
   const culture=await render('culture');
@@ -246,7 +284,7 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
   assert.ok(searchRows.some(row=>row.route==='yurt/horse' && row.title==='Ат'));
   assert.equal(run('NAV.some(([id])=>id === "yurt")'),true);
   const routeSource = fs.readFileSync('js/app.js','utf8');
-  assert.match(routeSource,/if \(route === "yurt"\) \{[\s\S]*?import\("\.\/yurt3d\.js\?v=45"\)/);
+  assert.match(routeSource,/if \(route === "yurt"\) \{[\s\S]*?import\("\.\/yurt3d\.js\?v=66"\)/);
   assert.equal((routeSource.match(/import\("\.\/yurt3d/g)||[]).length,1);
   assert.match(routeSource,/APP\.cleanupYurtUI\?\.\(\)/);
   assert.match(fs.readFileSync('index.html','utf8'),/<nav class="mobile-nav"[\s\S]*?href="#yurt"/);
@@ -335,7 +373,7 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
   assert.match(css,/\.full-details\[open\] \.details-more \{ display: none/);
   assert.match(css,/\.full-details:not\(\[open\]\) > :not\(summary\)/);
   const stage13CSS=fs.readFileSync('css/stage13.css','utf8');
-  assert.match(index,/css\/stage13.css\?v=45/); assert.match(index,/js\/experience.js\?v=45/);
+  assert.match(index,/css\/stage13.css\?v=66/); assert.match(index,/js\/experience.js\?v=66/);
   for(const attr of ['data-command-open','data-theme-toggle','data-scroll-progress','data-mobile-menu']) assert.ok(index.includes(attr));
   assert.match(index,/<nav class="mobile-nav"/);
   assert.match(stage13CSS,/safe-area-inset-bottom/);assert.match(stage13CSS,/height: 45svh/);
@@ -344,7 +382,7 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
   const fontCSS=fs.readFileSync('css/fonts.css','utf8');
   for(const [,path] of fontCSS.matchAll(/url\("([^"]+)"\)/g)) assert.ok(fs.existsSync(require('node:path').resolve('css',path)),path);
   for(const [,path] of index.matchAll(/(?:src|href)="((?:js|css)\/[^\"]+)"/g)) {
-    if (!path.includes('js/vendor/')) assert.match(path,/\?v=45$/);
+    if (!path.includes('js/vendor/')) assert.match(path,/\?v=66$/);
   }
   // Ортақ lazy жүктеу: жабық күй, бір сұрау, қате/қайта көру және кеш жауап.
   function fullNode(key, fallback='', content=false) {
@@ -470,11 +508,13 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
     const lifecycle=[];
     const EXPERIENCE={cleanup(){lifecycle.push('cleanup');},mount(){lifecycle.push('mount');}};
     APP.cleanupYurt=()=>lifecycle.push('yurt-dispose');
+    APP.cleanupHistory=()=>lifecycle.push('history-dispose');
+    APP.cleanupAtlas=()=>lifecycle.push('atlas-dispose');
     document.startViewTransition=callback=>{lifecycle.push('transition');callback();return {finished:Promise.resolve(),updateCallbackDone:Promise.resolve()};};
     APP.initAuth=async()=>{};APP.authRoute=route=>route;
   `,routeContext);
   await vm.runInContext('renderRoute()',routeContext);
-  assert.deepEqual([...vm.runInContext('lifecycle',routeContext)],['yurt-dispose','cleanup','transition','mount']);
+  assert.deepEqual([...vm.runInContext('lifecycle',routeContext)],['atlas-dispose','history-dispose','yurt-dispose','cleanup','transition','mount']);
   vm.runInContext(`lifecycle.length=0;window.matchMedia=()=>({matches:true});`,routeContext);
   await vm.runInContext('renderRoute()',routeContext);
   assert.deepEqual([...vm.runInContext('lifecycle',routeContext)],['cleanup','mount']);
@@ -485,10 +525,25 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
   assert.equal(routeLinks[1].attrs['aria-current'],'page');
   assert.equal(routeLinks[0].attrs['aria-current'],undefined);
   assert.equal(routeLinks[2].attrs['aria-current'],undefined);
+  vm.runInContext(`VIEWS.timeline={render:id=>'<h1>'+id+'</h1>',mount:id=>{APP.cleanupHistory=()=>lifecycle.push('history-dispose-'+id);}};location.hash='#timeline/alash';`,routeContext);
+  await vm.runInContext('renderRoute()',routeContext);
+  assert.match(routeRoot.innerHTML,/<h1>alash<\/h1>/);
+  assert.equal(vm.runInContext('APP.route',routeContext),'timeline');
+  vm.runInContext(`VIEWS.timeline={render:id=>'<h1>Тарих жолы</h1>',mount:()=>{APP.cleanupAtlas=()=>lifecycle.push('atlas-route-dispose');}};globalThis.history={replaceState:(_a,_b,hash)=>{location.hash=hash;}};`,routeContext);
+  for (const hash of ['#map','#map/events','#map/events/1465-border','#map/unknown/path']) {
+    vm.runInContext('location.hash='+JSON.stringify(hash),routeContext);
+    await vm.runInContext('renderRoute()',routeContext);
+    assert.equal(vm.runInContext('APP.route',routeContext),'timeline');
+    assert.equal(vm.runInContext('location.hash',routeContext),'#timeline');
+    assert.match(routeRoot.innerHTML,/<h1>Тарих жолы<\/h1>/);
+  }
+
   vm.runInContext(`location.hash='';`,routeContext);
   await vm.runInContext('renderRoute()',routeContext);
   assert.match(routeRoot.innerHTML,/<h1>Ескі бет<\/h1>/);
+  assert.ok(vm.runInContext('lifecycle.includes("history-dispose-alash")',routeContext));
   assert.equal(vm.runInContext('APP.route',routeContext),'home');
+  assert.ok(vm.runInContext('lifecycle.includes("atlas-route-dispose")',routeContext));
   vm.runInContext(`location.hash='#missing-stage11';`,routeContext);
   await vm.runInContext('renderRoute()',routeContext);
   assert.equal(vm.runInContext('APP.route',routeContext),'notfound');
