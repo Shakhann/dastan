@@ -32,9 +32,8 @@ VIEWS.voice = {
   render() { return heading("Тыңдау", "Қазақша сөздердің айтылуын тыңдаңыз.") + `<div class="word-grid">${DICT.map(dictionaryWord).join("")}</div>`; }
 };
 const CATEGORIES = {jyr: "Жыр-дастан", oner: "Өнер және тұрмыс", taam: "Ұлттық тағамдар", kijim: "Ұлттық киімдер", tarikh: "Тарих", tulgalar: "Тұлғалар", oyu: "Ою-өрнек"};
-const ORNAMENT_NOTICE = "Төмендегі сақталған SVG сызбалары оюлардың дәл үлгісі емес. Оларды дәстүрлі ою пішінін жаттауға пайдаланбаңыз. Атаулар мен сипаттамалар зерттеу жинағынан берілген.";
 function ornamentNotice() {
-  return `<aside class="notice"><h2>Сызбалар туралы</h2><p>${esc(ORNAMENT_NOTICE)}</p><p>Сәйкес келмейтін сызбалар бұл бетте көрсетілмейді. Қазір тек атаулар мен сипаттамалар берілген.</p></aside>`;
+  return `<aside class="notice"><h2>Суреттер туралы</h2><p>Суреті бар оюлардың атауы дереккөзде көрсетілген. Қалған оюлардың суреттері маман тексергеннен кейін қосылады.</p></aside>`;
 }
 function cleanExcerpt(text) {
   return String(text || "").replace(/\[Толық мәтін Wikipedia-да:[^\]]*\]/g, "").replace(/Толық мәтін Wikipedia-да[^\n]*/g, "").trim();
@@ -85,7 +84,7 @@ VIEWS.ornaments = {
   title: "Ою-өрнек",
   async render() {
     const articles = await culturalArticles("oyu");
-    return heading("Ою-өрнек") + ornamentNotice() + `<div class="word-grid">${ORNAMENTS.map(o => `<article class="word patch"><h2>${esc(o.name)}</h2><p>${esc(o.meaning)}</p></article>`).join("")}</div>` + articles.map(article).join("");
+    return heading("Ою-өрнек") + ornamentNotice() + `<div class="word-grid">${ORNAMENTS.map(o => `<article class="word patch">${o.image ? imageFigure(o.image, "ornament-image") : ""}<h2>${esc(o.name)}</h2><p>${esc(o.meaning)}</p></article>`).join("")}</div><section class="ornament-items"><h2>Оюлы бұйымдар</h2><p>Мұражайдағы және тұрмыстағы нақты бұйымдар.</p><div class="gallery">${APP.visuals.ornaments.map(path => imageFigure(path)).join("")}</div></section>` + articles.map(article).join("");
   }
 };
 function wikiSections(text) {

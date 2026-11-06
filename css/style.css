@@ -654,3 +654,12 @@ body.menu-open { overflow: hidden; }
   .full-details > summary { break-inside: avoid; }
   .full-details[open] { break-inside: auto; }
 }
+
+/* Ою суреті кесілмей, толық көрінеді. */
+.ornament-image .image-frame { aspect-ratio: 3/2; }
+.ornament-image img { width: 100%; height: 100%; object-fit: contain; }
+.ornament-items { margin-top: 4rem; }
+.ornament-items .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ornament-items .gallery > figure { grid-column: auto; grid-row: auto; margin-top: 0; }
+.ornament-items .gallery > figure .image-frame { aspect-ratio: 1; }
+@media (max-width: 900px) { .ornament-items .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

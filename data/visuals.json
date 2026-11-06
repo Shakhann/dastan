@@ -34,5 +34,13 @@
   "oyu_qoshqar_muiiz": "assets/heritage/syrmak-pattern.jpg",
   "dombyra": "assets/heritage/dombra-zhambyl.jpg",
   "kiiz-ui": "assets/heritage/yurt-assembling.jpg"
- }
+ },
+ "ornaments": [
+  "assets/heritage/oyu-felt-carpet.jpg",
+  "assets/heritage/oyu-felt-west.jpg",
+  "assets/heritage/syrmak.jpg",
+  "assets/heritage/oyu-syrmak-kanaeva.jpg",
+  "assets/heritage/oyu-yurt-door.jpg",
+  "assets/heritage/oyu-yurt-door-detail.jpg"
+ ]
 }
