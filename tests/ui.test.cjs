@@ -246,7 +246,7 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
   assert.ok(searchRows.some(row=>row.route==='yurt/horse' && row.title==='Ат'));
   assert.equal(run('NAV.some(([id])=>id === "yurt")'),true);
   const routeSource = fs.readFileSync('js/app.js','utf8');
-  assert.match(routeSource,/if \(route === "yurt"\) \{[\s\S]*?import\("\.\/yurt3d\.js\?v=34"\)/);
+  assert.match(routeSource,/if \(route === "yurt"\) \{[\s\S]*?import\("\.\/yurt3d\.js\?v=36"\)/);
   assert.equal((routeSource.match(/import\("\.\/yurt3d/g)||[]).length,1);
   assert.match(routeSource,/APP\.cleanupYurtUI\?\.\(\)/);
   assert.match(fs.readFileSync('index.html','utf8'),/<nav class="mobile-nav"[\s\S]*?href="#yurt"/);
@@ -335,7 +335,7 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
   assert.match(css,/\.full-details\[open\] \.details-more \{ display: none/);
   assert.match(css,/\.full-details:not\(\[open\]\) > :not\(summary\)/);
   const stage13CSS=fs.readFileSync('css/stage13.css','utf8');
-  assert.match(index,/css\/stage13.css\?v=34/); assert.match(index,/js\/experience.js\?v=34/);
+  assert.match(index,/css\/stage13.css\?v=36/); assert.match(index,/js\/experience.js\?v=36/);
   for(const attr of ['data-command-open','data-theme-toggle','data-scroll-progress','data-mobile-menu']) assert.ok(index.includes(attr));
   assert.match(index,/<nav class="mobile-nav"/);
   assert.match(stage13CSS,/safe-area-inset-bottom/);assert.match(stage13CSS,/height: 45svh/);
@@ -344,7 +344,7 @@ for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readF
   const fontCSS=fs.readFileSync('css/fonts.css','utf8');
   for(const [,path] of fontCSS.matchAll(/url\("([^"]+)"\)/g)) assert.ok(fs.existsSync(require('node:path').resolve('css',path)),path);
   for(const [,path] of index.matchAll(/(?:src|href)="((?:js|css)\/[^\"]+)"/g)) {
-    if (!path.includes('js/vendor/')) assert.match(path,/\?v=34$/);
+    if (!path.includes('js/vendor/')) assert.match(path,/\?v=36$/);
   }
   // Ортақ lazy жүктеу: жабық күй, бір сұрау, қате/қайта көру және кеш жауап.
   function fullNode(key, fallback='', content=false) {

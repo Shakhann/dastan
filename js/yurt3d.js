@@ -275,7 +275,7 @@ export function mountYurt(container) {
   });
   (async () => {
     try {
-      const THREE = await import('./vendor/three.module.min.js?v=34');
+      const THREE = await import('./vendor/three.module.min.js?v=36');
       if (disposed) return;
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));

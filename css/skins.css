@@ -498,3 +498,13 @@
 .clan-list { list-style: none; margin: .75rem 0 0; padding: 0 0 0 1rem; display: grid; gap: .5rem; border-left: 2px solid var(--skin-line); }
 .clan-list li { margin: 0; }
 .clan-leaf { display: block; padding: .55rem .9rem; border-radius: 12px; background: var(--skin-soft); font-weight: 500; }
+/* Бүкіл сайттың әрпі үлкейтілді. */
+html { font-size: 112.5%; }
+:root[data-skin] .site-header #desktopNav a { font-size: clamp(.78rem,.92vw,.95rem); }
+:root[data-skin] figcaption, :root[data-skin] .fine { font-size: .8125rem; }
+:root[data-skin] .people-grid figcaption { font-size: .75rem; }
+@media (min-width: 900px) {
+  :root[data-skin="ak"] .hero-signature { font-size: clamp(3.4rem,6.4vw,6rem); }
+  :root[data-skin="ak"] .hero-subtitle { font-size: clamp(1.5rem,2.7vw,2.6rem); }
+  :root[data-skin="ak"] .hero-copy > p:not(.hero-subtitle) { font-size: 1.125rem; }
+}
