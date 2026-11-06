@@ -295,8 +295,8 @@ APP.authRoute = route => {
   if (Object.hasOwn(AUTH_TITLES,route)) {
     if ((route === "login" || route === "register") && AUTH.user) return "profile";
     try { if (!sessionStorage.getItem(AUTH_RETURN_KEY)) sessionStorage.setItem(AUTH_RETURN_KEY,authInternalHash(AUTH.lastRoute)); } catch { /* Жадтағы бағыт жеткілікті. */ }
-    if (route === "login" && AUTH.confirmation?.kind === "register") AUTH.confirmation = null;
-    if (route === "register" && AUTH.confirmation?.kind === "login") AUTH.confirmation = null;
+    if (route === "login" && AUTH.confirmation?.kind === "register") { AUTH.confirmation = null; AUTH.message = ""; }
+    if (route === "register" && AUTH.confirmation?.kind === "login") { AUTH.confirmation = null; AUTH.message = ""; }
   } else {
     AUTH.lastRoute = authInternalHash(location.hash || "#home");
     try { sessionStorage.removeItem(AUTH_RETURN_KEY); } catch { /* Жадтағы бағыт жеткілікті. */ }
@@ -307,8 +307,9 @@ function authCallbackFailure() {
   AUTH.callbackRoute = "login";
   authNotify("Поштаңыз расталған болуы мүмкін. Құпия сөзбен кіріп көріңіз."); location.hash = "#login";
 }
-function authShell(content) {
-  return `<section class="auth-page auth-layout"><div class="auth-art">${imageFigure("assets/heritage/syrmak-pattern.jpg","auth-photo",true)}</div><div class="auth-content">${content}</div></section>`;
+function authShell(content, kind = "login") {
+  const benefits = kind === "register" ? `<ul class="auth-benefits"><li>Материалдарды сақтап жинаңыз</li><li>Соңғы қаралғандарға қайта оралыңыз</li><li>Басқа құрылғыдан кіріңіз</li></ul>` : "";
+  return `<section class="auth-page auth-layout auth-${esc(kind)}"><div class="auth-art"><div class="auth-emblem">${shanyrakSVG()}</div>${benefits}${imageFigure("assets/heritage/syrmak-pattern.jpg","auth-photo",true)}</div><div class="auth-content">${content}</div></section>`;
 }
 function authConfirmationHTML() {
   return `<section class="auth-confirmation"><h1>Поштаңызды растаңыз</h1><p>Хат <strong>${esc(AUTH.confirmation.email)}</strong> мекенжайына жіберілді</p><p>Хаттағы сілтемені ашыңыз. Хат көрінбесе, спам бумасын тексеріңіз.</p><button type="button" data-auth-resend>Хатты қайта жіберу</button><p class="fine" data-resend-countdown aria-live="polite"></p><p data-auth-message role="status" aria-live="polite">${esc(AUTH.message)}</p><a href="#login" data-auth-back>Кіру бетіне оралу</a></section>`;
@@ -316,13 +317,13 @@ function authConfirmationHTML() {
 function authPage(kind) {
   const title = AUTH_TITLES[kind];
   if (AUTH.user && (kind === "login" || kind === "register")) { location.hash = "#profile"; return ""; }
-  if (!AUTH.client) return authShell(`<h1>${esc(title)}</h1><p role="status">Тіркелу әзірге қосылмаған</p><p>Сайтты тіркелмей толық пайдалана аласыз.</p>${routeLink("home","Тіркелмей жалғастыру")}`);
-  if (kind === "new-password" && (!AUTH.user || !AUTH.recovery)) return authShell(`<h1>${esc(title)}</h1><p role="status">Жаңа құпия сөз қою үшін поштадағы қалпына келтіру сілтемесін осы браузерде ашыңыз.</p>${routeLink("reset","Қалпына келтіру сілтемесін алу")}`);
-  if ((kind === "login" || kind === "register") && AUTH.confirmation?.kind === kind) return authShell(authConfirmationHTML());
+  if (!AUTH.client) return authShell(`<h1>${esc(title)}</h1><p role="status">Тіркелу әзірге қосылмаған</p><p>Сайтты тіркелмей толық пайдалана аласыз.</p>${routeLink("home","Тіркелмей жалғастыру")}`,kind);
+  if (kind === "new-password" && (!AUTH.user || !AUTH.recovery)) return authShell(`<h1>${esc(title)}</h1><p role="status">Жаңа құпия сөз қою үшін поштадағы қалпына келтіру сілтемесін осы браузерде ашыңыз.</p>${routeLink("reset","Қалпына келтіру сілтемесін алу")}`,kind);
+  if ((kind === "login" || kind === "register") && AUTH.confirmation?.kind === kind) return authShell(authConfirmationHTML(),kind);
   const password = kind !== "reset", email = kind !== "new-password";
-  const switches = kind === "login" || kind === "register" ? `<nav class="auth-switch" aria-label="Тіркелгіге кіру тәсілі"><a href="#login"${kind === "login" ? ' aria-current="page"' : ""}>Кіру</a><a href="#register"${kind === "register" ? ' aria-current="page"' : ""}>Тіркелу</a></nav>` : "";
-  const pageTitle = {login:"Қош келдіңіз",register:"Тіркелгі ашу"}[kind] || title;
-  return authShell(`<h1>${esc(pageTitle)}</h1>${switches}<form id="authForm" class="auth-form" data-auth-kind="${esc(kind)}" novalidate>${email ? '<label for="authEmail">Электрондық пошта</label><input id="authEmail" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" aria-describedby="authEmailError" required><p id="authEmailError" class="field-error"></p>' : ""}${password ? `<label for="authPassword">Құпия сөз</label><div class="password-control"><input id="authPassword" name="password" type="password" autocomplete="${kind === "login" ? "current-password" : "new-password"}" aria-describedby="authPasswordError${kind === "login" ? "" : " authPasswordHint"}"${kind === "login" ? "" : ' minlength="8"'} required><button type="button" data-password-toggle aria-controls="authPassword" aria-pressed="false">Көрсету</button></div><p id="authPasswordError" class="field-error"></p>${kind === "login" ? '<p><a href="#reset">Құпия сөзді қалпына келтіру</a></p>' : '<p id="authPasswordHint" class="fine">Кемінде 8 таңба.</p>'}` : ""}<button type="submit">${kind === "reset" ? "Сілтеме жіберу" : kind === "new-password" ? "Құпия сөзді сақтау" : title}</button><p data-auth-message role="status" aria-live="polite" aria-atomic="true">${esc(AUTH.message)}</p></form><nav class="auth-actions" aria-label="Басқа әрекеттер">${kind === "reset" ? routeLink("login","Кіру бетіне оралу") : ""}<a href="${esc(authInternalHash(AUTH.lastRoute || "#home"))}">Тіркелмей жалғастыру</a></nav>`);
+  const accountLink = kind === "register" ? `<p class="auth-alternative">Тіркелгіңіз бар ма? ${routeLink("login","Кіру")}</p>` : kind === "login" ? `<p class="auth-alternative">Тіркелгіңіз жоқ па? ${routeLink("register","Тіркелу")}</p>` : "";
+  const pageTitle = {login:"Қайта келдіңіз",register:"Тіркелгі ашу"}[kind] || title;
+  return authShell(`<h1>${esc(pageTitle)}</h1><form id="authForm" class="auth-form" data-auth-kind="${esc(kind)}" novalidate>${email ? '<label for="authEmail">Электрондық пошта</label><input id="authEmail" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" aria-describedby="authEmailError" required><p id="authEmailError" class="field-error"></p>' : ""}${password ? `<label for="authPassword">Құпия сөз</label><div class="password-control"><input id="authPassword" name="password" type="password" autocomplete="${kind === "login" ? "current-password" : "new-password"}" aria-describedby="authPasswordError${kind === "login" ? "" : " authPasswordHint"}"${kind === "login" ? "" : ' minlength="8"'} required><button type="button" data-password-toggle aria-controls="authPassword" aria-pressed="false">Көрсету</button></div><p id="authPasswordError" class="field-error"></p>${kind === "login" ? '<p><a href="#reset">Құпия сөзді қалпына келтіру</a></p>' : '<p id="authPasswordHint" class="fine">Кемінде 8 таңба.</p>'}` : ""}<button type="submit">${kind === "reset" ? "Сілтеме жіберу" : kind === "new-password" ? "Құпия сөзді сақтау" : title}</button><p data-auth-message role="status" aria-live="polite" aria-atomic="true">${esc(AUTH.message)}</p></form>${accountLink}<nav class="auth-secondary" aria-label="Басқа әрекеттер">${kind === "reset" ? routeLink("login","Кіру бетіне оралу") : ""}<a href="${esc(authInternalHash(AUTH.lastRoute || "#home"))}">Тіркелмей жалғастыру</a></nav>`,kind);
 }
 function authRedirect() { return location.origin + location.pathname; }
 function authFieldError(form,name,message) {
@@ -392,7 +393,13 @@ function mountAuthForm() {
       } else {
         AUTH.confirmation = null;
         await authSession(result.data.session);
-        if (!AUTH.localOnly) authNotify("Тіркелгіге кірдіңіз."); location.hash = authReturnRoute();
+        if (kind === "register") {
+          authReturnRoute();
+          authNotify("Қош келдіңіз"); location.hash = "#profile";
+        } else {
+          if (!AUTH.localOnly) authNotify("Тіркелгіге кірдіңіз.");
+          location.hash = authReturnRoute();
+        }
       }
     } catch (error) {
       // Қалпына келтіру жауабы тіркелгінің бар-жоғын ашпайды.

@@ -108,6 +108,26 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
     count++;
     return html;
   }
+  // Портретсіз карточкада бос сурет орны қалмайды; Тұмарша дәл берілген.
+  assert.doesNotMatch(fs.readFileSync('js/app.js','utf8') + fs.readFileSync('js/views_a.js','utf8') + fs.readFileSync('css/style.css','utf8'), /monogram/);
+  for (const person of run('APP.data.people.filter(p=>!p.image)')) {
+    context.personFixture=person;
+    const card=run('personPatch(personFixture,true)');
+    assert.doesNotMatch(card, /<figure|<img|<svg|<aside/);
+    assert.ok(card.includes(person.name));
+  }
+  assert.equal(run('ORNAMENTS.find(o=>o.id==="o7").meaning'), 'Тіл-көзден, пәле-жаладан сақтайтын қорғаныш (бойтұмар) белгісі. Сынық сызықтан тарақ тістері сияқты тармақтар шығып тұратын геометриялық өрнек; кілемдерде, басқұрларда және зергерлік әшекейлерде қолданылады.');
+  for (const selected of ['saved','recent','settings',undefined,'invalid']) {
+    const html=await render('profile',selected);
+    const active=['saved','recent','settings'].includes(selected)?selected:'saved';
+    assert.match(html,/role="tablist"/);
+    assert.equal((html.match(/role="tab"/g)||[]).length,3);
+    assert.equal((html.match(/role="tabpanel"/g)||[]).length,3);
+    assert.match(html,new RegExp('id="profile-tab-'+active+'" role="tab" aria-selected="true"'));
+    assert.match(html,new RegExp('id="profile-panel-'+active+'" role="tabpanel"[^>]+tabindex="0">'));
+    assert.equal((html.match(/tabindex="0" hidden/g)||[]).length,2);
+    assert.match(html,/Тіркелсеңіз, сақталғандарыңыз басқа құрылғыда да ашылады/);
+  }
   // Жабық беттер толық файлдарды сұрамайды; әр мәтін өз орнында ашылады.
   requests.length=0;
   const peopleList=await render('people');
@@ -120,7 +140,7 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
     assert.match(html,/data-save-type="person"/);
     context.personID=id;
     if (run('APP.data.people.find(p=>p.id===personID).image')) assert.match(html,/<figcaption>/);
-    else assert.match(html,/class="monogram"/);
+    else { assert.doesNotMatch(html, /monogram|<aside/); assert.match(html,/person-detail--text/); }
   }
   for (const id of run('APP.data.traditions.map(t=>t.id)')) {
     const html=await render('traditions',id);
@@ -178,6 +198,8 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   }
   assert.match(css,/@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css,/@media print/);
+  assert.match(css,/\.person-detail--text \{ grid-template-columns: minmax\(0, 1fr\)/);
+  assert.match(css,/\.profile-danger \{[^}]*border-top: 2px solid var\(--qyzyl\)/);
   assert.match(css,/\.full-details > summary \{ min-height: 44px/);
   assert.match(css,/\.full-details > summary:focus-visible/);
   assert.match(css,/\.full-details\[open\] \.details-more \{ display: none/);
@@ -185,7 +207,7 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   const fontCSS=fs.readFileSync('css/fonts.css','utf8');
   for(const [,path] of fontCSS.matchAll(/url\("([^"]+)"\)/g)) assert.ok(fs.existsSync(require('node:path').resolve('css',path)),path);
   for(const [,path] of index.matchAll(/(?:src|href)="((?:js|css)\/[^\"]+)"/g)) {
-    if (!path.includes('js/vendor/')) assert.match(path,/\?v=11$/);
+    if (!path.includes('js/vendor/')) assert.match(path,/\?v=12$/);
   }
   // Ортақ lazy жүктеу: жабық күй, бір сұрау, қате/қайта көру және кеш жауап.
   function fullNode(key, fallback='', content=false) {
@@ -230,6 +252,25 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   requests.length=0; await run('optionalFull("art_kijim_ishik")');
   assert.equal(requests.length,0);
   assert.equal(documentEvents.toggle.length,1,'Ашуды ортақ тыңдаушы басқарады');
+  // Нақты mount тыңдаушылары: көрсеткі, Home/End, click, ARIA, фокус және URL.
+  const previousDocument=context.document;
+  const tabKeys=['saved','recent','settings'];
+  const tabNodes=tabKeys.map(key=>({dataset:{profileTab:key},attrs:{},events:{},
+    setAttribute(k,v){this.attrs[k]=v;},addEventListener(k,fn){this.events[k]=fn;},focus(){context.document.activeElement=this;}}));
+  const profileNodes=Object.fromEntries(['profileZhuz','profileTribe','profileForm','deleteProfile',...tabKeys.map(k=>'profile-panel-'+k)].map(id=>[id,{hidden:true,events:{},addEventListener(k,fn){this.events[k]=fn;}}]));
+  context.document={getElementById:id=>profileNodes[id],querySelectorAll:()=>tabNodes};
+  context.history={pushState(_a,_b,hash){context.location.hash=hash;}};
+  run('VIEWS.profile.mount()');
+  function key(index,key){let prevented=false;tabNodes[index].events.keydown({key,preventDefault(){prevented=true;}});assert.equal(prevented,true);}
+  key(0,'ArrowLeft'); assert.equal(context.location.hash,'#profile/settings');assert.equal(context.document.activeElement,tabNodes[2]);
+  assert.equal(tabNodes[2].attrs['aria-selected'],'true');assert.equal(tabNodes[0].tabIndex,-1);
+  assert.equal(profileNodes['profile-panel-settings'].hidden,false);assert.equal(profileNodes['profile-panel-saved'].hidden,true);
+  key(2,'ArrowRight');assert.equal(context.location.hash,'#profile/saved');
+  key(0,'End');assert.equal(context.location.hash,'#profile/settings');
+  key(2,'Home');assert.equal(context.location.hash,'#profile/saved');
+  tabNodes[1].events.click();assert.equal(context.location.hash,'#profile/recent');
+  assert.equal(profileNodes['profile-panel-recent'].hidden,false);
+  context.document=previousDocument;
   // Мәзірдің қабат, inert, Esc, Tab және фокус қайтару келісімі.
   const events = {};
   function node(id) {

@@ -81,7 +81,7 @@ function profileCard(entry, removable = false) {
   return `<article class="profile-card">${imageFigure(image,"profile-card-image")}<div class="profile-card-copy">${routeLink(material.route, material.title)}${removable ? `<button type="button" class="profile-remove" data-remove-type="${esc(entry.type)}" data-remove-id="${esc(entry.id)}" aria-label="${esc(material.title)} — сақталғандардан алып тастау">Алып тастау</button>` : ""}</div></article>`;
 }
 function profileSaved() {
-  if (!APP.profile.saved.length) return `<div class="profile-empty"><p>Өзіңізге қызық материалдарды жинаңыз: ${routeLink("people","Тұлғалар")} мен ${routeLink("traditions","Дәстүрлер")} бетіндегі «Сақтау» батырмасын басыңыз.</p></div>`;
+  if (!APP.profile.saved.length) return `<div class="profile-empty"><p>Өзіңізге қызық материалдарды жинаңыз: ${routeLink("people","Ел тұлғалары")} мен ${routeLink("traditions","Салт-дәстүр")} бетіндегі «Сақтау» батырмасын басыңыз.</p></div>`;
   return Object.entries(PROFILE_TYPES).map(([type,title]) => {
     const entries = APP.profile.saved.filter(e => e.type === type);
     return entries.length ? `<h3>${title}</h3><div class="profile-grid">${entries.map(e=>profileCard(e,true)).join("")}</div>` : "";
@@ -91,18 +91,45 @@ function profileIdentity() {
   const p = APP.profile;
   const zhuz = p.zhuz === "non-clan" ? "Руға жатпайтындар" : APP.profileTree.zhuzes.find(z => z.id === p.zhuz)?.name;
   const tribe = profileTribes(p.zhuz).find(t => t.id === p.tribe)?.name;
-  return `<div class="profile-avatar" aria-hidden="true">${profileSymbol(p.name)}</div><div><h1>${esc(p.name || "Профиль")}</h1>${zhuz ? `<p>${esc(zhuz)}${tribe ? ", " + esc(tribe) : ""}</p>` : ""}${tribe ? routeLink("shezhire/" + encodeURIComponent(p.zhuz),"Шежіреден көру") : ""}</div>`;
+  return `<div class="profile-avatar" aria-hidden="true">${profileSymbol(p.name)}</div><div class="profile-identity-copy"><h1>${esc(p.name || "Профиль")}</h1><p class="profile-email">${esc(AUTH.user?.email || (AUTH.user ? "Тіркелгі" : "Қонақ"))}</p>${zhuz ? `<p>${esc(zhuz)}${tribe ? ", " + esc(tribe) : ""}</p>` : ""}${tribe ? routeLink("shezhire/" + encodeURIComponent(p.zhuz),"Шежіреден көру") : ""}</div><dl class="profile-counts"><div><dt>Сақталғандар</dt><dd data-profile-saved-count>${p.saved.length}</dd></div><div><dt>Қаралғандар</dt><dd>${p.recent.length}</dd></div></dl>`;
 }
 function tribeOptions(zhuz, selected = "") {
   return `<option value="">Таңдалмаған</option>` + profileTribes(zhuz).map(t => `<option value="${esc(t.id)}"${t.id === selected ? " selected" : ""}>${esc(t.name)}</option>`).join("");
 }
+const PROFILE_TABS = [["saved","Сақталғандар"],["recent","Соңғы қаралғандар"],["settings","Баптаулар"]];
+function profileTabID(id) { return PROFILE_TABS.some(([key]) => key === id) ? id : "saved"; }
 VIEWS.profile = {
   title:"Профиль",
-  render() {
+  render(id) {
     const p = APP.profile;
-    return `<header id="profileIdentity" class="profile-header">${profileIdentity()}</header><section class="profile-account" aria-label="Тіркелгі"><div data-auth-account>${authAccountHTML()}</div><p data-auth-message role="status" aria-live="polite">${esc(AUTH.message)}</p></section><form id="profileForm" class="profile-form"><h2>Профильді өңдеу</h2><label for="profileName">Атыңыз</label><input id="profileName" name="name" type="text" maxlength="60" autocomplete="given-name" value="${esc(p.name)}"><label for="profileZhuz">Жүзіңіз</label><select id="profileZhuz" name="zhuz"><option value="">Таңдалмаған</option>${[...APP.profileTree.zhuzes,{id:"non-clan",name:"Руға жатпайтындар"}].map(z => `<option value="${esc(z.id)}"${z.id === p.zhuz ? " selected" : ""}>${esc(z.name)}</option>`).join("")}</select><label for="profileTribe">Руыңыз</label><select id="profileTribe" name="tribe"${p.zhuz ? "" : " disabled"}>${tribeOptions(p.zhuz,p.tribe)}</select><button type="submit">Сақтау</button></form><section class="profile-section" aria-labelledby="savedTitle"><h2 id="savedTitle">Сақталғандар</h2><div id="profileSaved">${profileSaved()}</div></section><section class="profile-section"><h2>Соңғы қаралғандар</h2>${p.recent.length ? `<div class="profile-grid recent-grid">${p.recent.map(e=>profileCard(e)).join("")}</div>` : '<p class="profile-empty">Қаралған материалдар осында көрінеді.</p>'}</section><section class="profile-danger"><h2>${AUTH.user ? "Тіркелгі мен профильді өшіру" : "Профильді өшіру"}</h2><p>${AUTH.user ? "Тіркелгіңіз, бұлттағы және осы браузердегі профиль, сақталғандар мен қарау тарихы біржола өшіріледі." : "Атыңыз, жүз бен ру таңдауыңыз, сақталғандар және қарау тарихы осы браузерден өшіріледі."}</p><button id="deleteProfile" type="button">${AUTH.user ? "Тіркелгі мен профильді өшіру" : "Профильді өшіру"}</button></section>`;
+    const active = profileTabID(id);
+    const tabs = PROFILE_TABS.map(([key,title]) => `<button type="button" class="profile-tab" id="profile-tab-${key}" role="tab" aria-selected="${key === active}" aria-controls="profile-panel-${key}" tabindex="${key === active ? 0 : -1}" data-profile-tab="${key}">${title}</button>`).join("");
+    const panel = (key, content) => `<section class="profile-panel" id="profile-panel-${key}" role="tabpanel" aria-labelledby="profile-tab-${key}" tabindex="0"${active === key ? "" : " hidden"}>${content}</section>`;
+    const settings = `<div class="profile-settings"><form id="profileForm" class="profile-form"><h2>Профильді өңдеу</h2><label for="profileName">Атыңыз</label><input id="profileName" name="name" type="text" maxlength="60" autocomplete="given-name" value="${esc(p.name)}"><label for="profileZhuz">Жүзіңіз</label><select id="profileZhuz" name="zhuz"><option value="">Таңдалмаған</option>${[...APP.profileTree.zhuzes,{id:"non-clan",name:"Руға жатпайтындар"}].map(z => `<option value="${esc(z.id)}"${z.id === p.zhuz ? " selected" : ""}>${esc(z.name)}</option>`).join("")}</select><label for="profileTribe">Руыңыз</label><select id="profileTribe" name="tribe"${p.zhuz ? "" : " disabled"}>${tribeOptions(p.zhuz,p.tribe)}</select><button type="submit">Сақтау</button></form><section class="profile-account" aria-label="Тіркелгі"><h2>Тіркелгі</h2><div data-auth-account>${authAccountHTML()}</div></section><section class="profile-danger"><h2>${AUTH.user ? "Тіркелгі мен профильді өшіру" : "Профильді өшіру"}</h2><p>${AUTH.user ? "Тіркелгіңіз, бұлттағы және осы браузердегі профиль, сақталғандар мен қарау тарихы біржола өшіріледі." : "Атыңыз, жүз бен ру таңдауыңыз, сақталғандар және қарау тарихы осы браузерден өшіріледі."}</p><button id="deleteProfile" type="button">${AUTH.user ? "Тіркелгі мен профильді өшіру" : "Профильді өшіру"}</button></section></div>`;
+    return `<header id="profileIdentity" class="profile-header">${profileIdentity()}</header>${AUTH.user ? "" : `<div class="profile-guest"><p>Тіркелсеңіз, сақталғандарыңыз басқа құрылғыда да ашылады</p>${routeLink("register","Тіркелу","button")}</div>`}<p data-auth-message role="status" aria-live="polite">${esc(AUTH.message)}</p><div class="profile-tabs" role="tablist" aria-label="Профиль бөлімдері">${tabs}</div>${panel("saved", `<h2>Сақталғандар</h2><div id="profileSaved">${profileSaved()}</div>`)}${panel("recent", `<h2>Соңғы қаралғандар</h2>${p.recent.length ? `<div class="profile-grid recent-grid">${p.recent.map(e=>profileCard(e)).join("")}</div>` : `<div class="profile-empty"><p>Тұлғаның өмірбаянын немесе дәстүрді ашсаңыз, соңғы қаралған материалдар осында көрінеді. ${routeLink("people","Ел тұлғалары")} мен ${routeLink("traditions","Салт-дәстүр")} бөлімінен бастаңыз.</p></div>`}`)}${panel("settings", settings)}`;
   },
   mount() {
+    const tabs = Array.from(document.querySelectorAll("[data-profile-tab]"));
+    const select = (key) => {
+      for (const tab of tabs) {
+        const selected = tab.dataset.profileTab === key;
+        tab.setAttribute("aria-selected", String(selected)); tab.tabIndex = selected ? 0 : -1;
+        document.getElementById("profile-panel-" + tab.dataset.profileTab).hidden = !selected;
+      }
+      if (location.hash !== "#profile/" + key) history.pushState(null, "", "#profile/" + key);
+    };
+    tabs.forEach((tab,index) => {
+      tab.addEventListener("click", () => select(tab.dataset.profileTab));
+      tab.addEventListener("keydown", event => {
+        let next;
+        if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+        if (event.key === "ArrowLeft") next = (index + tabs.length - 1) % tabs.length;
+        if (event.key === "Home") next = 0;
+        if (event.key === "End") next = tabs.length - 1;
+        if (next === undefined) return;
+        event.preventDefault(); select(tabs[next].dataset.profileTab); tabs[next].focus();
+      });
+    });
     const zhuz = document.getElementById("profileZhuz"), tribe = document.getElementById("profileTribe");
     zhuz.addEventListener("change", () => { tribe.innerHTML = tribeOptions(zhuz.value); tribe.disabled = !zhuz.value; });
     document.getElementById("profileForm").addEventListener("submit", event => {
@@ -119,7 +146,7 @@ VIEWS.profile = {
       try { localStorage.removeItem(PROFILE_KEY); } catch { removed = false; }
       APP.profile = emptyProfile(); APP.updateProfileButton();
       const page = document.querySelector("#view .page");
-      page.innerHTML = VIEWS.profile.render(); VIEWS.profile.mount();
+      page.innerHTML = VIEWS.profile.render("settings"); VIEWS.profile.mount();
       document.getElementById("profileName").focus();
       APP.toast(removed ? "Профиль өшірілді." : "Браузердегі профильді өшіру мүмкін болмады. Осы беттегі профиль тазартылды.");
     });
@@ -142,6 +169,8 @@ document.addEventListener("click", event => {
     b.setAttribute("aria-pressed",String(saved)); b.textContent = saved ? "Сақталды" : "Сақтау";
   });
   const list = document.getElementById("profileSaved");
+  const count = document.querySelector("[data-profile-saved-count]");
+  if (count) count.textContent = String(APP.profile.saved.length);
   if (list) {
     list.innerHTML = profileSaved();
     const next = list.querySelector("button, a");

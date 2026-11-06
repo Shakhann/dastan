@@ -22,7 +22,7 @@ VIEWS.people = {
     const p = APP.data.people.find(x => x.id === id);
     if (!p) return heading("Тұлға табылмады") + routeLink("people", "Тұлғалар тізіміне оралу");
     const content = `<div class="prose"><p>${esc(p.era)}</p><h2>Өмірі мен мұрасы</h2><p>${esc(p.summary_kk)}</p><h2>Тарихтағы орны</h2><p>${esc(p.why_forgotten_kk)}</p><h2>Толық өмірбаян</h2></div>`;
-    return routeLink("people", "Барлық тұлғалар", "back") + heading(p.name) + saveButton("person", p.id) + `<div class="person-detail"><aside>${p.image ? imageFigure(p.image, "portrait") : monogram(p)}</aside><article class="prose"><p class="years">${esc(p.years)}</p>${p.years_note_kk ? `<p class="note">${esc(p.years_note_kk)}</p>` : ""}<p><b>${esc(p.role)}</b></p><p>${esc(shortText(p.summary_kk))}</p>${fullDetails("people_" + p.id, content, {fallback: attribution({title:p.name,source_url:p.wiki_url})})}</article></div>`;
+    return routeLink("people", "Барлық тұлғалар", "back") + heading(p.name) + saveButton("person", p.id) + `<div class="person-detail${p.image ? "" : " person-detail--text"}">${p.image ? `<aside>${imageFigure(p.image, "portrait")}</aside>` : ""}<article class="prose"><p class="years">${esc(p.years)}</p>${p.years_note_kk ? `<p class="note">${esc(p.years_note_kk)}</p>` : ""}<p><b>${esc(p.role)}</b></p><p>${esc(shortText(p.summary_kk))}</p>${fullDetails("people_" + p.id, content, {fallback: attribution({title:p.name,source_url:p.wiki_url})})}</article></div>`;
   }
 };
 VIEWS.traditions = {

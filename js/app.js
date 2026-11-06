@@ -75,9 +75,6 @@ function imageFigure(path, cls = "", eager = false, overlay = "") {
   if (!c || !/^assets\/heritage\/[a-zA-Z0-9_.-]+$/.test(path)) return "";
   return `<figure class="${esc(cls)}"><div class="image-frame"><img src="${esc(path)}" alt="${esc(c.caption_kk)}" ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async">${overlay}</div><figcaption>${imageCredit(c)}</figcaption></figure>`;
 }
-function monogram(person) {
-  return `<div class="monogram" role="img" aria-label="${esc(person.name)}: портреті жоқ"><span aria-hidden="true">${esc(person.name.split(/\s+/).slice(0,2).map(n=>Array.from(n)[0]).join(""))}</span></div>`;
-}
 function imageCard(path, title, route, cls = "", description = "") {
   return `<article class="image-card ${esc(cls)}">${imageFigure(path, "card-visual")}<div class="card-copy"><h2 class="card-title">${routeLink(route,title)}</h2>${description ? `<p class="card-description">${esc(description)}</p>` : ""}</div></article>`;
 }
@@ -85,7 +82,7 @@ function personPatch(p, preview = false) {
   const route = "people/" + encodeURIComponent(p.id);
   const summary = preview ? `<p class="card-excerpt">${esc(shortText(p.summary_kk))}</p>` : "";
   if (p.image) return imageCard(p.image, p.name, route, "person portrait", `${p.years}. ${p.role}`).replace("</div></article>", `${summary}</div></article>`);
-  return `<article class="image-card person">${monogram(p)}<div class="card-copy"><h2 class="card-title">${routeLink(route,p.name)}</h2><p class="card-description">${esc(p.years)}. ${esc(p.role)}</p>${summary}</div></article>`;
+  return `<article class="image-card person"><div class="card-copy"><h2 class="card-title">${routeLink(route,p.name)}</h2><p class="card-description">${esc(p.years)}. ${esc(p.role)}</p>${summary}</div></article>`;
 }
 function traditionPatch(t) {
   if (t.image) return imageCard(t.image, t.name, "traditions/" + encodeURIComponent(t.id), "tradition", shortText(t.summary_kk));

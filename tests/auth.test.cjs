@@ -7,7 +7,7 @@ function setup({configured=true,url='https://example.test/dastan/#login',cloud=n
  const run=s=>vm.runInContext(s,ctx);
  run(`const APP={toast:message=>notices.push(message)}, VIEWS={}; function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))} function routeLink(r,l){return '<a href="#'+r+'">'+esc(l)+'</a>'} function imageFigure(){return '<figure>Сырмақ</figure>'} function heading(t){return '<h1>'+esc(t)+'</h1>'} function renderRoute(){};const SUPABASE_URL=${JSON.stringify(configured?'https://test.supabase.co':'')},SUPABASE_ANON_KEY=${JSON.stringify(configured?'anon':'')};`);
  ctx.notices=notices;
- run(fs.readFileSync('js/profile.js','utf8'));run(fs.readFileSync('js/auth.js','utf8'));
+ run(fs.readFileSync('js/shanyrak.js','utf8'));run(fs.readFileSync('js/profile.js','utf8'));run(fs.readFileSync('js/auth.js','utf8'));
  run(`APP.profileTree={zhuzes:[{id:'uly',branches:[{tribes:[{id:'dulat'}]}]},{id:'orta',branches:[{tribes:[{id:'argyn'}]}]}],non_clan:[]}; for(let i=0;i<250;i++)APP.materials.set('person:'+i,{title:'Тұлға'});`);
  return {run,ctx,storage,session,handlers,client,writes,notices,location,async tick(ms=650){for(const [id,t] of [...timers])if(t.ms===ms){timers.delete(id);t.fn()}await run('AUTH.writes');},event(e,s){listener(e,s)}};
 }
@@ -63,8 +63,12 @@ function setup({configured=true,url='https://example.test/dastan/#login',cloud=n
  // 8-кезең: пішін өрістері және интерфейс келісімі.
  t=setup();await t.run('APP.initAuth()');
  const login=t.run("authPage('login')"), register=t.run("authPage('register')");
- assert.match(login,/auth-layout/);assert.match(login,/<a href="#login" aria-current="page">/);
- assert.match(register,/<a href="#register" aria-current="page">/);assert.doesNotMatch(login,/role="tablist"/);
+ assert.match(login,/auth-layout/);assert.match(login,/Қайта келдіңіз/);
+ assert.match(register,/Тіркелгіңіз бар ма/);assert.doesNotMatch(login,/auth-switch|role="tablist"/);assert.doesNotMatch(register,/поштаңызды раста|Поштаңызды раста|растау сілтемесі/i);
+ assert.match(login,/auth-login/);assert.match(register,/auth-register/);
+ assert.match(register,/Материалдарды сақтап жинаңыз/);assert.match(register,/Соңғы қаралғандарға қайта оралыңыз/);assert.match(register,/Басқа құрылғыдан кіріңіз/);
+ assert.match(login,/shanyrak-svg/);assert.doesNotMatch(login,/auth-benefits/);
+ for(const kind of ['reset','new-password'])assert.match(t.run(`authPage('${kind}')`),/auth-layout/);
  assert.match(login,/data-password-toggle aria-controls="authPassword" aria-pressed="false"/);
  assert.match(login,/aria-describedby="authEmailError"/);assert.match(login,/Тіркелмей жалғастыру/);
  await submit(t,'login','signInWithPassword',{}, {email:'wrong'});
@@ -80,6 +84,12 @@ function setup({configured=true,url='https://example.test/dastan/#login',cloud=n
  assert.equal(input.type,'text');assert.equal(reveal['aria-pressed'],'true');assert.equal(reveal.textContent,'Жасыру');
  for(const click of t.handlers.click)click({target:{closest:s=>s==='[data-password-toggle]'?reveal:null}});
  assert.equal(input.type,'password');assert.equal(reveal['aria-pressed'],'false');
+ // Растаусыз тіркелу: сессия, профиль бағыты, сәлемдесу; бұрынғы бағыттан басым.
+ t=setup();await t.run('APP.initAuth()');
+ t.session.set('dastan.auth.return','#people/abai');
+ await submit(t,'register','signUp',{data:{session:{user:{id:'new',email:'mail@test.kz'}}}});
+ assert.equal(t.run('AUTH.user.id'),'new');assert.equal(t.location.hash,'#profile');
+ assert.match(t.run('AUTH.message'),/Қош келдіңіз/);assert.equal(t.run('AUTH.confirmation'),null);
  // Растау экраны, HTML escaping, қайта жіберу және 60 секундтық тосқауыл.
  t=setup();await t.run('APP.initAuth()');
  await submit(t,'register','signUp',{data:{session:null,user:{identities:[{}]}}});
