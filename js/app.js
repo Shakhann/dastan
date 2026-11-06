@@ -140,7 +140,7 @@ async function renderRoute() {
   stopAudio();
   const root = document.getElementById("view");
   const main = document.getElementById("main");
-  document.querySelectorAll("#siteNav a, #footerNav a, .menu-profile").forEach(a => {
+  document.querySelectorAll("#siteNav a, #footerNav a").forEach(a => {
     if (a.getAttribute("href") === "#" + navParent(route)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
   root.innerHTML = '<div class="page"><p role="status">Мұра беттері жүктелуде…</p></div>';

@@ -77,7 +77,21 @@ function authAccountHTML() {
   if (AUTH.user) return `<p>Кірген тіркелгі: <strong>${esc(AUTH.user.email || "Расталған тіркелгі")}</strong></p><p>${AUTH.localOnly ? LOCAL_PROFILE_MESSAGE : AUTH.loading ? "Профиль бұлттан жүктелуде…" : AUTH.syncFailed ? "Жергілікті көшірме сақтаулы. Бұлтқа қайта жіберу қажет." : AUTH.ready ? "Профиль осы браузерде және бұлтта сақталады." : "Жергілікті көшірме сақтаулы. Бұлтпен байланысты қайта тексеріңіз."}</p><div class="auth-actions"><button type="button" data-auth-logout${AUTH.busy ? " disabled" : ""}>Шығу</button>${(!AUTH.ready || AUTH.syncFailed) && !AUTH.loading && !AUTH.localOnly ? '<button type="button" data-auth-retry>Қайта қосылу</button>' : ""}</div>`;
   return `<p>Қонақ режимі. Профиль осы браузерде сақталады.</p><div class="auth-actions">${routeLink("login","Кіру")}${routeLink("register","Тіркелу")}</div>`;
 }
+function authMenuHTML() {
+  const current = navParent(APP.route) === "profile" ? ' aria-current="page"' : "";
+  const detail = AUTH.user ? AUTH.user.email || "Тіркелгі" : "Қонақ";
+  const profile = `<a class="menu-profile" href="#profile"${current}><span class="menu-avatar" aria-hidden="true">${profileSymbol(APP.profile.name || AUTH.user?.email)}</span><span class="menu-profile-copy"><strong>Профиль</strong><small>${esc(detail)}</small></span></a>`;
+  if (AUTH.user) return `${profile}<button type="button" class="menu-auth-link" data-auth-logout>Шығу</button>`;
+  return `${profile}${routeLink("login","Кіру","menu-auth-link")}${routeLink("register","Тіркелу","menu-auth-link menu-auth-primary")}`;
+}
 APP.updateAuthUI = () => {
+  document.querySelectorAll("[data-auth-menu]").forEach(node => {
+    const html = authMenuHTML();
+    if (node.innerHTML === html) return;
+    const focused = node.contains(document.activeElement);
+    node.innerHTML = html;
+    if (focused) (node.querySelector("button, a") || document.getElementById("menuClose"))?.focus();
+  });
   document.querySelectorAll("[data-auth-account]").forEach(node => {
     const html = authAccountHTML();
     if (node.innerHTML === html) return;

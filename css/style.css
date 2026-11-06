@@ -326,7 +326,7 @@ body.menu-open { overflow: hidden; }
   background: var(--kiiz);
   color: var(--ak);
 }
-.menu-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.menu-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--zhun); }
 .menu-heading h2 { margin: 0; font-size: clamp(1.5rem, 2vw, 2rem); }
 #menuClose { background: var(--ak); color: var(--kiiz); border-color: var(--ak); }
 .menu-orbit { position: relative; flex: 1 0 600px; width: 100%; max-width: 1100px; margin: 0 auto; }
@@ -342,6 +342,8 @@ body.menu-open { overflow: hidden; }
   padding: .55rem .75rem;
   transform: translate(-50%, -50%) rotate(calc(var(--i) * 45deg - 90deg)) translateY(-245px) rotate(calc(90deg - var(--i) * 45deg));
   background: var(--kiiz);
+  /* Айналдырылған блок жиегінде шығатын жұқа сызықты жабады. */
+  box-shadow: 0 0 0 2px var(--kiiz);
   color: var(--ak);
   text-align: center;
   text-decoration: none;
@@ -350,11 +352,17 @@ body.menu-open { overflow: hidden; }
 #siteNav a:hover { text-decoration: underline; }
 #siteNav a[aria-current] { color: var(--zhun); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: .25em; }
 .menu-panel :focus-visible { outline-color: var(--ak); }
-.menu-profile { color: var(--ak); display: flex; width: 100%; max-width: 68ch; margin: 0 auto; min-height: 44px; align-items: center; font-family: var(--heading); }
-.menu-account { max-width: 68ch; margin: 0 auto; width: 100%; padding-top: 1rem; border-top: 1px solid var(--ak); font: 500 1rem/1.5 var(--heading); }
-.menu-account a { color: var(--ak); }
-.menu-account .auth-actions { margin-bottom: 0; }
-.menu-account button { border-color: var(--ak); }
+.menu-account-bar { display: flex; align-items: center; gap: .7rem; min-width: 0; margin-left: auto; font-family: var(--heading); }
+.menu-profile { display: flex; align-items: center; gap: .7rem; min-width: 0; min-height: 44px; margin-right: .5rem; color: var(--ak); text-decoration: none; }
+.menu-profile:hover strong, .menu-profile[aria-current] strong { text-decoration: underline; text-underline-offset: .2em; }
+.menu-avatar { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--zhun); color: var(--kiiz); font: 700 1.2rem/1 var(--heading); }
+.menu-avatar svg { width: 55%; height: 55%; }
+.menu-profile-copy { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.menu-profile-copy strong { font-size: 1.05rem; }
+.menu-profile-copy small { max-width: 22ch; overflow: hidden; color: var(--zhun); font-size: .85rem; text-overflow: ellipsis; white-space: nowrap; }
+.menu-auth-link, button.menu-auth-link { display: inline-flex; align-items: center; min-height: 44px; padding: .4rem 1rem; border: 1px solid var(--ak); background: transparent; color: var(--ak); font: 700 1rem/1.2 var(--heading); text-decoration: none; }
+.menu-auth-link:hover, button.menu-auth-link:hover { background: var(--ak); border-color: var(--ak); color: var(--kiiz); }
+.menu-auth-primary { background: var(--zhun); border-color: var(--zhun); color: var(--kiiz); }
 
 /* Оқу және іздеу. */
 .prose { max-width: 68ch; min-width: 0; font: 400 1rem/1.75 var(--body); overflow-wrap: anywhere; }
@@ -562,7 +570,7 @@ body.menu-open { overflow: hidden; }
   .menu-orbit { flex: 1 0 auto; margin: 2rem auto; max-width: 620px; }
   .menu-shanyrak { width: 100%; height: auto; aspect-ratio: 1; opacity: .12; }
   #siteNav { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: .3rem; }
-  #siteNav a { position: relative; top: auto; left: auto; width: 100%; transform: none; text-align: left; font-size: clamp(1.7rem, 4vw, 2.6rem); background: transparent; }
+  #siteNav a { position: relative; top: auto; left: auto; width: 100%; transform: none; text-align: left; font-size: clamp(1.7rem, 4vw, 2.6rem); background: transparent; box-shadow: none; }
   .hero { min-height: auto; flex-direction: column; padding-top: 0; }
   .hero-shanyrak { width: 56vw; margin: 25vw 0 2rem; order: -1; }
   .hero-shanyrak .shanyrak-svg { width: 112vw; height: 112vw; left: -28vw; top: -28vw; clip-path: inset(0 0 23%); }
@@ -667,9 +675,11 @@ body.menu-open { overflow: hidden; }
   .password-control { gap: .35rem; }
   .password-control button { padding-inline: .6rem; font-size: 1rem; }
   .menu-panel { padding: 1.2rem 5%; }
-  .menu-heading { gap: .5rem; }
+  .menu-heading { gap: .75rem .5rem; }
   .menu-heading h2 { font-size: clamp(1.3rem, 5vw, 1.5rem); }
-  .menu-account { font-size: .95rem; }
+  .menu-account-bar { order: 3; flex: 1 0 100%; margin-left: 0; gap: .5rem; }
+  .menu-profile { flex: 1; margin-right: 0; }
+  .menu-auth-link, button.menu-auth-link { padding-inline: .7rem; }
   .site-footer { padding-top: 3rem; }
 }
 

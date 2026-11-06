@@ -207,7 +207,7 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   const fontCSS=fs.readFileSync('css/fonts.css','utf8');
   for(const [,path] of fontCSS.matchAll(/url\("([^"]+)"\)/g)) assert.ok(fs.existsSync(require('node:path').resolve('css',path)),path);
   for(const [,path] of index.matchAll(/(?:src|href)="((?:js|css)\/[^\"]+)"/g)) {
-    if (!path.includes('js/vendor/')) assert.match(path,/\?v=12$/);
+    if (!path.includes('js/vendor/')) assert.match(path,/\?v=13$/);
   }
   // Ортақ lazy жүктеу: жабық күй, бір сұрау, қате/қайта көру және кеш жауап.
   function fullNode(key, fallback='', content=false) {
