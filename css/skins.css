@@ -556,3 +556,9 @@ html { font-size: 112.5%; }
 :root[data-skin] .video-frame { overflow: hidden; }
 :root[data-skin] .video-frame .video-play { background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 :root[data-skin] button.save-material { display: inline-flex; width: auto !important; min-width: 170px; max-width: max-content; margin-bottom: 1.5rem; }
+/* Дәстүр беті: оқу бағанасы мен әрпі үлкейтілді, бет кеңірек ашылады. */
+@media (min-width: 900px) {
+  :root[data-skin] .tradition-detail { width: min(1560px, calc(100vw - 3rem)); margin-inline: calc(50% - min(780px, calc(50vw - 1.5rem))); grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 1.75rem; }
+}
+:root[data-skin] .tradition-detail .prose, :root[data-skin] .tradition-detail .tradition-text { font-size: 1.125rem; line-height: 1.7; }
+:root[data-skin] .tradition-detail .prose p, :root[data-skin] .tradition-detail .prose li { max-width: none; font-size: inherit; }
