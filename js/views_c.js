@@ -31,7 +31,7 @@ VIEWS.voice = {
   title: "Тыңдау",
   render() { return heading("Тыңдау", "Қазақша сөздердің айтылуын тыңдаңыз.") + `<div class="word-grid">${DICT.map(dictionaryWord).join("")}</div>`; }
 };
-const CATEGORIES = {jyr: "Жыр-дастан", taam: "Ұлттық тағамдар", kijim: "Ұлттық киімдер", tarikh: "Тарих", tulgalar: "Тұлғалар", oyu: "Ою-өрнек"};
+const CATEGORIES = {jyr: "Жыр-дастан", oner: "Өнер және тұрмыс", taam: "Ұлттық тағамдар", kijim: "Ұлттық киімдер", tarikh: "Тарих", tulgalar: "Тұлғалар", oyu: "Ою-өрнек"};
 const ORNAMENT_NOTICE = "Төмендегі сақталған SVG сызбалары оюлардың дәл үлгісі емес. Оларды дәстүрлі ою пішінін жаттауға пайдаланбаңыз. Атаулар мен сипаттамалар зерттеу жинағынан берілген.";
 function ornamentNotice() {
   return `<aside class="notice"><h2>Сызбалар туралы</h2><p>${esc(ORNAMENT_NOTICE)}</p><p>Сәйкес келмейтін сызбалар бұл бетте көрсетілмейді. Қазір тек атаулар мен сипаттамалар берілген.</p></aside>`;
@@ -42,32 +42,11 @@ function cleanExcerpt(text) {
 function articleText(d) { return cleanExcerpt(d.text).split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join(""); }
 function article(d) {
   const image = APP.visuals.articles?.[d.id] || (d.category === "jyr" ? APP.visuals.articles?.jyr_default : "");
-  return `<details class="patch article" data-article="${esc(d.id)}"><summary>${image ? imageFigure(image,"article-cover") : ""}<span class="article-title">${esc(d.title)}</span></summary><div class="article-body"><div class="prose" data-article-body>${articleText(d)}${attribution(d)}</div><div class="article-tools">${saveButton("article", d.id)}${audioButton(cleanExcerpt(d.text).slice(0,500),d.id)}</div></div></details>`;
+  const summary = `${image ? imageFigure(image,"article-cover") : ""}<span class="article-title">${esc(d.title)}</span><span class="article-excerpt">${esc(shortText(cleanExcerpt(d.text)))}</span>`;
+  const tools = `<div class="article-tools">${saveButton("article", d.id)}${audioButton(cleanExcerpt(d.text).slice(0,500),d.id)}</div>`;
+  return fullDetails("art_" + d.id, tools, {summary, articleID:d.id, fallback:articleText(d) + attribution(d)});
 }
-async function loadArticle(details) {
-  if (details.dataset.loaded === "true" || details.dataset.loading === "true") return;
-  details.dataset.loading = "true";
-  const body = details.querySelector("[data-article-body]");
-  const fallback = details._fallback || body.innerHTML; details._fallback = fallback;
-  body.innerHTML = '<p role="status">Толық мәтін жүктелуде…</p>';
-  try {
-    const full = await optionalFull("art_" + details.dataset.article);
-    if (!details.isConnected) return;
-    body.innerHTML = full ? fullSections(full) : fallback;
-    details.dataset.loaded = "true";
-  } catch {
-    if (details.isConnected) { body.innerHTML = '<p role="alert">Толық мәтін жүктелмеді.</p><button type="button" data-article-retry>Қайта көру</button>'; }
-  } finally { details.dataset.loading = "false"; }
-}
-document.addEventListener("toggle", e => {
-  if (e.target.matches("details[data-article]") && e.target.open) {
-    APP.visit("article", e.target.dataset.article);
-    loadArticle(e.target);
-  }
-}, true);
-document.addEventListener("click", e => {
-  if (e.target.closest("[data-article-retry]")) loadArticle(e.target.closest("details"));
-});
+
 async function culturalArticles(category) {
   const topics = await APP.cachedJSON("content_topics.json");
   return Promise.all(topics.filter(t => category ? t.category === category : t.category !== "oyu").map(t => APP.cachedJSON(`data/${t.category}/${t.id}.json`)));
@@ -155,11 +134,27 @@ VIEWS.encyclopedia = {
   }
 };
 const LANGUAGE_LINKS = [["dict","Сөздік"],["words","Көнерген сөздер"],["proverbs","Мақал-мәтел"],["twisters","Жаңылтпаш"],["gram","Тіл ережелері"],["voice","Тыңдау"]];
-VIEWS.language = {title:"Тіл", render() { return heading("Тіл", "Қазақ тілінің сөз байлығы мен айтылымы.") + `<div class="language-index">${LANGUAGE_LINKS.map(([r,n])=>routeLink(r,n)).join("")}</div>`; }};
+const LANGUAGE_ARTICLES = [["kazakh-language", "Қазақ тілі"], ["kazakh-alphabet", "Қазақ әліпбиі"], ["proverbs", "Мақал-мәтелдер"], ["tongue-twisters", "Жаңылтпаш"], ["orkhon-script", "Көне түркі жазбалары"]];
+async function languageMaterial(id, title) {
+  const key = "lang_" + id;
+  try {
+    const full = await optionalFull(key);
+    const first = full?.sections?.flatMap(s => s.paragraphs || []).find(p => String(p).trim());
+    if (!first) return "";
+    return `<section class="language-material"><h2>${esc(title)}</h2><p>${esc(shortText(first))}</p>${fullDetails(key)}</section>`;
+  } catch {
+    return `<section class="language-material"><h2>${esc(title)}</h2><p role="alert">Қысқа мәтін жүктелмеді.</p>${fullDetails(key)}</section>`;
+  }
+}
+VIEWS.language = {title:"Тіл", async render() { return heading("Тіл", "Қазақ тілінің сөз байлығы мен айтылымы.") + `<div class="language-index">${LANGUAGE_LINKS.map(([r,n])=>routeLink(r,n)).join("")}</div><section><h2>Тіл туралы</h2>${(await Promise.all(LANGUAGE_ARTICLES.map(([id,title]) => languageMaterial(id,title)))).join("")}</section>`; }};
+for (const [route, id, title] of [["proverbs", "proverbs", "Мақал-мәтелдер"], ["twisters", "tongue-twisters", "Жаңылтпаш"]]) {
+  const render = VIEWS[route].render;
+  VIEWS[route].render = async function() { return await languageMaterial(id,title) + render.call(this); };
+}
 for (const [r, title] of LANGUAGE_LINKS) {
   VIEWS[r].title = title;
   const render = VIEWS[r].render;
-  VIEWS[r].render = function(id) { return subnav(LANGUAGE_LINKS,"Тіл бөлімдері") + render.call(this,id); };
+  VIEWS[r].render = async function(id) { return subnav(LANGUAGE_LINKS,"Тіл бөлімдері") + await render.call(this,id); };
 }
 for (const r of ["jyr","read","ornaments"]) {
   const render = VIEWS[r].render;

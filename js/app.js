@@ -5,6 +5,28 @@ const NAV = [["home", "Басты бет"], ["people", "Ел тұлғалары"
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c]));
 }
+// Қысқа мәтінді сөйлемге, ол сыймаса сөзге дейін аламыз.
+function shortText(text, limit = 220) {
+  const value = String(text || "").replace(/\s+/g, " ").trim();
+  limit = Math.max(0, Math.floor(Number(limit) || 0));
+  if (value.length <= limit) return value;
+  if (!limit) return "";
+  let end = 0;
+  for (const match of value.matchAll(/[.!?](?:[»”"')\]]*)(?=\s|$)/gu)) {
+    const i = match.index, stop = i + match[0].length;
+    if (stop > limit) break;
+    if (value[i] === ".") {
+      const token = (value.slice(0, i + 1).match(/[^\s]+$/u)?.[0] || "").replace(/^[«“"'(\[]+/u, "");
+      if (/\d\.$/u.test(token) || /^(?:ж|жж|ғ|ғғ|т\.б|т\.с\.с|б\.з|б\.з\.д|т|б|с|ноғ|қаз|орыс|лат|ағылш|араб|парсы|гр|фр|нем|қысқ|мыс|шам)\.$/iu.test(token) || /^(?:\p{Lu}\.)+$/u.test(token)) continue;
+    }
+    end = stop;
+  }
+  if (end) return value.slice(0, end);
+  const clipped = value.slice(0, Math.max(0, limit - 1));
+  if (/\s/u.test(value[clipped.length] || "")) return clipped.trimEnd() + "…";
+  const boundary = clipped.search(/\s+\S*$/u);
+  return (boundary >= 0 ? clipped.slice(0, boundary) : "") + "…";
+}
 function safeURL(value) {
   try { const u = new URL(value); return /^https?:$/.test(u.protocol) ? u.href : ""; }
   catch { return ""; }
@@ -59,14 +81,15 @@ function monogram(person) {
 function imageCard(path, title, route, cls = "", description = "") {
   return `<article class="image-card ${esc(cls)}">${imageFigure(path, "card-visual")}<div class="card-copy"><h2 class="card-title">${routeLink(route,title)}</h2>${description ? `<p class="card-description">${esc(description)}</p>` : ""}</div></article>`;
 }
-function personPatch(p) {
+function personPatch(p, preview = false) {
   const route = "people/" + encodeURIComponent(p.id);
-  if (p.image) return imageCard(p.image, p.name, route, "person portrait", `${p.years}. ${p.role}`);
-  return `<article class="image-card person">${monogram(p)}<div class="card-copy"><h2 class="card-title">${routeLink(route,p.name)}</h2><p class="card-description">${esc(p.years)}. ${esc(p.role)}</p></div></article>`;
+  const summary = preview ? `<p class="card-excerpt">${esc(shortText(p.summary_kk))}</p>` : "";
+  if (p.image) return imageCard(p.image, p.name, route, "person portrait", `${p.years}. ${p.role}`).replace("</div></article>", `${summary}</div></article>`);
+  return `<article class="image-card person">${monogram(p)}<div class="card-copy"><h2 class="card-title">${routeLink(route,p.name)}</h2><p class="card-description">${esc(p.years)}. ${esc(p.role)}</p>${summary}</div></article>`;
 }
 function traditionPatch(t) {
-  if (t.image) return imageCard(t.image, t.name, "traditions/" + encodeURIComponent(t.id), "tradition", t.summary_kk);
-  return `<article class="patch"><div class="patch-body"><h2>${routeLink("traditions/" + encodeURIComponent(t.id), t.name)}</h2><p>${esc(t.summary_kk)}</p></div></article>`;
+  if (t.image) return imageCard(t.image, t.name, "traditions/" + encodeURIComponent(t.id), "tradition", shortText(t.summary_kk));
+  return `<article class="patch"><div class="patch-body"><h2>${routeLink("traditions/" + encodeURIComponent(t.id), t.name)}</h2><p>${esc(shortText(t.summary_kk))}</p></div></article>`;
 }
 
 let activeAudio = null;
@@ -190,15 +213,50 @@ function fullSections(d) {
   return (d.sections || []).map(s => `${s.heading ? `<${Number(s.level) >= 3 ? "h3" : "h2"}>${esc(s.heading)}</${Number(s.level) >= 3 ? "h3" : "h2"}>` : ""}${(s.paragraphs || []).map(p => `<p>${esc(p)}</p>`).join("")}`).join("") + attribution(d);
 }
 // Бұл материалдардың толық мәтін файлы жоқ, сондықтан оларды сұрамаймыз.
-const NO_FULL_TEXT = new Set(["trad_konakasy", "trad_kymyzmuryndyk", "art_kijim_ishik"]);
+const NO_FULL_TEXT = new Set(["art_kijim_ishik"]);
+APP.missingFull = new Set();
 async function optionalFull(key) {
   if (!/^[\w-]+$/.test(key) || NO_FULL_TEXT.has(key)) return null;
   const path = `data/full/${key}.json`;
   if (!APP.cache.has(path)) APP.cache.set(path, (async () => {
     const r = await fetch(path);
-    if (r.status === 404) return null;
+    if (r.status === 404) { APP.missingFull.add(key); return null; }
     if (!r.ok) throw new Error("Мәтін жүктелмеді");
     return r.json();
   })().catch(e => { APP.cache.delete(path); throw e; }));
   return APP.cache.get(path);
 }
+
+function detailsLabel() {
+  return '<span class="details-more">Толығырақ</span><span class="details-less">Жасыру</span>';
+}
+function fullDetails(key, content = "", {summary = "", articleID = "", fallback = ""} = {}) {
+  if ((NO_FULL_TEXT.has(key) || APP.missingFull.has(key)) && !content && !fallback) return "";
+  return `<details class="article full-details" data-full="${esc(key)}"${articleID ? ` data-article="${esc(articleID)}"` : ""}><summary>${summary}${detailsLabel()}</summary><div class="article-body">${content}<div class="prose" data-full-body>${fallback}</div></div></details>`;
+}
+async function loadArticle(details) {
+  if (!details.open || details.dataset.loaded === "true" || details.dataset.loading === "true") return;
+  details.dataset.loading = "true";
+  const body = details.querySelector("[data-full-body]");
+  const fallback = details._fallback ?? body.innerHTML; details._fallback = fallback;
+  body.innerHTML = '<p role="status">Толық мәтін жүктелуде…</p>';
+  try {
+    const full = await optionalFull(details.dataset.full);
+    if (!details.isConnected) return;
+    const hasText = full?.sections?.some(s => s.paragraphs?.some(p => String(p).trim()));
+    if (!hasText) APP.missingFull.add(details.dataset.full);
+    body.innerHTML = hasText ? fullSections(full) : fallback;
+    details.dataset.loaded = "true";
+    if (!hasText && !fallback && !body.previousElementSibling) details.remove();
+  } catch {
+    if (details.isConnected) body.innerHTML = '<p role="alert">Толық мәтін жүктелмеді.</p><button type="button" data-full-retry>Қайта көру</button>';
+  } finally { details.dataset.loading = "false"; }
+}
+document.addEventListener("toggle", e => {
+  if (!e.target.matches("details[data-full]") || !e.target.open) return;
+  if (e.target.dataset.article) APP.visit("article", e.target.dataset.article);
+  loadArticle(e.target);
+}, true);
+document.addEventListener("click", e => {
+  if (e.target.closest("[data-full-retry]")) loadArticle(e.target.closest("details[data-full]"));
+});

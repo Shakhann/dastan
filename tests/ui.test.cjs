@@ -3,12 +3,15 @@
 const fs = require('node:fs');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
+const documentEvents = {};
+const requests = [];
 const context = vm.createContext({
   console, URL, Map, Set, Date, Promise,
-  document: {addEventListener(){}, getElementById(){return null;}, querySelectorAll(){return [];}},
+  document: {addEventListener(type, listener){(documentEvents[type] ||= []).push(listener);}, getElementById(){return null;}, querySelectorAll(){return [];}},
   window: {addEventListener(){}}, location: new URL('https://example.test/#home'),
   localStorage: {getItem(){return null;}},
   fetch: async path => {
+    requests.push(path);
     const exists = fs.existsSync(path);
     return {ok:exists,status:exists ? 200 : 404,json:async()=>JSON.parse(fs.readFileSync(path,'utf8'))};
   }, setTimeout(){}, clearTimeout(){}
@@ -20,6 +23,78 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
 (async () => {
   await run('APP.loadHeritage();');
   await run('APP.initProfile();');
+  // Сөйлем, қысқарту, сан және сөз шекаралары.
+  const shortCases = [
+    ['',220,''], ['Қысқа мәтін.',220,'Қысқа мәтін.'],
+    ['  Қазақ   тілі.  ',220,'Қазақ тілі.'],
+    ['Бір сөйлем. Екінші сөйлем өте ұзақ болып жалғасады.',25,'Бір сөйлем.'],
+    ['Сұрақ па? Келесі сөйлем ұзақ жалғасады.',15,'Сұрақ па?'],
+    ['Бір сөз әрі қарай жалғасады',0,''],
+    ['Бір сөз әрі қарай жалғасады',1,'…'],
+    ['бір екі үш төрт',8,'бір екі…']
+  ];
+  for (const [text,limit,expected] of shortCases) {
+    context.excerptText=text; context.excerptLimit=limit;
+    assert.equal(run('shortText(excerptText,excerptLimit)'),expected);
+  }
+  for (const text of [
+    '1930 ж. ел өмірінде үлкен өзгерістер басталды және жалғасты',
+    'А. Бөкейхан ел өмірінде үлкен із қалдырған көрнекті тұлға',
+    'А.Б. Бөкейхан ел өмірінде үлкен із қалдырған көрнекті тұлға',
+    'Мысалы, т.б. деректер осы жерде кеңінен баяндалып жалғасады',
+    '1930. Бұл саннан кейін мәтін әлі де жалғасып жатыр',
+    'Домбыра (ноғ. Домбра) — қазақ халқының музыкалық аспабы'
+  ]) {
+    context.excerptText=text; context.excerptLimit=28;
+    const result=run('shortText(excerptText,excerptLimit)');
+    assert.ok(result.length<=28,result);
+    assert.ok(result.endsWith('…'),result);
+  }
+  for (let limit=0;limit<240;limit++) {
+    context.excerptText='Қазақ тілі — бай әрі көркем тіл, халықтың мәдени мұрасы. '.repeat(8);
+    context.excerptLimit=limit;
+    assert.ok(run('shortText(excerptText,excerptLimit).length')<=limit);
+  }
+  // Дайын толық мәтіндер мен жаңа мәдениет мақалаларының келісімі.
+  const languageIDs = ['kazakh-language','kazakh-alphabet','proverbs','tongue-twisters','orkhon-script'];
+  const timelineYears = run('APP.data.timeline.map(t=>t.year)');
+  assert.equal(timelineYears.length,14);
+  const fullKeys = [...languageIDs.map(id=>'lang_'+id), ...timelineYears.map(year=>'tl_'+year),
+    'trad_konakasy','trad_kymyzmuryndyk', ...['dombyra','qobyz','kui','aitys','kiiz-ui'].map(id=>'art_'+id)];
+  for (const key of fullKeys) {
+    const data=JSON.parse(fs.readFileSync(`data/full/${key}.json`,'utf8'));
+    assert.equal(data.key,key);
+    assert.ok(data.title && data.source_url && data.source_name && data.license,key);
+    assert.ok(data.sections.some(s=>s.paragraphs?.length),key);
+    context.fullFixture=data;
+    const html=run('fullSections(fullFixture)');
+    assert.match(html,/class="fine attribution"/);
+    assert.match(html,/href="#credits"/);
+    assert.doesNotMatch(html,/<a[^>]+href="https?:/);
+  }
+  assert.equal(run('NO_FULL_TEXT.has("trad_konakasy")'),false);
+  assert.equal(run('NO_FULL_TEXT.has("trad_kymyzmuryndyk")'),false);
+  assert.equal(run('NO_FULL_TEXT.has("art_kijim_ishik")'),true);
+  const onerIDs=['dombyra','qobyz','kui','aitys','kiiz-ui'];
+  assert.equal(run('CATEGORIES.oner'),'Өнер және тұрмыс');
+  assert.equal(run('Object.keys(CATEGORIES)[1]'),'oner');
+  for (const id of onerIDs) {
+    const data=JSON.parse(fs.readFileSync(`data/oner/${id}.json`,'utf8'));
+    assert.equal(data.category,'oner');
+    context.onerID=id;
+    assert.equal(run('APP.materials.has("article:"+onerID)'),true);
+    assert.equal(run('validateProfile({saved:[{type:"article",id:onerID}]}).saved.length'),1);
+    assert.match(run('profileCard({type:"article",id:onerID},true)'),new RegExp('href="#culture/'+id+'"'));
+  }
+  for (const [id,name] of [['dombyra','dombra-zhambyl.jpg'],['kiiz-ui','yurt-assembling.jpg']]) {
+    context.onerID=id;
+    assert.equal(run('APP.visuals.articles[onerID]'),'assets/heritage/'+name);
+    assert.equal(run('APP.credits.some(c=>c.path===APP.visuals.articles[onerID])'),true);
+  }
+  for (const id of ['qobyz','kui','aitys']) {
+    context.onerID=id;
+    assert.equal(run('APP.visuals.articles[onerID]'),undefined);
+  }
   const routes = run('Object.keys(VIEWS)');
   let count = 0;
   async function render(route,id) {
@@ -33,17 +108,60 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
     count++;
     return html;
   }
+  // Жабық беттер толық файлдарды сұрамайды; әр мәтін өз орнында ашылады.
+  requests.length=0;
+  const peopleList=await render('people');
+  assert.equal((peopleList.match(/class="card-excerpt"/g)||[]).length,run('APP.data.people.length'));
+  for (const id of run('APP.data.people.map(p=>p.id)')) {
+    const html=await render('people',id);
+    assert.equal((html.match(/<details\b/g)||[]).length,1);
+    assert.match(html,new RegExp('data-full="people_'+id+'"'));
+    assert.ok(html.indexOf('class="years"')<html.indexOf('<details'));
+    assert.match(html,/data-save-type="person"/);
+    context.personID=id;
+    if (run('APP.data.people.find(p=>p.id===personID).image')) assert.match(html,/<figcaption>/);
+    else assert.match(html,/class="monogram"/);
+  }
+  for (const id of run('APP.data.traditions.map(t=>t.id)')) {
+    const html=await render('traditions',id);
+    assert.equal((html.match(/<details\b/g)||[]).length,1);
+    assert.match(html,new RegExp('data-full="trad_'+id+'"'));
+    assert.ok(html.indexOf('class="video-panel"')<html.indexOf('<details'));
+    assert.match(html,/data-save-type="tradition"/);
+  }
+  const timeline=await render('timeline');
+  assert.equal((timeline.match(/<details\b/g)||[]).length,14);
+  for (const year of timelineYears) assert.match(timeline,new RegExp('data-full="tl_'+year+'"'));
+  const culture=await render('culture');
+  for (const id of onerIDs) assert.match(culture,new RegExp('data-article="'+id+'"'));
+  assert.match(culture,/<summary>[\s\S]*class="article-excerpt"/);
+  assert.equal(requests.filter(path=>path.startsWith('data/full/')).length,0,'Толық мәтін тек ашылғанда жүктеледі');
+  const language=await render('language');
+  assert.match(language,/Тіл туралы/);
+  assert.equal((language.match(/<details\b/g)||[]).length,5);
+  for (const id of languageIDs) assert.match(language,new RegExp('data-full="lang_'+id+'"'));
+  for (const [route,id] of [['proverbs','proverbs'],['twisters','tongue-twisters']]) {
+    const html=await render(route);
+    assert.match(html,new RegExp('data-full="lang_'+id+'"'));
+    assert.ok(html.indexOf('class="language-material"')<html.indexOf('class="word-grid"'));
+  }
   for (const route of routes) await render(route);
   const people=run('APP.data.people.map(p=>p.id)');
   for (const id of people) await render('people',id);
   for (const id of run('APP.data.traditions.map(t=>t.id)')) await render('traditions',id);
   for (const id of run('APP.profileArticles.map(t=>t.id)')) await render('culture',id);
   const home=await render('home');
+  assert.doesNotMatch(home,/class="card-excerpt"/);
   assert.match(home,/hero-shanyrak/); assert.match(home,/hero-copy/);
   assert.ok((home.match(/<img /g)||[]).length >= 15,'Басты бет фотоға бай');
   const credits=await render('credits');
   assert.match(credits,/Alegreya Sans және Literata/);
   assert.match(credits,/SIL Open Font License/);
+  for (const key of fullKeys.filter(k=>/^(?:lang|tl)_/.test(k))) {
+    const data=JSON.parse(fs.readFileSync(`data/full/${key}.json`,'utf8'));
+    context.sourceURL=data.source_url;
+    assert.ok(credits.includes(run('esc(sourceURL)')),key);
+  }
   const svg=run('shanyrakSVG({rays:24,extended:true})');
   assert.equal((svg.match(/<line /g)||[]).length,24);
   assert.equal((svg.match(/<path /g)||[]).length,6);
@@ -59,11 +177,58 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   }
   assert.match(css,/@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css,/@media print/);
+  assert.match(css,/\.full-details > summary \{ min-height: 44px/);
+  assert.match(css,/\.full-details > summary:focus-visible/);
+  assert.match(css,/\.full-details\[open\] \.details-more \{ display: none/);
+  assert.match(css,/\.full-details:not\(\[open\]\) > :not\(summary\)/);
   const fontCSS=fs.readFileSync('css/fonts.css','utf8');
   for(const [,path] of fontCSS.matchAll(/url\("([^"]+)"\)/g)) assert.ok(fs.existsSync(require('node:path').resolve('css',path)),path);
   for(const [,path] of index.matchAll(/(?:src|href)="((?:js|css)\/[^\"]+)"/g)) {
-    if (!path.includes('js/vendor/')) assert.match(path,/\?v=8$/);
+    if (!path.includes('js/vendor/')) assert.match(path,/\?v=9$/);
   }
+  // Ортақ lazy жүктеу: жабық күй, бір сұрау, қате/қайта көру және кеш жауап.
+  function fullNode(key, fallback='', content=false) {
+    const body={innerHTML:fallback,previousElementSibling:content ? {} : null};
+    const node={dataset:{full:key},open:false,isConnected:true,removed:false,
+      querySelector(selector){assert.equal(selector,'[data-full-body]');return body;},
+      remove(){this.removed=true;}};
+    return {node,body};
+  }
+  const lazy=fullNode('tl_1465'); context.fullNode=lazy.node;
+  run('APP.cache.delete("data/full/tl_1465.json")'); requests.length=0;
+  await run('loadArticle(fullNode)'); assert.equal(requests.length,0);
+  lazy.node.open=true;
+  const pending=run('loadArticle(fullNode)');
+  assert.match(lazy.body.innerHTML,/role="status"/);
+  assert.equal(lazy.node.dataset.loading,'true');
+  await run('loadArticle(fullNode)'); await pending;
+  assert.equal(requests.filter(p=>p==='data/full/tl_1465.json').length,1);
+  assert.equal(lazy.node.dataset.loaded,'true');
+  assert.match(lazy.body.innerHTML,/class="fine attribution"/);
+  await run('loadArticle(fullNode)'); assert.equal(requests.length,1);
+  const originalFetch=context.fetch;
+  const retry=fullNode('tl_1643'); retry.node.open=true; context.fullNode=retry.node;
+  run('APP.cache.delete("data/full/tl_1643.json")');
+  context.fetch=async()=>({ok:false,status:503});
+  await run('loadArticle(fullNode)');
+  assert.match(retry.body.innerHTML,/role="alert"/);
+  assert.match(retry.body.innerHTML,/data-full-retry>Қайта көру/);
+  assert.notEqual(retry.node.dataset.loaded,'true');
+  assert.equal(retry.node.dataset.loading,'false');
+  context.fetch=originalFetch;
+  await run('loadArticle(fullNode)');
+  assert.equal(retry.node.dataset.loaded,'true');
+  assert.doesNotMatch(retry.body.innerHTML,/data-full-retry/);
+  const stale=fullNode('tl_1465'); stale.node.open=true; stale.node.isConnected=false;
+  context.fullNode=stale.node; await run('loadArticle(fullNode)');
+  assert.doesNotMatch(stale.body.innerHTML,/class="fine attribution"/);
+  const missing=fullNode('nonexistent_stage9'); missing.node.open=true; context.fullNode=missing.node;
+  await run('loadArticle(fullNode)'); assert.equal(missing.node.removed,true);
+  assert.equal(run('fullDetails("nonexistent_stage9")'),'');
+  assert.equal(run('fullDetails("art_kijim_ishik")'),'');
+  requests.length=0; await run('optionalFull("art_kijim_ishik")');
+  assert.equal(requests.length,0);
+  assert.equal(documentEvents.toggle.length,1,'Ашуды ортақ тыңдаушы басқарады');
   // Мәзірдің қабат, inert, Esc, Tab және фокус қайтару келісімі.
   const events = {};
   function node(id) {
@@ -112,5 +277,5 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   await vm.runInContext('renderRoute()',routeContext);
   assert.match(routeRoot.innerHTML,/<h1>Кіру<\/h1>/);
   assert.doesNotMatch(routeRoot.innerHTML,/Ескі бет/);
-  console.log(`PASS: ${count} маршрут көрінісі, суреттер, ішкі сілтемелер, шаңырақ, қаріптер және мәзір фокусы`);
+  console.log(`PASS: ${count} маршрут көрінісі, shortText, lazy details/retry, oner/профиль, деректер, суреттер және мәзір фокусы`);
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -178,5 +178,45 @@
     "page": "Қаныш_Имантайұлы_Сәтбаев",
     "source_url": "https://kk.wikipedia.org/wiki/Қаныш_Имантайұлы_Сәтбаев",
     "preserve_local": true
+  },
+  {
+    "id": "dombyra",
+    "title": "Домбыра",
+    "category": "oner",
+    "page": "Домбыра",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "qobyz",
+    "title": "Қобыз",
+    "category": "oner",
+    "page": "Қобыз",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "kui",
+    "title": "Күй",
+    "category": "oner",
+    "page": "Күй",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "aitys",
+    "title": "Айтыс",
+    "category": "oner",
+    "page": "Айтыс",
+    "source": "wikipedia",
+    "preserve_local": true
+  },
+  {
+    "id": "kiiz-ui",
+    "title": "Киіз үй",
+    "category": "oner",
+    "page": "Киіз үй",
+    "source": "wikipedia",
+    "preserve_local": true
   }
 ]

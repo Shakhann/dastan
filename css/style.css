@@ -189,8 +189,7 @@ svg { display: block; max-width: 100%; }
   top: -19.5vw;
   overflow: visible;
   /* Уықтар мәтінге жетпей сөнеді. */
-  -webkit-mask-image: linear-gradient(to right, transparent 13%, #000 21%);
-  mask-image: linear-gradient(to right, transparent 13%, #000 21%);
+  clip-path: inset(0 0 0 17%);
 }
 .hero-image, .banner-image { position: relative; }
 .hero-image .image-frame, .banner-image .image-frame {
@@ -412,6 +411,19 @@ body.menu-open { overflow: hidden; }
 .article-title { display: inline-block; padding: 1rem 0 .3rem; }
 .article-title::after { content: ' ＋'; }
 .article[open] .article-title::after { content: ' −'; }
+/* Қысқа мәтін үнемі көрінеді, толық мәтін сол орында ашылады. */
+.article-excerpt { display: block; max-width: 68ch; font: 400 1rem/1.75 var(--body); overflow-wrap: anywhere; }
+.card-excerpt { font-size: .95rem; overflow-wrap: anywhere; }
+.full-details { min-width: 0; border-top: 1px dashed var(--line); }
+.full-details > summary { min-height: 44px; overflow-wrap: anywhere; }
+.full-details .details-less { display: none; }
+.full-details[open] .details-more { display: none; }
+.full-details[open] .details-less { display: inline; }
+.full-details > summary:focus-visible { outline: 3px solid var(--qyzyl); outline-offset: 4px; }
+.full-details .article-title::after { content: none; }
+.full-details .details-more, .full-details .details-less { font: 700 1.1rem/1.4 var(--heading); color: var(--qyzyl); }
+.full-details [data-full-body] { overflow-wrap: anywhere; }
+.language-material { min-width: 0; max-width: 68ch; margin-block: 2.5rem; }
 .article-body { padding: 1.5rem 0 2rem; }
 .rule > p, .rule > ul { max-width: 68ch; }
 .rule > button { margin-bottom: 1.5rem; }
@@ -524,7 +536,7 @@ body.menu-open { overflow: hidden; }
   #siteNav a { position: relative; top: auto; left: auto; width: 100%; transform: none; text-align: left; font-size: clamp(1.7rem, 4vw, 2.6rem); background: transparent; }
   .hero { min-height: auto; flex-direction: column; padding-top: 0; }
   .hero-shanyrak { width: 56vw; margin: 25vw 0 2rem; order: -1; }
-  .hero-shanyrak .shanyrak-svg { width: 112vw; height: 112vw; left: -28vw; top: -28vw; -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 77%); mask-image: linear-gradient(to bottom, #000 74%, transparent 77%); }
+  .hero-shanyrak .shanyrak-svg { width: 112vw; height: 112vw; left: -28vw; top: -28vw; clip-path: inset(0 0 23%); }
   .hero-copy { order: 0; width: 100%; max-width: 650px; }
   .hero-copy h1 { font-size: clamp(4rem, 19vw, 9rem); }
   .hero-image figcaption { font-size: .85rem; }
@@ -638,4 +650,7 @@ body.menu-open { overflow: hidden; }
   .timeline, .timeline > li { display: block; }
   .image-card, figure, .timeline > li { break-inside: avoid; }
   .auth-layout { display: block; }
+  .full-details:not([open]) > :not(summary) { display: none !important; }
+  .full-details > summary { break-inside: avoid; }
+  .full-details[open] { break-inside: auto; }
 }
