@@ -75,7 +75,7 @@ const esm = source => import('data:text/javascript;base64,' + Buffer.from(source
   const button = {dataset:{yurtObject:'horse'},style:{},removeAttribute(){}};
   const classNames = new Set();
   const container = {...events(),querySelector:()=>stage,querySelectorAll:()=>[button],contains:()=>false,classList:{add:n=>classNames.add(n),remove:n=>classNames.delete(n)}};
-  const { mountYurt } = await esm(source.replace("await import('./vendor/three.module.min.js?v=33')", 'await Promise.resolve(globalThis.__sceneThree)'));
+  const { mountYurt } = await esm(source.replace("await import('./vendor/three.module.min.js?v=34')", 'await Promise.resolve(globalThis.__sceneThree)'));
   const cleanup = mountYurt(container);
   assert.equal(container.count(), 1, 'Selection listener exists before async import completes');
   container.emit('yurtselect', {detail:{id:'horse'}});
