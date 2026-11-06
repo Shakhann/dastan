@@ -84,9 +84,47 @@ VIEWS.ornaments = {
   title: "Ою-өрнек",
   async render() {
     const articles = await culturalArticles("oyu");
-    return heading("Ою-өрнек") + ornamentNotice() + `<div class="word-grid">${ORNAMENTS.map(o => `<article class="word patch">${o.image ? imageFigure(o.image, "ornament-image") : ""}<h2>${esc(o.name)}</h2><p>${esc(o.meaning)}</p></article>`).join("")}</div><section class="ornament-items"><h2>Оюлы бұйымдар</h2><p>Мұражайдағы және тұрмыстағы нақты бұйымдар.</p><div class="gallery">${APP.visuals.ornaments.map(path => imageFigure(path)).join("")}</div></section>` + articles.map(article).join("");
-  }
+    return heading("Ою-өрнек") + ornamentNotice() + `<div class="word-grid">${[...ORNAMENTS].sort((a,b) => Boolean(b.image) - Boolean(a.image)).map(o => `<article class="word patch">${o.image ? imageFigure(o.image, "ornament-image") : ""}<h2>${esc(o.name)}</h2><p>${esc(o.meaning)}</p></article>`).join("")}</div><section class="ornament-items"><h2>Оюлы бұйымдар</h2><p>Мұражайдағы және тұрмыстағы нақты бұйымдар.</p><div class="gallery">${APP.visuals.ornaments.map(path => imageFigure(path)).join("")}</div></section>` + (ornamentGamePool().length >= 4 ? '<section class="ornament-game"><h2>Ою тап</h2><p>Атауы берілген оюды суреттерден табыңыз.</p><div id="ornaGame"></div></section>' : "") + articles.map(article).join("");
+  },
+  mount() { startOrnamentGame(); }
 };
+function ornamentGamePool() { return ORNAMENTS.filter(o => o.image); }
+function shuffled(items) {
+  const list = [...items];
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}
+function startOrnamentGame() {
+  const box = document.getElementById("ornaGame");
+  if (!box) return;
+  let lastID = "";
+  function round() {
+    const pool = ornamentGamePool();
+    const answer = shuffled(pool.filter(o => o.id !== lastID))[0];
+    lastID = answer.id;
+    const options = shuffled([answer, ...shuffled(pool.filter(o => o !== answer)).slice(0, 3)]);
+    // Жауап алдын ала білінбеуі үшін суреттің сипаттамасында атау жазылмайды.
+    box.innerHTML = `<p class="game-question">Атауы: <b>${esc(answer.name)}</b></p><div class="game-options">${options.map((o, i) => `<button type="button" class="game-option" data-orna="${esc(o.id)}"><img src="${esc(o.image)}" alt="${i + 1}-ою"></button>`).join("")}</div><p id="ornaStatus" role="status"></p>`;
+    box.querySelectorAll("[data-orna]").forEach(button => button.addEventListener("click", () => {
+      const status = document.getElementById("ornaStatus");
+      if (button.dataset.orna !== answer.id) {
+        button.disabled = true;
+        status.textContent = "Бұл басқа ою. Қайта таңдаңыз.";
+        return;
+      }
+      box.querySelectorAll("[data-orna]").forEach(b => { b.disabled = true; });
+      button.classList.add("is-correct");
+      status.innerHTML = `Дұрыс, бұл ${esc(answer.name)}. <button type="button" id="ornaNext">Келесі ою</button>`;
+      const next = document.getElementById("ornaNext");
+      next.addEventListener("click", round);
+      next.focus();
+    }));
+  }
+  round();
+}
 function wikiSections(text) {
   return text.split(/\n+/).filter(Boolean).map(line=>{
     const h = line.match(/^(={2,})\s*(.*?)\s*\1$/);

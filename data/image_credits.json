@@ -529,5 +529,41 @@
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
+ },
+ {
+  "path": "assets/heritage/oyu-qosmuiiz.jpg",
+  "use": "ornament:o9",
+  "caption_kk": "Қосмүйіз оюы салынған киіз бұйым",
+  "author": "Канаева Салиха",
+  "license": "CC0",
+  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82%3A%D0%9E%D1%8E_%D1%82%D2%AF%D1%80%D1%96-%D2%9B%D0%BE%D1%88%D2%9B%D0%B0%D1%80%D0%BC%D2%AF%D0%B9%D1%96%D0%B7.jpg"
+ },
+ {
+  "path": "assets/heritage/oyu-agash.jpg",
+  "use": "ornament:o10",
+  "caption_kk": "Ағаш оюы, киіз кілемнің бөлігі",
+  "author": "Книжная пыль",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B9_%D0%B2%D0%BE%D0%B9%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D0%B2%D0%B5%D1%80.jpg"
+ },
+ {
+  "path": "assets/heritage/oyu-taban.jpg",
+  "use": "ornament:o11",
+  "caption_kk": "Табан оюы, киіз үй есігінің бөлігі",
+  "author": "Книжная пыль",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
+ },
+ {
+  "path": "assets/heritage/oyu-shiyrshyq.jpg",
+  "use": "ornament:o12",
+  "caption_kk": "Шиыршық оюы, киіз үй есігінің бөлігі",
+  "author": "Книжная пыль",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
  }
 ]
