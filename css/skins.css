@@ -536,3 +536,14 @@ html { font-size: 112.5%; }
   :root[data-skin] .zhuz-choice .zhuz-toggle { font-size: 1.5rem; min-height: 64px; justify-content: center; text-align: center; }
 }
 @media (max-width: 767px) { :root[data-skin] .zhuz-choice:last-child { grid-column: 1 / -1; } }
+/* Дәстүр беті: бейне үлкейді және мәтінді оқығанда экранда қалады. */
+:root[data-skin] .tradition-detail { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 2rem; align-items: start; }
+:root[data-skin] .tradition-detail > .video-panel { grid-column: 2; grid-row: 1; position: sticky; top: 92px; align-self: start; width: 100%; max-width: none; margin: 0; z-index: 3; }
+:root[data-skin] .tradition-detail > .tradition-text, :root[data-skin] .tradition-detail > article { grid-column: 1; grid-row: 1; min-width: 0; }
+:root[data-skin] .tradition-detail > .video-panel p { font-size: 1.05rem; }
+@media (max-width: 899px) {
+  :root[data-skin] .tradition-detail { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  :root[data-skin] .tradition-detail > .video-panel { grid-column: 1; grid-row: 1; top: 80px; background: var(--skin-bg); padding-bottom: .5rem; }
+  :root[data-skin] .tradition-detail > .video-panel p { display: none; }
+  :root[data-skin] .tradition-detail > .tradition-text, :root[data-skin] .tradition-detail > article { grid-row: 2; }
+}
