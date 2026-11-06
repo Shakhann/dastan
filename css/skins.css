@@ -526,3 +526,13 @@ html { font-size: 112.5%; }
 :root[data-skin] .zhuz-choice .zhuz-toggle { font-size: 1.25rem; min-height: 56px; }
 :root[data-skin] .zhuz-choice figcaption { font-size: .75rem; }
 @media (min-width: 768px) { :root[data-skin] .zhuz-panel { margin-top: 1.5rem; } }
+/* Үш жүз негізгі қатарда үлкен тұрады, төртіншісі астына жатады. */
+@media (min-width: 768px) {
+  :root[data-skin] .tree-branches { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+  :root[data-skin] .zhuz-choice:last-child { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 1.25rem; }
+  :root[data-skin] .zhuz-choice:last-child figure { flex: 0 0 min(320px, 34%); }
+  :root[data-skin] .zhuz-choice:last-child .image-frame { aspect-ratio: 16/9; }
+  :root[data-skin] .zhuz-choice:last-child .zhuz-toggle { flex: 1; margin: 0; }
+  :root[data-skin] .zhuz-choice .zhuz-toggle { font-size: 1.5rem; min-height: 64px; justify-content: center; text-align: center; }
+}
+@media (max-width: 767px) { :root[data-skin] .zhuz-choice:last-child { grid-column: 1 / -1; } }

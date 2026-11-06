@@ -52,7 +52,7 @@ APP.toast = message => {
   APP.noticeTimer = setTimeout(() => { node.textContent = ""; }, 6000);
 };
 APP.json = async path => {
-  const response = await fetch(path);
+  const response = await fetch(/^https?:/.test(path) ? path : path + (path.includes("?") ? "&" : "?") + "v=40");
   if (!response.ok) throw new Error("Деректер жүктелмеді");
   return response.json();
 };
@@ -188,7 +188,7 @@ async function renderRoute() {
     if (typeof EXPERIENCE !== "undefined") EXPERIENCE.mount(root);
     if (route === "yurt") {
       const host = root.querySelector?.("[data-yurt]");
-      if (host) import("./yurt3d.js?v=39").then(module => {
+      if (host) import("./yurt3d.js?v=40").then(module => {
         if (version === APP.navigation && host.isConnected) {
           APP.cleanupYurt = module.mountYurt(host);
           if (YURT.find(id)) host.dispatchEvent(new CustomEvent("yurtselect", {detail:{id}}));
