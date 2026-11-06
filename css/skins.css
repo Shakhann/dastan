@@ -562,3 +562,8 @@ html { font-size: 112.5%; }
 }
 :root[data-skin] .tradition-detail .prose, :root[data-skin] .tradition-detail .tradition-text { font-size: 1.125rem; line-height: 1.7; }
 :root[data-skin] .tradition-detail .prose p, :root[data-skin] .tradition-detail .prose li { max-width: none; font-size: inherit; }
+/* Мәтін бет бойымен созылмайды: бейненің қасында өз терезесінде айналады. */
+:root[data-skin] .tradition-detail > .tradition-text { max-height: calc(100svh - 120px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+@media (max-width: 899px) {
+  :root[data-skin] .tradition-detail > .tradition-text { max-height: calc(100svh - 340px); min-height: 260px; }
+}
