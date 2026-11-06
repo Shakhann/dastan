@@ -13,34 +13,45 @@
 <meta property="og:image" content="assets/heritage/hero-horseman.jpg">
 <meta property="og:image:alt" content="Аттылы адам мен дала көрінісі">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/fonts.css?v=13">
-<link rel="stylesheet" href="css/style.css?v=13">
-<script defer src="js/content.js?v=13"></script>
-<script defer src="js/shanyrak.js?v=13"></script>
-<script defer src="js/app.js?v=13"></script>
-<script defer src="js/menu.js?v=13"></script>
-<script defer src="js/profile.js?v=13"></script>
+<script src="js/skin.js?v=33"></script>
+<link rel="stylesheet" href="css/fonts.css?v=33">
+<link rel="stylesheet" href="css/style.css?v=33">
+<link rel="stylesheet" href="css/stage13.css?v=33">
+<link rel="stylesheet" href="css/skins.css?v=33">
+<script defer src="js/content.js?v=33"></script>
+<script defer src="js/app.js?v=33"></script>
+<script defer src="js/menu.js?v=33"></script>
+<script defer src="js/profile.js?v=33"></script>
 <script defer src="js/vendor/supabase.js"></script>
-<script defer src="js/auth-config.js?v=13"></script>
-<script defer src="js/auth.js?v=13"></script>
-<script defer src="js/views_a.js?v=13"></script>
-<script defer src="js/views_b.js?v=13"></script>
-<script defer src="js/views_c.js?v=13"></script>
+<script defer src="js/auth-config.js?v=33"></script>
+<script defer src="js/auth.js?v=33"></script>
+<script defer src="js/yurt.js?v=33"></script>
+<script defer src="js/views_a.js?v=33"></script>
+<script defer src="js/views_b.js?v=33"></script>
+<script defer src="js/views_c.js?v=33"></script>
+<script defer src="js/lab.js?v=33"></script>
+<script defer src="js/search.js?v=33"></script>
+<script defer src="js/experience.js?v=33"></script>
 </head>
 <body>
 <a class="skip" href="#main">Мазмұнға өту</a>
 <header class="site-header">
+<div class="reading-progress" data-scroll-progress aria-hidden="true"></div>
 <a class="brand" href="#home" aria-label="ДАСТАН — басты бет">ДАСТАН<span>Қазақ мұрасы</span></a>
-<div class="header-actions"><a id="profileButton" href="#login" aria-label="Кіру">Кіру</a><button id="menuToggle" type="button" aria-expanded="false" aria-controls="menuPanel"><span class="menu-icon" aria-hidden="true"></span><span class="menu-label">Мәзір</span></button></div>
+<nav id="desktopNav" class="desktop-nav" aria-label="Негізгі бөлімдер"></nav>
+<form class="header-search" data-site-search><label class="sr-only" for="headerSearch">Қазақша іздеу</label><input id="headerSearch" type="search" name="q" placeholder="Іздеу" maxlength="120"><button type="submit" aria-label="Іздеу">Іздеу</button></form>
+<div class="header-actions"><button type="button" data-command-open aria-label="Іздеу және бөлімдер (Ctrl+K)">Іздеу <kbd>Ctrl K</kbd></button><button type="button" data-theme-toggle aria-label="Күн тақырыбын қосу" aria-pressed="false"><svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a.8.8 0 0 0-1-1A10 10 0 1 0 21.5 15.6a.8.8 0 0 0-1-1Z"/></svg><svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3 7 7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></svg></button><a id="profileButton" href="#login" aria-label="Кіру">Кіру</a><button id="menuToggle" type="button" aria-expanded="false" aria-controls="menuPanel"><span class="menu-label">Мәзір</span></button></div>
 </header>
 <div id="menuOverlay" class="menu-overlay" hidden></div>
 <section id="menuPanel" class="menu-panel" role="dialog" aria-modal="true" aria-labelledby="menuTitle" tabindex="-1" hidden>
 <div class="menu-heading"><h2 id="menuTitle">Бөлімдер</h2><div class="menu-account-bar" data-auth-menu></div><button id="menuClose" type="button" aria-label="Мәзірді жабу">Жабу ×</button></div>
-<div class="menu-orbit"><div class="menu-shanyrak" aria-hidden="true"></div><nav id="siteNav" aria-label="Негізгі бөлімдер"></nav></div>
+<form class="menu-search" data-site-search><label for="menuSearch">Қазақша іздеу</label><div class="search-row"><input id="menuSearch" type="search" name="q" maxlength="120" placeholder="Сөз не тақырып"><button>Іздеу</button></div></form>
+<div class="menu-list"><nav id="siteNav" aria-label="Негізгі бөлімдер"></nav></div>
 </section>
 <main id="main" tabindex="-1"><div id="view"><p role="status">Мұра беттері жүктелуде…</p></div></main>
+<nav class="mobile-nav" aria-label="Жылдам өту"><a href="#home">Басты</a><a href="#lab">Зертхана</a><a href="#yurt">Киіз үй</a><button type="button" data-command-open>Іздеу</button><a href="#profile/saved">Сақталған</a><button type="button" data-mobile-menu>Мәзір</button></nav>
 <noscript><p>Мұра беттерін ашу үшін браузеріңізде JavaScript қосыңыз.</p></noscript>
-<footer class="site-footer"><a class="brand" href="#home">ДАСТАН</a><p>Тарих, дәстүр және тіл.</p><a href="#credits">Суреттер мен дереккөздер</a><nav id="footerNav" aria-label="Футер бөлімдері"></nav></footer>
+<footer class="site-footer"><a class="brand" href="#home">ДАСТАН</a><p>Тарих, дәстүр және тіл.</p><a href="#about">Жоба туралы</a><a href="#credits">Суреттер мен дереккөздер</a><nav id="footerNav" aria-label="Футер бөлімдері"></nav></footer>
 <div id="notice" role="status" aria-live="polite"></div>
 </body>
 </html>

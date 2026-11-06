@@ -132,6 +132,19 @@ function wikiSections(text) {
     return `<p>${esc(line)}</p>`;
   }).join("");
 }
+const LANGUAGE_LINKS = [["dict","Сөздік"],["words","Көнерген сөздер"],["proverbs","Мақал-мәтел"],["twisters","Жаңылтпаш"],["gram","Тіл ережелері"],["voice","Тыңдау"]];
+const LANGUAGE_ARTICLES = [["kazakh-language", "Қазақ тілі"], ["kazakh-alphabet", "Қазақ әліпбиі"], ["proverbs", "Мақал-мәтелдер"], ["tongue-twisters", "Жаңылтпаш"], ["orkhon-script", "Көне түркі жазбалары"]];
+async function languageMaterial(id, title) {
+  const key = "lang_" + id;
+  try {
+    const full = await optionalFull(key);
+    const first = full?.sections?.flatMap(s => s.paragraphs || []).find(p => String(p).trim());
+    if (!first) return "";
+    return `<section class="language-material"><h2>${esc(title)}</h2><p>${esc(shortText(first))}</p>${fullDetails(key)}</section>`;
+  } catch {
+    return `<section class="language-material"><h2>${esc(title)}</h2><p role="alert">Қысқа мәтін жүктелмеді.</p>${fullDetails(key)}</section>`;
+  }
+}
 VIEWS.encyclopedia = {
   render() {
     return heading("Энциклопедия", "Қазақ Уикипедиясының толық мәтіндерін осы бетте оқыңыз.") + `<form id="encyclopediaForm"><label for="articleSearch">Тақырып атауы</label><div class="search-row"><input id="articleSearch" type="search" required maxlength="200" placeholder="Мысалы: Домбыра"><button>Іздеу</button></div></form><div id="articleResult" aria-live="polite"></div>`;
@@ -170,19 +183,6 @@ VIEWS.encyclopedia = {
     });
   }
 };
-const LANGUAGE_LINKS = [["dict","Сөздік"],["words","Көнерген сөздер"],["proverbs","Мақал-мәтел"],["twisters","Жаңылтпаш"],["gram","Тіл ережелері"],["voice","Тыңдау"]];
-const LANGUAGE_ARTICLES = [["kazakh-language", "Қазақ тілі"], ["kazakh-alphabet", "Қазақ әліпбиі"], ["proverbs", "Мақал-мәтелдер"], ["tongue-twisters", "Жаңылтпаш"], ["orkhon-script", "Көне түркі жазбалары"]];
-async function languageMaterial(id, title) {
-  const key = "lang_" + id;
-  try {
-    const full = await optionalFull(key);
-    const first = full?.sections?.flatMap(s => s.paragraphs || []).find(p => String(p).trim());
-    if (!first) return "";
-    return `<section class="language-material"><h2>${esc(title)}</h2><p>${esc(shortText(first))}</p>${fullDetails(key)}</section>`;
-  } catch {
-    return `<section class="language-material"><h2>${esc(title)}</h2><p role="alert">Қысқа мәтін жүктелмеді.</p>${fullDetails(key)}</section>`;
-  }
-}
 VIEWS.language = {title:"Тіл", async render() { return heading("Тіл", "Қазақ тілінің сөз байлығы мен айтылымы.") + `<div class="language-index">${LANGUAGE_LINKS.map(([r,n])=>routeLink(r,n)).join("")}</div><section><h2>Тіл туралы</h2>${(await Promise.all(LANGUAGE_ARTICLES.map(([id,title]) => languageMaterial(id,title)))).join("")}</section>`; }};
 for (const [route, id, title] of [["proverbs", "proverbs", "Мақал-мәтелдер"], ["twisters", "tongue-twisters", "Жаңылтпаш"]]) {
   const render = VIEWS[route].render;

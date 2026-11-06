@@ -17,12 +17,57 @@ const context = vm.createContext({
   }, setTimeout(){}, clearTimeout(){}
 });
 const run = source => vm.runInContext(source, context);
-for (const path of ['content','shanyrak','app','menu','profile']) run(fs.readFileSync(`js/${path}.js`,'utf8'));
+for (const path of ['content','app','lab','menu','profile']) run(fs.readFileSync(`js/${path}.js`,'utf8'));
 run('const AUTH = {user:null,message:""}; function authAccountHTML(){return "";}');
-for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${path}.js`,'utf8'));
+for (const path of ['yurt','views_a','views_b','views_c','search']) run(fs.readFileSync(`js/${path}.js`,'utf8'));
 (async () => {
   await run('APP.loadHeritage();');
   await run('APP.initProfile();');
+  // Іздеу барлық дерек түрін қамтиды және жалғаулы сөзді түбірмен табады.
+  const searchRows=await run('SEARCH.index()');
+  assert.deepEqual([...new Set(searchRows.map(r=>r.type))],['Тұлғалар','Дәстүрлер','Тарих','Көнерген сөздер','Сөздік','Мақал-мәтел','Жаңылтпаш','Мақалалар','Киіз үй әлемі']);
+  context.searchRows=searchRows;
+  assert.ok(run('SEARCH.groups(searchRows,"Абайдың").some(([,rows])=>rows.some(r=>r.title.includes("Абай")))'));
+  assert.equal(run('SEARCH.matches({title:"бала",text:""},"балаларға")'),true);
+  assert.equal(run('SEARCH.matches({title:"Абай",text:""},"АБАЙДЫҢ")'),true);
+  assert.equal(run('SEARCH.matches({title:"Абай",text:""},"жоқсөз")'),false);
+  assert.equal(run('SEARCH.groups(searchRows,"").length'),0);
+  assert.match(run('SEARCH.results([])'),/Ештеңе табылмады/);
+  const searchHTML=await run('VIEWS.search.render("<b>жоқсөз</b>")');
+  assert.match(searchHTML,/aria-live="polite"/);assert.doesNotMatch(searchHTML,/<b>жоқсөз<\/b>/);
+  const aboutHTML=await run('VIEWS.about.render()');
+  const topics=JSON.parse(fs.readFileSync('content_topics.json','utf8'));
+  const manifest=JSON.parse(fs.readFileSync('audio/manifest.json','utf8'));
+  const expectedCounts={'Тұлға':run('APP.data.people.length'),'Дәстүр':run('APP.data.traditions.length'),'Сөз':run('APP.data.words.length+DICT.length'),'Мақал':run('PROVERBS.length'),'Мақала':topics.length,'Аудио':new Set(Object.values(manifest).filter(p=>typeof p==='string' && /^[\w.-]+\.mp3$/.test(p))).size};
+  for(const [label,n] of Object.entries(expectedCounts)) assert.ok(aboutHTML.includes('<dt>'+label+'</dt><dd>'+n+'</dd>'),label+' деректен есептеледі');
+  assert.match(aboutHTML,/href="#credits"/);
+  // Зертхана DOM-ға бекітілгенде нәтижелер нақты енгізуге ілеседі.
+  const labDocument=context.document;
+  const labNodes=Object.fromEntries(['labWord','labText','labForms','labCyr','labLatin','labArab'].map(id=>[id,{value:'',textContent:'',innerHTML:'',events:{},addEventListener(type,fn){this.events[type]=fn;}}]));
+  labNodes.labWord.value='бала';labNodes.labText.value='тіл';
+  context.document={getElementById:id=>labNodes[id]};
+  run('VIEWS.lab.mount()');
+  assert.match(labNodes.labForms.innerHTML,/word-root/);
+  assert.match(labNodes.labForms.innerHTML,/баланың|бала<\/span><strong class="word-suffix">ның/);
+  assert.equal(labNodes.labLatin.textContent,'tıl');assert.equal(labNodes.labArab.textContent,'ٴتىل');
+  labNodes.labWord.value='кітап';labNodes.labWord.events.input();
+  assert.match(labNodes.labForms.innerHTML,/кітаб/);
+  labNodes.labWord.value='123';labNodes.labWord.events.input();
+  assert.match(labNodes.labForms.innerHTML,/кирилл/);assert.doesNotMatch(labNodes.labForms.innerHTML,/word-root/);
+  labNodes.labText.value='<b>қазақ</b>';labNodes.labText.events.input();
+  assert.equal(labNodes.labCyr.textContent,'<b>қазақ</b>');assert.equal(labNodes.labLatin.textContent,'<b>qazaq</b>');
+  // Бірінші экрандағы құрал да сөз енгізгенде үш септікті бірден жаңартады.
+  const heroInput={value:'кітап',events:{},addEventListener(type,fn){this.events[type]=fn;}};
+  const heroOutput={innerHTML:''},heroLink={attrs:{},setAttribute(k,v){this.attrs[k]=v;}};
+  context.document={getElementById:id=>id==='heroWord'?heroInput:heroOutput,querySelector:()=>heroLink};
+  run('VIEWS.home.mount()');
+  assert.equal((heroOutput.innerHTML.match(/<small>/g)||[]).length,3);
+  assert.match(heroOutput.innerHTML,/кітап/);
+  heroInput.value='бала';heroInput.events.input();
+  assert.equal(heroLink.attrs.href,'#lab/'+encodeURIComponent('бала'));
+  heroInput.value='<img>';heroInput.events.input();
+  assert.doesNotMatch(heroOutput.innerHTML,/<img>/);assert.match(heroOutput.innerHTML,/кирилл/);
+  context.document=labDocument;
   // Сөйлем, қысқарту, сан және сөз шекаралары.
   const shortCases = [
     ['',220,''], ['Қысқа мәтін.',220,'Қысқа мәтін.'],
@@ -103,8 +148,15 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
     assert.equal(typeof html,'string');
     assert.ok(html.length > 50,route);
     for (const [,path] of html.matchAll(/<img[^>]*src="(assets\/[^\"]+)"/g)) assert.ok(fs.existsSync(path),path);
-    if (route !== 'credits') assert.doesNotMatch(html,/<a\b[^>]*href="https?:/);
+    if (route !== 'credits') {
+      for(const [,url] of html.matchAll(/<a\b[^>]*href="(https?:[^"]+)"/g)) assert.match(url,/^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/);
+    }
+    assert.doesNotMatch(html,/<(?:img|iframe)\b[^>]*src="https?:(?!\/\/i\.ytimg\.com\/)/);
     assert.doesNotMatch(html,/class="image-action"/);
+    assert.doesNotMatch(html,/shanyrak-svg|hero-shanyrak|section-shanyrak|menu-orbit/);
+    for (const [,classes] of html.matchAll(/<figure class="([^"]*)"/g)) {
+      assert.equal((classes.match(/\bplate-(?:lg|md|sm)\b/g)||[]).length,1,'Әр суретте бір пештақ өлшемі бар');
+    }
     count++;
     return html;
   }
@@ -115,6 +167,13 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
     const card=run('personPatch(personFixture,true)');
     assert.doesNotMatch(card, /<figure|<img|<svg|<aside/);
     assert.ok(card.includes(person.name));
+  }
+  for (const person of run('APP.data.people.filter(p=>p.image)')) {
+    context.personFixture=person;
+    const card=run('profileCard({type:"person",id:personFixture.id},true)');
+    assert.match(card,/profile-card-image portrait plate-sm/);
+    assert.match(card,/<figcaption>/);
+    assert.ok(card.includes('data-remove-id="'+person.id+'"'));
   }
   assert.equal(run('ORNAMENTS.find(o=>o.id==="o7").meaning'), 'Тіл-көзден, пәле-жаладан сақтайтын қорғаныш (бойтұмар) белгісі. Сынық сызықтан тарақ тістері сияқты тармақтар шығып тұратын геометриялық өрнек; кілемдерде, басқұрларда және зергерлік әшекейлерде қолданылады.');
   for (const selected of ['saved','recent','settings',undefined,'invalid']) {
@@ -171,43 +230,133 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   for (const id of people) await render('people',id);
   for (const id of run('APP.data.traditions.map(t=>t.id)')) await render('traditions',id);
   for (const id of run('APP.profileArticles.map(t=>t.id)')) await render('culture',id);
+  assert.equal(run('homeDayIndex(new Date(2026,10,6,0,1))'),run('homeDayIndex(new Date(2026,10,6,23,59))'));
+  assert.equal(run('homeDayIndex(new Date(2026,10,7))-homeDayIndex(new Date(2026,10,6))'),1);
   const home=await render('home');
   assert.doesNotMatch(home,/class="card-excerpt"/);
-  assert.match(home,/hero-shanyrak/); assert.match(home,/hero-copy/);
+  assert.match(home,/hero-visual/); assert.match(home,/hero-copy/);
+  assert.match(home,/hero-image plate-lg/);
+  assert.match(home,/<h1 class="sr-only">ДАСТАН/);
+  assert.match(home,/hero-signature[^>]+aria-hidden="true"/);
+  for(const label of ['ДАСТАН','Dastan','داستان']) assert.ok(home.includes(label));
+  const mosaicLinks=home.match(/<div class="section-mosaic">([\s\S]*?)<\/section>/)[1];
+  assert.equal((mosaicLinks.match(/<a /g)||[]).length,9);
+  assert.doesNotMatch(mosaicLinks,/href="#home"/);
+  for (const route of ['people','shezhire','traditions','timeline','culture','language','encyclopedia','lab','yurt']) assert.ok(mosaicLinks.includes('href="#'+route+'"'));
+  for (const kind of ['mosaic','people','traditions','gallery']) assert.match(home,new RegExp('class="home-'+kind+'"'));
+  for(const section of ['daily-proverb','daily-word','lab-intro']) assert.ok(home.includes('class="'+section+'"'));
+  assert.match(home,/href="#lab\//);
   assert.ok((home.match(/<img /g)||[]).length >= 15,'Басты бет фотоға бай');
+  // 13-кезең: шынайы сілтемелер, деректен алынған сандар және екі тарих лентасы.
+  assert.doesNotMatch(home,/data-yurt-link|yurt-hotspots|data-yurt(?:>|\s)/);
+  assert.match(home,/href="#yurt"[^>]*>Киіз үйге кіру/);
+  assert.match(home,/assets\/heritage\/hero-horseman.jpg/);
+  const exhibit = await render('yurt');
+  assert.equal((exhibit.match(/data-yurt-object=/g)||[]).length,42);
+  assert.match(exhibit,/id="yurtInfo"[^>]+hidden/);
+  assert.match(exhibit,/data-yurt-status role="status" aria-live="polite"/);
+  assert.ok(searchRows.some(row=>row.route==='yurt/horse' && row.title==='Ат'));
+  assert.equal(run('NAV.some(([id])=>id === "yurt")'),true);
+  const routeSource = fs.readFileSync('js/app.js','utf8');
+  assert.match(routeSource,/if \(route === "yurt"\) \{[\s\S]*?import\("\.\/yurt3d\.js\?v=33"\)/);
+  assert.equal((routeSource.match(/import\("\.\/yurt3d/g)||[]).length,1);
+  assert.match(routeSource,/APP\.cleanupYurtUI\?\.\(\)/);
+  assert.match(fs.readFileSync('index.html','utf8'),/<nav class="mobile-nav"[\s\S]*?href="#yurt"/);
+
+  assert.match(home,/class="heritage-panorama" data-parallax/);
+  assert.match(home,/class="portrait-rail" data-drag-rail tabindex="0"/);
+  assert.equal((home.match(/data-drag-rail/g)||[]).length,2);
+  assert.match(timeline,/timeline-rail" data-drag-rail tabindex="0"/);
+  const homeCounts=[...home.matchAll(/<span data-count="(\d+)">(\d+)<\/span>/g)];
+  assert.deepEqual(homeCounts.map(m=>Number(m[1])),['Тұлға','Дәстүр','Сөз','Мақала','Аудио'].map(k=>expectedCounts[k]));
+  for(const m of homeCounts) assert.equal(m[1],m[2],'accessible count exists before animation');
+  for(const proverb of run('PROVERBS.slice(0,8)')) assert.ok(home.includes(run('esc('+JSON.stringify(proverb.kk)+')')));
   const credits=await render('credits');
-  assert.match(credits,/Alegreya Sans және Literata/);
+  assert.match(credits,/Piazzolla және Golos Text/);
   assert.match(credits,/SIL Open Font License/);
   for (const key of fullKeys.filter(k=>/^(?:lang|tl)_/.test(k))) {
     const data=JSON.parse(fs.readFileSync(`data/full/${key}.json`,'utf8'));
     context.sourceURL=data.source_url;
     assert.ok(credits.includes(run('esc(sourceURL)')),key);
   }
-  const svg=run('shanyrakSVG({rays:24,extended:true})');
-  assert.equal((svg.match(/<line /g)||[]).length,24);
-  assert.equal((svg.match(/<path /g)||[]).length,6);
-  assert.match(svg,/stroke="currentColor"/);
-  assert.match(svg,/aria-hidden="true"/);
+  // Бөлім ашылымы фотосыз да толық портал болып қалады.
+  context.sectionVisuals=run('APP.visuals.sections');
+  run('APP.visuals.sections = {}; APP.route = "missing-stage11";');
+  assert.match(run('heading("Бос күй", "Түсіндірме")'),/^<header class="section-banner">/);
+  assert.match(run('heading("Бос күй", "Түсіндірме")'),/<h1>Бос күй<\/h1><p>Түсіндірме<\/p>/);
+  run('APP.visuals.sections = sectionVisuals;');
+  assert.equal(fs.existsSync('js/shanyrak.js'),false);
   const index=fs.readFileSync('index.html','utf8');
   assert.ok(index.indexOf('css/fonts.css') < index.indexOf('css/style.css'));
-  assert.doesNotMatch(index,/fonts\.google/);
+  assert.doesNotMatch(index,/fonts\.google|shanyrak|menu-orbit/);
+  for(const id of ['desktopNav','menuToggle','menuPanel','siteNav','menuClose']) assert.match(index,new RegExp('id="'+id+'"'));
+  assert.match(index,/data-auth-menu/);
+  assert.match(index,/id="menuToggle"[^>]+aria-controls="menuPanel"/);
+  assert.match(index,/id="menuPanel"[^>]+role="dialog"[^>]+aria-modal="true"/);
+  const appSource=fs.readFileSync('js/app.js','utf8');
+  assert.match(appSource,/#siteNav a, #desktopNav a, #footerNav a/);
+  assert.match(appSource,/getElementById\("desktopNav"\)\.innerHTML = NAV\.filter/);
+  for(const file of ['js/app.js','js/profile.js','js/auth.js','js/views_a.js','js/views_b.js','js/views_c.js']) assert.doesNotMatch(fs.readFileSync(file,'utf8'),/shanyrakSVG|hero-shanyrak|section-shanyrak/);
   const css=fs.readFileSync('css/style.css','utf8');
-  assert.doesNotMatch(css,/gradient\(|box-shadow|Montserrat|\bInter\b|--blue|--gold/);
-  for(const [token,value] of Object.entries({kiiz:'#24282E',zhun:'#D8C3A0',ak:'#F7F6F2',qyzyl:'#A11D33',kok:'#4C6675',line:'#24282E33'})) {
-    assert.ok(css.includes(`--${token}: ${value}`),token);
+  assert.doesNotMatch(css,/gradient\(|box-shadow|Montserrat|\bInter\b|--blue|--gold|--kiiz|--zhun|--qyzyl|--kok|shanyrak|menu-orbit|Alegreya|Literata/);
+  for(const [token,value] of Object.entries({lazurit:'#12355B',tun:'#0C2238',firuza:'#1E8E8E',kirpish:'#B5764A',sylaq:'#EEF3F1',ak:'#FBFCFB',qara:'#101E2A'})) {
+    assert.match(css,new RegExp(`--${token}:\\s*${value}`,"i"),token);
+  }
+  assert.match(css,/--heading:\s*'Piazzolla'/);
+  assert.match(css,/--body:\s*'Piazzolla'/);
+  assert.match(css,/--ui:\s*'Golos Text'/);
+  assert.match(css,/\.prose\s*\{[^}]*max-width:\s*68ch/);
+  assert.match(css,/\.prose\s*\{[^}]*1\.125rem\/1\.65/);
+  assert.match(css,/::selection\s*\{/);
+  assert.match(css,/caret-color:\s*var\(--lazurit\)/);
+  assert.match(css,/scrollbar-color:\s*var\(--lazurit\) var\(--sylaq\)/);
+  assert.doesNotMatch(css,/border-radius:\s*(?:[3-9]\d*px|[1-9]\d*%)/);
+  for (const size of ['lg','md','sm']) assert.match(css,new RegExp('\\.plate-'+size+' \\.image-frame\\s*\\{'));
+  assert.match(css,/\.image-frame\s*\{[^}]*border:\s*12px solid var\(--lazurit\)/);
+  assert.match(css,/\.portrait[^{}]*\.image-frame[^{}]*\{[^}]*aspect-ratio:\s*4\/5/);
+  assert.match(css,/\.portrait[^{}]*img[^{}]*\{[^}]*object-position:\s*center 20%/);
+  assert.match(css,/\.hero-image \.image-frame img\s*\{[^}]*object-fit:\s*cover/);
+  assert.doesNotMatch(css.match(/\.header-actions\s*\{([^}]*)\}/)[1],/position:\s*fixed/);
+  assert.match(css,/@media \(min-width:\s*1100px\)\s*\{[\s\S]*?#desktopNav[^{}]*\{[^}]*display:\s*flex/);
+  assert.match(css,/@media \(min-width:\s*1100px\)\s*\{[\s\S]*?#menuToggle\s*\{[^}]*display:\s*none/);
+  assert.match(css,/@media \(max-width:\s*599px\)/);
+  const brickURL=css.match(/--brick-pattern:\s*url\("data:image\/svg\+xml,([^"\n]+)"\)/);
+  assert.ok(brickURL,'Кірпіш белдеудің ортақ SVG торы');
+  const brickSVG=decodeURIComponent(brickURL[1]);
+  const dimensions=brickSVG.match(/width='(\d+)' height='(\d+)'/);
+  assert.ok(dimensions && Number(dimensions[2])>32,'Белдеу екі қатардан биік');
+  assert.doesNotMatch(brickSVG,/<text|<image|<circle|<line/);
+  for (const color of ['#12355B','#1E8E8E','#B5764A']) assert.ok(brickSVG.includes(color));
+  assert.match(css,/\.section-banner::after[^{}]*\{[^}]*var\(--brick-pattern\)/);
+  assert.match(css,/@keyframes brick-build\s*\{\s*from\s*\{\s*clip-path:/);
+  const animations=[...css.matchAll(/animation:\s*([^;}]+)/g)].map(match=>match[1]).filter(value=>!value.startsWith('none'));
+  assert.ok(animations.length>=2,'Қолтаңба мен бет ауысуының анимациясы');
+  const motion=animations.find(a=>a.startsWith('brick-build'))?.match(/^brick-build\s+(\d+)ms/);
+  assert.ok(motion && Number(motion[1])<=900);
+  const luminance=hex=>{const rgb=hex.match(/[\da-f]{2}/ig).map(channel=>parseInt(channel,16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
+  for(const [ink,paper] of [['#FBFCFB','#12355B'],['#FBFCFB','#0C2238'],['#101E2A','#EEF3F1'],['#101E2A','#FBFCFB']]) {
+    const values=[luminance(ink),luminance(paper)].sort((a,b)=>b-a);
+    assert.ok((values[0]+.05)/(values[1]+.05)>=4.5,ink+' / '+paper+' AA мәтін контрасты');
   }
   assert.match(css,/@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css,/@media print/);
-  assert.match(css,/\.person-detail--text \{ grid-template-columns: minmax\(0, 1fr\)/);
-  assert.match(css,/\.profile-danger \{[^}]*border-top: 2px solid var\(--qyzyl\)/);
+  assert.match(css,/\.person-detail--text\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+  assert.match(css,/\.profile-danger \{[^}]*border-top:/);
   assert.match(css,/\.full-details > summary \{ min-height: 44px/);
   assert.match(css,/\.full-details > summary:focus-visible/);
   assert.match(css,/\.full-details\[open\] \.details-more \{ display: none/);
   assert.match(css,/\.full-details:not\(\[open\]\) > :not\(summary\)/);
+  const stage13CSS=fs.readFileSync('css/stage13.css','utf8');
+  assert.match(index,/css\/stage13.css\?v=33/); assert.match(index,/js\/experience.js\?v=33/);
+  for(const attr of ['data-command-open','data-theme-toggle','data-scroll-progress','data-mobile-menu']) assert.ok(index.includes(attr));
+  assert.match(index,/<nav class="mobile-nav"/);
+  assert.match(stage13CSS,/safe-area-inset-bottom/);assert.match(stage13CSS,/height: 45svh/);
+  assert.match(stage13CSS,/@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(stage13CSS,/animation-play-state: paused/);
   const fontCSS=fs.readFileSync('css/fonts.css','utf8');
   for(const [,path] of fontCSS.matchAll(/url\("([^"]+)"\)/g)) assert.ok(fs.existsSync(require('node:path').resolve('css',path)),path);
   for(const [,path] of index.matchAll(/(?:src|href)="((?:js|css)\/[^\"]+)"/g)) {
-    if (!path.includes('js/vendor/')) assert.match(path,/\?v=13$/);
+    if (!path.includes('js/vendor/')) assert.match(path,/\?v=33$/);
   }
   // Ортақ lazy жүктеу: жабық күй, бір сұрау, қате/қайта көру және кеш жауап.
   function fullNode(key, fallback='', content=false) {
@@ -298,12 +447,20 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   assert.equal(panel.hidden,true); assert.equal(overlay.hidden,true);
   assert.equal(toggle.attrs['aria-expanded'],'false'); assert.equal(doc.activeElement,toggle);
   assert.deepEqual(backgrounds.map(n=>n.inert),[false,false,true]);
+  const mobileMenu=node('mobileMenu'); mobileMenu.matches=selector=>selector==='[data-mobile-menu]';
+  doc.activeElement=mobileMenu; toggle.events.click();
+  assert.equal(doc.activeElement,close);
+  events.keydown({key:'Escape',preventDefault(){}});
+  assert.equal(doc.activeElement,mobileMenu,'mobile menu restores visible opener');
   // Callback hash-ты initAuth күтіліп тұрғанда өзгертсе, ескі бет көрсетілмейді.
   const routeRoot={innerHTML:''},routeMain={focus(){}};
+  const routeLinks=['login','culture','language'].map(route=>({href:'#'+route,attrs:{'aria-current':'page'},
+    getAttribute(name){return name==='href'?this.href:this.attrs[name];},
+    setAttribute(name,value){this.attrs[name]=value;},removeAttribute(name){delete this.attrs[name];}}));
   const routeContext=vm.createContext({console,URL,Map,Set,Promise,
     location:new URL('https://example.test/#home'),
     window:{addEventListener(){},scrollTo(){},scrollY:0},
-    document:{addEventListener(){},querySelectorAll(){return [];},
+    document:{addEventListener(){},querySelectorAll(selector){assert.equal(selector,'#siteNav a, #desktopNav a, #footerNav a, .mobile-nav a');return routeLinks;},
       body:{classList:{toggle(){}}},getElementById:id=>id==='view'?routeRoot:routeMain},
     setTimeout(){},clearTimeout(){}});
   vm.runInContext(fs.readFileSync('js/app.js','utf8'),routeContext);
@@ -319,5 +476,37 @@ for (const path of ['views_a','views_b','views_c']) run(fs.readFileSync(`js/${pa
   await vm.runInContext('renderRoute()',routeContext);
   assert.match(routeRoot.innerHTML,/<h1>Кіру<\/h1>/);
   assert.doesNotMatch(routeRoot.innerHTML,/Ескі бет/);
+  // Маршрут lifecycle: жаңа бетке дейін ескі көрініс тазартылады,
+  // View Transitions пен reduced-motion fallback бірдей мазмұнды береді.
+  vm.runInContext(`
+    const lifecycle=[];
+    const EXPERIENCE={cleanup(){lifecycle.push('cleanup');},mount(){lifecycle.push('mount');}};
+    APP.cleanupYurt=()=>lifecycle.push('yurt-dispose');
+    document.startViewTransition=callback=>{lifecycle.push('transition');callback();return {finished:Promise.resolve(),updateCallbackDone:Promise.resolve()};};
+    APP.initAuth=async()=>{};APP.authRoute=route=>route;
+  `,routeContext);
+  await vm.runInContext('renderRoute()',routeContext);
+  assert.deepEqual([...vm.runInContext('lifecycle',routeContext)],['yurt-dispose','cleanup','transition','mount']);
+  vm.runInContext(`lifecycle.length=0;window.matchMedia=()=>({matches:true});`,routeContext);
+  await vm.runInContext('renderRoute()',routeContext);
+  assert.deepEqual([...vm.runInContext('lifecycle',routeContext)],['cleanup','mount']);
+  vm.runInContext(`window.matchMedia=()=>({matches:false});document.startViewTransition=undefined;`,routeContext);
+  // Ішкі маршрут desktop/mobile/footer сілтемелерінде ата-анасын белгілейді.
+  vm.runInContext(`APP.initAuth=async()=>{}; APP.authRoute=route=>route; VIEWS.ornaments={render:()=>'<h1>Ою</h1>'}; location.hash='#ornaments';`,routeContext);
+  await vm.runInContext('renderRoute()',routeContext);
+  assert.equal(routeLinks[1].attrs['aria-current'],'page');
+  assert.equal(routeLinks[0].attrs['aria-current'],undefined);
+  assert.equal(routeLinks[2].attrs['aria-current'],undefined);
+  vm.runInContext(`location.hash='';`,routeContext);
+  await vm.runInContext('renderRoute()',routeContext);
+  assert.match(routeRoot.innerHTML,/<h1>Ескі бет<\/h1>/);
+  assert.equal(vm.runInContext('APP.route',routeContext),'home');
+  vm.runInContext(`location.hash='#missing-stage11';`,routeContext);
+  await vm.runInContext('renderRoute()',routeContext);
+  assert.equal(vm.runInContext('APP.route',routeContext),'notfound');
+  assert.match(routeRoot.innerHTML,/section-banner/);
+  assert.match(routeRoot.innerHTML,/Бет табылмады/);
+  assert.match(routeRoot.innerHTML,/href="#home"/);
+  assert.ok(routeLinks.every(link=>link.attrs['aria-current']===undefined));
   console.log(`PASS: ${count} маршрут көрінісі, shortText, lazy details/retry, oner/профиль, деректер, суреттер және мәзір фокусы`);
 })().catch(error=>{console.error(error);process.exitCode=1;});

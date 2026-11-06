@@ -1,9 +1,18 @@
 "use strict";
-function clanPanel(t, group) {
-  return `<article class="clan" data-clan="${esc(t.id)}"><h3><button type="button" aria-expanded="false" aria-controls="clan-${esc(t.id)}" data-clan-toggle>${esc(t.name)}</button></h3><div id="clan-${esc(t.id)}" hidden><p>${esc(t.summary_kk)}</p>${group ? `<h3>Шығу тегі</h3><p>${esc(t.origin_kk)}</p><h3>Қоғамдағы қызметі</h3><p>${esc(t.role_kk)}</p>` : ""}<h3>${group ? "Топтары" : "Аталары"}</h3><ul>${(t.subclans || t.subgroups || []).map(s => `<li>${esc(s)}</li>`).join("")}</ul></div></article>`;
+function clanNode(value, key) {
+  const match = String(value).match(/^(.*?)\s*\((.*)\)\s*$/);
+  const name = match ? match[1] : String(value);
+  const kids = match ? match[2].split(/,\s*/).filter(Boolean) : [];
+  if (!kids.length) return `<li><span class="clan-leaf">${esc(name)}</span></li>`;
+  return `<li><button type="button" class="clan-branch" aria-expanded="false" aria-controls="${esc(key)}" data-clan-toggle>${esc(name)}</button><ul id="${esc(key)}" class="clan-list" hidden>${kids.map((kid,i) => clanNode(kid, key + "-" + i)).join("")}</ul></li>`;
+}
+function clanPanel(t) {
+  const kids = t.subclans || t.subgroups || [];
+  const key = "clan-" + t.id;
+  return `<article class="clan" data-clan="${esc(t.id)}"><button type="button" class="clan-branch" aria-expanded="false" aria-controls="${esc(key)}" data-clan-toggle>${esc(t.name)}</button><div id="${esc(key)}" hidden>${kids.length ? `<ul class="clan-list">${kids.map((kid,i) => clanNode(kid, key + "-" + i)).join("")}</ul>` : '<p class="fine">Тармақтары әзірге енгізілмеген.</p>'}</div></article>`;
 }
 function zhuzPanel(z) {
-  return `<section class="zhuz-panel" data-zhuz="${esc(z.id)}" hidden><h2>${esc(z.name)}</h2><p>${esc(z.summary_kk)}</p><p class="region"><b>Қоныстанған өңірі:</b> ${esc(z.region_kk)}</p>${z.branches.map(b => `<section class="branch"><h3>${esc(b.name)}</h3><p>${esc(b.note_kk)}</p>${b.tribes.map(t => clanPanel(t)).join("")}</section>`).join("")}</section>`;
+  return `<section class="zhuz-panel" data-zhuz="${esc(z.id)}" hidden><h2>${esc(z.name)}</h2><div class="clan-grid">${z.branches.flatMap(b => b.tribes).map(t => clanPanel(t)).join("")}</div></section>`;
 }
 VIEWS.shezhire = {
   title: "Шежіре",
@@ -53,6 +62,6 @@ VIEWS.credits = {
     const entries = [...APP.data.people.map(p=>({title:p.name,source_url:p.wiki_url})),...APP.data.traditions.map(t=>({title:t.name,source_url:t.source_url || t.wiki_url})),...APP.data.timeline.map(t=>({title:t.title_kk,source_url:t.source_url})),...articles];
     const full = await Promise.all([...APP.data.people.map(p=>"people_"+p.id),...APP.data.traditions.map(t=>"trad_"+t.id),...articles.map(a=>"art_"+a.id),...APP.data.timeline.map(t=>"tl_"+t.year),...LANGUAGE_ARTICLES.map(([id])=>"lang_"+id)].map(optionalFull));
     [...entries,...full.filter(Boolean)].forEach(d=>{if(d.source_url) APP.sources.set(d.source_url,d.title);});
-    return heading("Суреттер мен дереккөздер", "Мәтіндер мен суреттердің авторлығы және пайдалану шарттары.") + `<section><h2>Мәтін дереккөздері</h2><p>Қазақ Уикипедиясы мәтіндері CC BY-SA 4.0 лицензиясымен берілген. Редакциялық мәтіндердің шарттары төменде көрсетілген.</p><ul class="source-list">${[...APP.sources].map(([url,title])=>`<li>${esc(title)} — ${sourceLink(url,"Мақала URL-і")}</li>`).join("")}</ul>${articles.filter(a=>a.source_name!=="Қазақ Уикипедиясы").map(a=>`<p class="fine">${esc(a.title)}: ${esc(a.source_name)}, ${esc(a.license)}</p>`).join("")}</section><section><h2>Қаріп лицензиялары</h2><p>Alegreya Sans және Literata қаріптері SIL Open Font License лицензиясымен пайдаланылады.</p></section><section><h2>Суреттер</h2><div class="credits-grid">${APP.credits.map((c,i)=>`<article class="patch">${imageFigure(c.path,"",i===0)}<div class="patch-body">${sourceLink(c.source_url,"Сурет дереккөзі")} ${sourceLink(c.license_url,c.license)}</div></article>`).join("")}</div></section>`;
+    return heading("Суреттер мен дереккөздер", "Мәтіндер мен суреттердің авторлығы және пайдалану шарттары.") + `<section><h2>Мәтін дереккөздері</h2><p>Қазақ Уикипедиясы мәтіндері CC BY-SA 4.0 лицензиясымен берілген. Редакциялық мәтіндердің шарттары төменде көрсетілген.</p><ul class="source-list">${[...APP.sources].map(([url,title])=>`<li>${esc(title)} — ${sourceLink(url,"Мақала URL-і")}</li>`).join("")}</ul>${articles.filter(a=>a.source_name!=="Қазақ Уикипедиясы").map(a=>`<p class="fine">${esc(a.title)}: ${esc(a.source_name)}, ${esc(a.license)}</p>`).join("")}</section><section><h2>Қаріп лицензиялары</h2><p>Piazzolla және Golos Text қаріптері SIL Open Font License (SIL OFL) лицензиясымен пайдаланылады.</p></section><section><h2>Суреттер</h2><div class="credits-grid">${APP.credits.map((c,i)=>`<article class="patch">${imageFigure(c.path,"",i===0)}<div class="patch-body">${sourceLink(c.source_url,"Сурет дереккөзі")} ${sourceLink(c.license_url,c.license)}</div></article>`).join("")}</div></section>`;
   }
 };

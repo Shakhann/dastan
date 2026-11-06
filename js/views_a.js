@@ -4,16 +4,40 @@ const GROUPS = {
   marriage: "Үйлену және отбасын құру", hospitality: "Қонақжайлық",
   seasons: "Жыл мезгілдері", mourning: "Аза тұту және еске алу", "mutual help": "Өзара көмек"
 };
+// Local-calendar selection stays stable through the day, including across DST changes.
+function homeDayIndex(date = new Date()) {
+  return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
+}
 VIEWS.home = {
   title: "Қазақ мұрасы",
   async render() {
-    const d = await APP.cachedJSON("data/shezhire.json");
-    return `<section class="hero"><div class="hero-shanyrak">${imageFigure(APP.visuals.home.hero, "hero-image", true)}${shanyrakSVG({extended:true})}</div><div class="hero-copy"><h1>ДАСТАН</h1><p class="hero-subtitle">Қазақ мұрасы</p><p>Елдің тарихы — адам тағдырында, дәстүрінде, тілінде.</p><div class="hero-actions">${routeLink("shezhire", "Шежірені тану", "button")}${routeLink("traditions", "Салт-дәстүр", "button button-light")}</div></div></section>
-    <div class="home-content"><section><div class="section-heading"><h2>Дала. Ел. Шежіре.</h2>${routeLink("shezhire", "Шежірені қарау")}</div><div class="zhuz-grid">${d.zhuzes.map(z=>imageCard(z.image,z.name,"shezhire/"+encodeURIComponent(z.id))).join("")}</div></section>
-    <section><div class="section-heading"><h2>Ел тұлғалары</h2>${routeLink("people", "Барлық тұлғалар")}</div><div class="people-grid">${APP.data.people.filter(p=>p.image).slice(0,4).map(p => personPatch(p)).join("")}</div></section>
-    <section><div class="section-heading"><h2>Салт-дәстүр</h2>${routeLink("traditions", "Барлық дәстүрлер")}</div><div class="tradition-grid">${APP.data.traditions.filter(t=>t.image).slice(0,4).map(traditionPatch).join("")}</div></section>
-    <section><div class="section-heading"><h2>Мұра көріністері</h2><p>Дала, өнер және күнделікті өмір.</p></div><div class="gallery">${APP.visuals.home.gallery.map(path=>imageFigure(path)).join("")}</div></section>
-    <section><div class="section-heading"><h2>Тарихтан таңдама</h2>${routeLink("timeline", "Тарих жолы")}</div><div class="history-selection">${APP.data.timeline.filter(t=>t.image).slice(0,2).map(t=>imageCard(t.image,t.title_kk,"timeline","",String(t.year))).join("")}</div></section></div>`;
+    const day = homeDayIndex();
+    const words = [...APP.data.words.map(w => ({...w, meaning:w.meaning_kk, example:w.example_kk})), ...DICT.map(w => ({...w, meaning:`${w.ru} / ${w.en}`, example:w.ex, audio:"d_" + w.id}))];
+    const word = words[day % words.length];
+    const proverb = PROVERBS[day % PROVERBS.length];
+    const [manifest, topics] = await Promise.all([APP.cachedJSON("audio/manifest.json").catch(() => ({})), APP.cachedJSON("content_topics.json").catch(() => [])]);
+    const counts = [["Тұлға",APP.data.people.length],["Дәстүр",APP.data.traditions.length],["Сөз",words.length],["Мақала",topics.length],["Аудио",new Set(Object.values(manifest).filter(p => typeof p === "string" && /^[\w.-]+\.mp3$/.test(p))).size]];
+    const mosaic = [["people","Ел тұлғалары"],["shezhire","Шежіре"],["traditions","Салт-дәстүр"],["timeline","Тарих жолы"],["culture","Мәдениет"],["language","Тіл"],["encyclopedia","Энциклопедия"],["lab","Зертхана"],["yurt","Киіз үй әлемі"]];
+    return `<section class="hero yurt-hero home-hero"><div class="hero-visual home-hero-picture">${imageFigure("assets/heritage/hero-horseman.jpg", "hero-image plate-lg", true)}${routeLink("yurt", "Киіз үйге кіру", "button home-yurt-enter")}</div><div class="hero-copy"><h1 class="sr-only">ДАСТАН — Қазақ мұрасы және тіл зертханасы</h1><div class="hero-signature" aria-hidden="true"><span lang="kk">ДАСТАН</span><span lang="kk-Latn">Dastan</span><span lang="kk-Arab" dir="rtl">داستان</span></div><p class="hero-subtitle">Мұраны таны. Тілді қолдан.</p><p>Тұлғалар мен дәстүрді таныңыз. Қазақ сөзін түрлендіріп, үш әліпбиде жазып көріңіз.</p><div class="hero-lab"><label for="heroWord">Сөз жазыңыз</label><input id="heroWord" value="кітап" maxlength="60" autocomplete="off" spellcheck="false" aria-describedby="heroForms">${LAB.keyboard("heroWord")}<div id="heroForms" class="hero-forms" role="status" aria-live="polite"></div>${routeLink("lab/кітап", "Зертханаға өту", "button button-light hero-lab-link")}</div></div></section>
+    <section class="heritage-panorama" data-parallax>${imageFigure(APP.visuals.home.hero, "panorama-image plate-lg")}<p class="panorama-caption">Мұраны таны. Тілді қолдан.</p></section>
+    <div class="home-content"><section class="heritage-counts" aria-label="Жергілікті мұра жинағы"><dl>${counts.map(([label,count]) => `<div><dt>${label}</dt><dd><span data-count="${count}">${count}</span></dd></div>`).join("")}</dl><p class="fine">Жергілікті жинақтағы жазбалар мен бөлек аудиофайлдар саны.</p></section><section class="home-mosaic"><div class="section-heading"><h2>Мұраға жол</h2><p>Тарихтан сөзге, сөзден күнделікті қолданысқа.</p></div><div class="section-mosaic">${mosaic.map(([route,name]) => `<a class="mosaic-tile" href="#${route}"><h3>${esc(name)}</h3>${imageFigure((route==="lab"?"assets/heritage/alash-trio.jpg":route==="yurt"?"assets/heritage/yurt-assembling.jpg":APP.visuals.sections[route] || APP.visuals.home.gallery[5]), "mosaic-image plate-md")}</a>`).join("")}</div></section></div>
+    <div class="proverb-marquee" tabindex="0" role="region" aria-label="Қазақ мақалдары, тоқтату үшін меңзерді үстіне қойыңыз"><div class="proverb-track">${[0,1].map(copy => `<div class="proverb-copy" ${copy ? 'aria-hidden="true"' : ""}>${PROVERBS.slice(0,8).map(p => `<span>${esc(p.kk)}</span>`).join("")}</div>`).join("")}</div></div>
+    <section class="daily-proverb"><div class="band-inner"><h2>Күн мақалы</h2><blockquote>${esc(proverb.kk)}</blockquote>${audioButton(proverb.kk, "p_" + proverb.id)} ${routeLink("proverbs", "Мақал-мәтелдер")}</div></section>
+    <div class="home-content"><section class="daily-word"><div><h2>Күн сөзі</h2><p>Сөздің мағынасын танып, өз сөйлеміңізде қолданып көріңіз.</p></div><article><h3>${esc(word.kk)}</h3><p>${esc(word.meaning)}</p><blockquote>${esc(word.example)}</blockquote><div class="daily-actions">${word.audio && manifest[word.audio] ? audioButton(word.kk, word.audio) : ""}${routeLink("lab/" + encodeURIComponent(word.kk), "Түрлендіру", "button")}</div></article></section><section class="home-people"><div class="section-heading"><h2>Ел тұлғалары</h2>${routeLink("people", "Барлық тұлғалар")}</div><p class="rail-hint">Сүйреп жылжытыңыз немесе көрсеткі пернелерін қолданыңыз.</p><div class="portrait-rail" data-drag-rail tabindex="0" role="region" aria-label="Ел тұлғалары">${APP.data.people.filter(p=>p.image).map(p => personPatch(p)).join("")}</div></section><section class="home-timeline"><div class="section-heading"><h2>Тарих жолы</h2>${routeLink("timeline", "Барлық кезеңдер")}</div>${timelineRail(true)}</section></div>
+    <section class="lab-intro"><div class="band-inner"><div><h2>Тіл зертханасы</h2><p>Бір сөздің жалғауларын көріңіз, ережесін түсініңіз. Кирилл мәтінін латын және төте жазуға ауыстырыңыз.</p>${routeLink("lab", "Зертхананы ашу", "button button-light")}</div><div class="lab-example" aria-label="Кітап сөзінің түрлену мысалы"><p><span>Түбір</span><strong>кітап</strong></p><p><span>Көптік</span><strong>кітап<em>тар</em></strong></p><p><span>Менің</span><strong>кітаб<em>ым</em></strong></p><small>Дауысты жалғанғанда п дыбысы б дыбысына өзгереді.</small></div></div></section>
+    <div class="home-content"><section class="home-traditions"><div class="section-heading"><h2>Салт-дәстүр</h2>${routeLink("traditions", "Барлық дәстүрлер")}</div><div class="tradition-grid">${APP.data.traditions.filter(t=>t.image).slice(0,2).map(traditionPatch).join("")}</div></section><section class="home-gallery"><div class="section-heading"><h2>Мұра көріністері</h2><p>Дала, өнер және күнделікті өмір.</p></div><div class="gallery">${APP.visuals.home.gallery.map(path=>imageFigure(path)).join("")}</div></section></div>`;
+  },
+  mount() {
+    const input = document.getElementById("heroWord");
+    const output = document.getElementById("heroForms");
+    const link = document.querySelector(".hero-lab-link");
+    const update = () => {
+      const result = LAB.decline(input.value);
+      output.innerHTML = result.error ? `<p>${esc(result.error)}</p>` : result.cases.slice(1,4).map(f => `<p><small>${esc(f.name)}</small><strong>${esc(f.root)}<span class="hero-suffix">${esc(f.suffix)}</span></strong></p>`).join("");
+      link.setAttribute("href", "#lab/" + encodeURIComponent(result.error ? "" : result.word));
+    };
+    input.addEventListener("input", update);
+    update();
   }
 };
 VIEWS.people = {
@@ -36,9 +60,12 @@ VIEWS.traditions = {
     return heading("Салт-дәстүр", "Халықтың тұрмысынан, бір-біріне деген ықыласынан туған мұра.") + Object.entries(GROUPS).map(([key, name]) => `<section class="tradition-group"><h2>${esc(name)}</h2><div class="tradition-grid">${APP.data.traditions.filter(t => t.group === key).map(traditionPatch).join("")}</div></section>`).join("");
   }
 };
+function timelineRail(preview = false) {
+  return `<p class="rail-hint">Уақыт бойымен сүйреңіз немесе көрсеткі пернелерін қолданыңыз.</p><ol class="timeline timeline-rail" data-drag-rail tabindex="0" aria-label="Тарих кезеңдері">${APP.data.timeline.map(t => `<li><div class="date">${esc(t.year)}</div><article>${t.image ? imageFigure(t.image, "timeline-image") : ""}<h2>${esc(t.title_kk)}</h2><p>${esc(preview ? shortText(t.text_kk) : t.text_kk)}</p>${preview ? routeLink("timeline", "Кезеңді оқу") : fullDetails("tl_" + t.year)}${attribution({title:t.title_kk,source_url:t.source_url})}</article></li>`).join("")}</ol>`;
+}
 VIEWS.timeline = {
   render() {
-    return heading("Тарих жолы", "Өткенге көз жүгіртіп, бүгіннің тамырын таниық.") + `<ol class="timeline">${APP.data.timeline.map(t => `<li><div class="date">${esc(t.year)}</div><article>${t.image ? imageFigure(t.image, "timeline-image") : ""}<h2>${esc(t.title_kk)}</h2><p>${esc(t.text_kk)}</p>${fullDetails("tl_" + t.year)}${attribution({title:t.title_kk,source_url:t.source_url})}</article></li>`).join("")}</ol>`;
+    return heading("Тарих жолы", "Өткенге көз жүгіртіп, бүгіннің тамырын таниық.") + timelineRail();
   }
 };
 function searchableWords(title, intro, items, renderer) {
@@ -72,3 +99,9 @@ document.addEventListener("click", e => {
   f.title = b.dataset.title; f.allow = "autoplay; encrypted-media; picture-in-picture"; f.allowFullscreen = true;
   b.replaceWith(f);
 });
+
+VIEWS.yurt = {
+  title: "Киіз үй әлемі",
+  render() { return YURT.render(); },
+  mount(id) { APP.cleanupYurtUI = YURT.mount(document.querySelector('[data-yurt]'), id); }
+};

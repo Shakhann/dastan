@@ -7,7 +7,7 @@ function setup({configured=true,url='https://example.test/dastan/#login',cloud=n
  const run=s=>vm.runInContext(s,ctx);
  run(`const APP={toast:message=>notices.push(message)}, VIEWS={}; function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))} function routeLink(r,l){return '<a href="#'+r+'">'+esc(l)+'</a>'} function imageFigure(){return '<figure>Сырмақ</figure>'} function heading(t){return '<h1>'+esc(t)+'</h1>'} function renderRoute(){};const SUPABASE_URL=${JSON.stringify(configured?'https://test.supabase.co':'')},SUPABASE_ANON_KEY=${JSON.stringify(configured?'anon':'')};`);
  ctx.notices=notices;
- run(fs.readFileSync('js/shanyrak.js','utf8'));run(fs.readFileSync('js/profile.js','utf8'));run(fs.readFileSync('js/auth.js','utf8'));
+ run(fs.readFileSync('js/profile.js','utf8'));run(fs.readFileSync('js/auth.js','utf8'));
  run(`APP.profileTree={zhuzes:[{id:'uly',branches:[{tribes:[{id:'dulat'}]}]},{id:'orta',branches:[{tribes:[{id:'argyn'}]}]}],non_clan:[]}; for(let i=0;i<250;i++)APP.materials.set('person:'+i,{title:'Тұлға'});`);
  return {run,ctx,storage,session,handlers,client,writes,notices,location,async tick(ms=650){for(const [id,t] of [...timers])if(t.ms===ms){timers.delete(id);t.fn()}await run('AUTH.writes');},event(e,s){listener(e,s)}};
 }
@@ -55,6 +55,8 @@ function setup({configured=true,url='https://example.test/dastan/#login',cloud=n
  t.run(`AUTH.user={id:'a',email:'<img src=x onerror=1>'}`);
  assert.doesNotMatch(t.run('authAccountHTML()'),/<img/);
  assert.match(t.run('authAccountHTML()'),/&lt;img/);
+ assert.match(t.run('VIEWS.profile.render("settings")'),/data-auth-logout[^>]*>Шығу<\/button>/);
+ assert.match(t.run('VIEWS.profile.render("settings")'),/id="profile-panel-settings"[^>]*tabindex="0">/);
  t.run('AUTH.user=null;AUTH.confirmation=null');
  for(const [kind,autocomplete] of [['login','current-password'],['register','new-password']]) {
    assert.match(t.run(`authPage('${kind}')`),new RegExp('autocomplete="'+autocomplete+'"'));
@@ -67,7 +69,7 @@ function setup({configured=true,url='https://example.test/dastan/#login',cloud=n
  assert.match(register,/Тіркелгіңіз бар ма/);assert.doesNotMatch(login,/auth-switch|role="tablist"/);assert.doesNotMatch(register,/поштаңызды раста|Поштаңызды раста|растау сілтемесі/i);
  assert.match(login,/auth-login/);assert.match(register,/auth-register/);
  assert.match(register,/Материалдарды сақтап жинаңыз/);assert.match(register,/Соңғы қаралғандарға қайта оралыңыз/);assert.match(register,/Басқа құрылғыдан кіріңіз/);
- assert.match(login,/shanyrak-svg/);assert.doesNotMatch(login,/auth-benefits/);
+ assert.doesNotMatch(login,/shanyrak|auth-emblem/);assert.doesNotMatch(login,/auth-benefits/);
  for(const kind of ['reset','new-password'])assert.match(t.run(`authPage('${kind}')`),/auth-layout/);
  assert.match(login,/data-password-toggle aria-controls="authPassword" aria-pressed="false"/);
  assert.match(login,/aria-describedby="authEmailError"/);assert.match(login,/Тіркелмей жалғастыру/);
@@ -76,7 +78,7 @@ function setup({configured=true,url='https://example.test/dastan/#login',cloud=n
  await submit(t,'register','signUp',{}, {password:'short'});
  assert.equal(t.calls,0);assert.equal(t.form.elements.password.focused,true);
  await submit(t,'login','signInWithPassword',{error:{code:'invalid_credentials'}});
- assert.equal(t.form.elements.password.attrs['aria-invalid'],'true');assert.equal(t.form.elements.password.focused,true);assert.equal(t.status.textContent,'');
+ assert.equal(t.form.elements.password.attrs['aria-invalid'],'true');assert.equal(t.form.elements.password.focused,true);assert.match(t.status.textContent,/құпия сөз қате/);
  // Құпия сөзді көрсету жеке батырмамен басқарылады.
  const input={type:'password'},reveal={textContent:'Көрсету',setAttribute(k,v){this[k]=v}};
  t.ctx.document.getElementById=id=>id==='authPassword'?input:null;

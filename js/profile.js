@@ -52,7 +52,7 @@ APP.updateProfileButton = () => {
   node.classList.toggle("is-signed-in", Boolean(user));
   node.setAttribute("href", user ? "#profile" : "#login");
   node.setAttribute("aria-label", user ? "Профиль" : "Кіру");
-  node.innerHTML = user ? profileSymbol(APP.profile.name || user.email || "П") : "Кіру";
+  node.innerHTML = `<span class="account-avatar" aria-hidden="true">${user ? profileSymbol(APP.profile.name || user.email || "П") : "◯"}</span><span class="account-label">${user ? "Профиль" : "Кіру"}</span>`;
 };
 APP.persistProfile = () => {
   APP.profile = validateProfile(APP.profile);
@@ -78,7 +78,7 @@ function profileCard(entry, removable = false) {
   const material = APP.materials.get(entry.type + ":" + entry.id);
   if (!material) return "";
   const image = material.image || APP.visuals.sections[entry.type === "person" ? "people" : "traditions"];
-  return `<article class="profile-card">${imageFigure(image,"profile-card-image")}<div class="profile-card-copy">${routeLink(material.route, material.title)}${removable ? `<button type="button" class="profile-remove" data-remove-type="${esc(entry.type)}" data-remove-id="${esc(entry.id)}" aria-label="${esc(material.title)} — сақталғандардан алып тастау">Алып тастау</button>` : ""}</div></article>`;
+  return `<article class="profile-card">${imageFigure(image,entry.type === "person" && material.image ? "profile-card-image portrait plate-sm" : "profile-card-image plate-sm")}<div class="profile-card-copy">${routeLink(material.route, material.title)}${removable ? `<button type="button" class="profile-remove" data-remove-type="${esc(entry.type)}" data-remove-id="${esc(entry.id)}" aria-label="${esc(material.title)} — сақталғандардан алып тастау">Алып тастау</button>` : ""}</div></article>`;
 }
 function profileSaved() {
   if (!APP.profile.saved.length) return `<div class="profile-empty"><p>Өзіңізге қызық материалдарды жинаңыз: ${routeLink("people","Ел тұлғалары")} мен ${routeLink("traditions","Салт-дәстүр")} бетіндегі «Сақтау» батырмасын басыңыз.</p></div>`;

@@ -323,7 +323,7 @@ function authCallbackFailure() {
 }
 function authShell(content, kind = "login") {
   const benefits = kind === "register" ? `<ul class="auth-benefits"><li>Материалдарды сақтап жинаңыз</li><li>Соңғы қаралғандарға қайта оралыңыз</li><li>Басқа құрылғыдан кіріңіз</li></ul>` : "";
-  return `<section class="auth-page auth-layout auth-${esc(kind)}"><div class="auth-art"><div class="auth-emblem">${shanyrakSVG()}</div>${benefits}${imageFigure("assets/heritage/syrmak-pattern.jpg","auth-photo",true)}</div><div class="auth-content">${content}</div></section>`;
+  return `<section class="auth-page auth-layout auth-${esc(kind)}"><div class="auth-art">${benefits}${imageFigure("assets/heritage/syrmak-pattern.jpg","auth-photo",true)}</div><div class="auth-content">${content}</div></section>`;
 }
 function authConfirmationHTML() {
   return `<section class="auth-confirmation"><h1>Поштаңызды растаңыз</h1><p>Хат <strong>${esc(AUTH.confirmation.email)}</strong> мекенжайына жіберілді</p><p>Хаттағы сілтемені ашыңыз. Хат көрінбесе, спам бумасын тексеріңіз.</p><button type="button" data-auth-resend>Хатты қайта жіберу</button><p class="fine" data-resend-countdown aria-live="polite"></p><p data-auth-message role="status" aria-live="polite">${esc(AUTH.message)}</p><a href="#login" data-auth-back>Кіру бетіне оралу</a></section>`;
@@ -346,7 +346,7 @@ function authFieldError(form,name,message) {
   if (error) error.textContent = message;
   AUTH.message = message;
   const status = form.querySelector("[data-auth-message]");
-  if (status) status.textContent = "";
+  if (status) status.textContent = message;
   input?.focus();
 }
 function showAuthConfirmation(email,kind) {

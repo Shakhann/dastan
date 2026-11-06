@@ -9,7 +9,7 @@ function closeMenu(restoreFocus = true) {
   document.body.classList.remove("menu-open");
   menuBackground.forEach(([node, inert]) => { node.inert = inert; });
   menuBackground = [];
-  if (restoreFocus) document.getElementById("menuToggle").focus({preventScroll:true});
+  if (restoreFocus) (APP.menuReturnFocus || document.getElementById("menuToggle")).focus({preventScroll:true});
   return true;
 }
 function setupMenu() {
@@ -18,10 +18,11 @@ function setupMenu() {
   const overlay = document.getElementById("menuOverlay");
   toggle.addEventListener("click", () => {
     if (!panel.hidden) { closeMenu(); return; }
+    APP.menuReturnFocus = document.activeElement?.matches?.("[data-mobile-menu]") ? document.activeElement : toggle;
     panel.hidden = false; overlay.hidden = false;
     toggle.setAttribute("aria-expanded", "true");
     document.body.classList.add("menu-open");
-    menuBackground = [...document.querySelectorAll(".site-header, main, .site-footer, .skip")].map(node => [node, node.inert]);
+    menuBackground = [...document.querySelectorAll(".site-header, main, .site-footer, .skip, .mobile-nav")].map(node => [node, node.inert]);
     document.getElementById("menuClose").focus({preventScroll:true});
     menuBackground.forEach(([node]) => { node.inert = true; });
   });
@@ -35,7 +36,7 @@ function setupMenu() {
     if (panel.hidden) return;
     if (event.key === "Escape") { event.preventDefault(); closeMenu(); }
     if (event.key !== "Tab") return;
-    const items = [...panel.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')];
+    const items = [...panel.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]')];
     const first = items[0], last = items[items.length - 1];
     if (event.shiftKey && (document.activeElement === first || !panel.contains(document.activeElement))) { event.preventDefault(); last.focus(); }
     else if (!event.shiftKey && (document.activeElement === last || !panel.contains(document.activeElement))) { event.preventDefault(); first.focus(); }
