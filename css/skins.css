@@ -520,3 +520,9 @@ html { font-size: 112.5%; }
 :root[data-skin] .zhuz-choice .zhuz-toggle { order: 1; width: 100%; min-height: 48px; height: auto; margin-top: auto; padding: .55rem .6rem; font-size: 1.0625rem; line-height: 1.2; white-space: normal; writing-mode: horizontal-tb; }
 :root[data-skin] .zhuz-choice figcaption { padding: .35rem .2rem 0; font-size: .6875rem; line-height: 1.35; }
 @media (max-width: 767px) { :root[data-skin] .tree-branches { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Жүз тақтайшалары үлкейтілді. */
+:root[data-skin] .tree-branches { max-width: none; gap: 1.25rem; }
+:root[data-skin] .zhuz-choice { padding: .9rem; }
+:root[data-skin] .zhuz-choice .zhuz-toggle { font-size: 1.25rem; min-height: 56px; }
+:root[data-skin] .zhuz-choice figcaption { font-size: .75rem; }
+@media (min-width: 768px) { :root[data-skin] .zhuz-panel { margin-top: 1.5rem; } }

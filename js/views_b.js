@@ -33,7 +33,7 @@ VIEWS.shezhire = {
       buttons.forEach(b => b.setAttribute("aria-expanded", String(b.dataset.zhuzToggle === key)));
       if (update) history.replaceState(null,"", "#shezhire/" + encodeURIComponent(key));
     }
-    buttons.forEach(b => b.addEventListener("click", () => { document.getElementById("clanSearch").value = ""; document.getElementById("clanStatus").textContent = ""; document.querySelectorAll("[data-clan]").forEach(c => { c.hidden = false; }); select(b.dataset.zhuzToggle); }));
+    buttons.forEach(b => b.addEventListener("click", () => { if (b.getAttribute("aria-expanded") === "true") { panels.forEach(p => { p.hidden = true; }); b.setAttribute("aria-expanded","false"); history.replaceState(null,"","#shezhire"); return; } document.getElementById("clanSearch").value = ""; document.getElementById("clanStatus").textContent = ""; document.querySelectorAll("[data-clan]").forEach(c => { c.hidden = false; }); select(b.dataset.zhuzToggle); }));
     document.querySelectorAll("[data-clan-toggle]").forEach(b => b.addEventListener("click", () => {
       const open = b.getAttribute("aria-expanded") !== "true";
       b.setAttribute("aria-expanded", String(open)); document.getElementById(b.getAttribute("aria-controls")).hidden = !open;
