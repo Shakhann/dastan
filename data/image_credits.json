@@ -1,569 +1,596 @@
 [
- {
-  "path": "assets/heritage/shanyrak.jpg",
-  "use": "hero",
-  "caption_kk": "Шаңырақ арқылы көрінген аспан",
-  "author": "Alexandr frolov",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_Shangrak.jpg"
- },
- {
-  "path": "assets/heritage/interior_painting.jpg",
-  "use": "banner",
-  "caption_kk": "Николай Хлудов, «Қазақ киіз үйінің іші», 1914",
-  "author": "Nikolay Khludov",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:Nikolay_Khludov_%E2%80%94_Interior_of_a_Kazakh_Yurt_(1914).jpg"
- },
- {
-  "path": "assets/heritage/interior_museum.jpg",
-  "use": "banner",
-  "caption_kk": "Киіз үй ішінің көрмесі, Алматы, Орталық мемлекеттік музей",
-  "author": "Nurken",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Yurt_interior_replica_at_Almaty_Central_State_Museum_of_Kazakhstan.jpg"
- },
- {
-  "path": "assets/heritage/dombra_man.jpg",
-  "use": "banner",
-  "caption_kk": "Домбырашы, XIX ғасырдағы фото",
-  "author": "АҚШ Конгресс кітапханасының жинағы",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_man,_a_musician_with_a_dombra,_seated_LCCN99615631.tif"
- },
- {
-  "path": "assets/heritage/altybaqan.jpg",
-  "use": "banner",
-  "caption_kk": "Наурыздағы алтыбақан",
-  "author": "OlegShalun",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Nauryz,_Kazakh_national_swings_Altybaqan.jpg"
- },
- {
-  "path": "assets/heritage/syrmak.jpg",
-  "use": "banner",
-  "caption_kk": "Сырмақ",
-  "author": "Автор белгісіз",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Syrmaq._Kazakh_carpet.jpg"
- },
- {
-  "path": "assets/heritage/shashu.jpg",
-  "use": "tradition:shashu",
-  "caption_kk": "«Шашу» естелік монетасы, 2012",
-  "author": "National Bank of Kazakhstan",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:KZ-2017-500tenge-Shashu-b.png"
- },
- {
-  "path": "assets/heritage/bride.jpg",
-  "use": "tradition:betashar",
-  "caption_kk": "Қазақ қалыңдығы, тарихи фото",
-  "author": "historical public records photo",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:Historical_Kazakh_wedding_garb_photo.jpg"
- },
- {
-  "path": "assets/heritage/mirzhakyp-dulatov.jpg",
-  "use": "person:mirzhakyp-dulatov",
-  "caption_kk": "Міржақып Дулатұлы (Міржақып Дулатов)",
-  "author": "Қазпошта",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:Stamps_of_Kazakhstan,_2010-29.jpg"
- },
- {
-  "path": "assets/heritage/mukhamedzhan-tynyshbayev.jpg",
-  "use": "person:mukhamedzhan-tynyshbayev",
-  "caption_kk": "Мұхамеджан Тынышбаев (Мұхаметжан Тынышбайұлы)",
-  "author": "Автор белгісіз",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:Tynyshpayev_M.jpg"
- },
- {
-  "path": "assets/heritage/zhahansha-dosmukhamedov.jpg",
-  "use": "person:zhahansha-dosmukhamedov",
-  "caption_kk": "Жаһанша Досмұхамедов",
-  "author": "Фотограф белгісіз",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%96%D0%B0%D0%BD%D1%88%D0%B0_%D0%94%D0%BE%D1%81%D0%BC%D1%83%D1%85%D0%B0%D0%BC%D0%B5%D0%B4%D0%BE%D0%B2,_1920_%D0%B3%D0%BE%D0%B4.jpg"
- },
- {
-  "path": "assets/heritage/akkagaz-doszhanova.jpg",
-  "use": "person:akkagaz-doszhanova",
-  "caption_kk": "Аққағаз Досжанова",
-  "author": "Фотоателье белгісіз",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%90%D0%BA%D0%BA%D0%B0%D0%B3%D0%B0%D0%B7_%D0%94%D0%BE%D1%81%D0%B6%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0_(1893-1932).png"
- },
- {
-  "path": "assets/heritage/gulsim-asfendiyarova.jpg",
-  "use": "person:gulsim-asfendiyarova",
-  "caption_kk": "Гүлсім Асфендиярова (Гүлсім Сейітжафарқызы Асфендиярова)",
-  "author": "Автор белгісіз",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%90%D1%81%D1%84%D0%B5%D0%BD%D0%B4%D0%B8%D0%B0%D1%80%D0%BE%D0%B2%D0%B0_%D0%93._%D0%A4._(1880-1940).png"
- },
- {
-  "path": "assets/heritage/telzhan-shonanuly.jpg",
-  "use": "person:telzhan-shonanuly",
-  "caption_kk": "Телжан Шонанұлы (Телжан Шонанов)",
-  "author": "Автор белгісіз",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:Telzhan_Shonanuly.jpg"
- },
- {
-  "path": "assets/heritage/khiuaz-dospanova.jpg",
-  "use": "person:khiuaz-dospanova",
-  "caption_kk": "Хиуаз Доспанова (Хиуаз Қайырқызы Доспанова)",
-  "author": "Автор белгісіз",
-  "license": "Public domain",
-  "license_url": null,
-  "source_url": "https://commons.wikimedia.org/wiki/File:Khiuaz_Dospanova.jpg"
- },
- {
-  "path": "assets/heritage/hero-horseman.jpg",
-  "caption_kk": "Бүркіт ұстаған атты қазақ, киіз үйлердің жанында, Алтай, 1911–1914 жылдар",
-  "author": "Sergei Ivanovich Borisov",
-  "license": "Public domain",
-  "license_url": "",
-  "source_url": "https://commons.wikimedia.org/wiki/File:SB_-_Kazakh_man_on_horse_with_golden_eagle_1911-1914.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/eagle-hunters.jpg",
-  "caption_kk": "Қазақ бүркітшілері, Баян-Өлгий, Моңғолия",
-  "author": "Altaihunters",
-  "license": "CC BY-SA 3.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_Eagle_Hunters.JPG",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/mangystau-three-brothers.jpg",
-  "caption_kk": "Қарынжарық, Маңғыстау",
-  "author": "Astrobond",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:KarynZharyk_tract._Kazakhstan,_Mangistau._November_2024.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/charyn.jpg",
-  "caption_kk": "Шарын шатқалы",
-  "author": "Bgag",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Charyn_Canyon,_Kazakhstan_03.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/gold-ibex.jpg",
-  "caption_kk": "Алтын адамның бас киіміндегі қанатты тау ешкілері",
-  "author": "Zunkir",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Homme_dor_Issyk_-_bouquetins_ailes.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/syrmak-pattern.jpg",
-  "caption_kk": "Қазақ сырмағы",
-  "author": "Arnur.sarybai",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_syrmak.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/dombra-zhambyl.jpg",
-  "caption_kk": "Жамбыл Жабаев жас кезінде тартқан домбыра",
-  "author": "PlainVector",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Zhambyl_Zhabaev%27s_dombra_03.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/golden-man.jpg",
-  "caption_kk": "Алтын адам, Қазақстанның Орталық мемлекеттік музейі",
-  "author": "Nurken",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Golden_Man,_Almaty_Central_State_Museum_of_Kazakhstan.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/otrar.jpg",
-  "caption_kk": "Отырар қалашығы, әуеден түсірілген",
-  "author": "Coopypasted",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%93%D0%BE%D1%80%D0%BE%D0%B4%D0%B8%D1%89%D0%B5_%D0%9E%D1%82%D1%8B%D1%80%D0%B0%D1%80_%D1%81_%D0%B2%D0%BE%D0%B7%D0%B4%D1%83%D1%85%D0%B0.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/yasawi.jpg",
-  "caption_kk": "Қожа Ахмет Ясауи кесенесі, Түркістан",
-  "author": "Petar Milošević",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan,_Kazakhstan.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/altyn-emel.jpg",
-  "caption_kk": "Ақтау таулары, Алтынемел ұлттық паркі",
-  "author": "Astrobond",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Chalk_Mountains._Aktau_Mountains._Altyn-Emel_National_Park._Kazakhstan,_April_2025_01.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/burabay.jpg",
-  "caption_kk": "Бурабай көлі мен кенті, Көкше тауынан көрінісі",
-  "author": "Kalabaha1969",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9F%D0%B0%D0%BD%D0%BE%D1%80%D0%B0%D0%BC%D0%B0_%D0%BD%D0%B0_%D0%BF%D0%BE%D1%81%D1%91%D0%BB%D0%BE%D0%BA_%D0%91%D0%BE%D1%80%D0%BE%D0%B2%D0%BE%D0%B5_%D0%B8_%D0%BE%D0%B7%D0%B5%D1%80%D0%BE_%D0%91%D0%BE%D1%80%D0%BE%D0%B2%D0%BE%D0%B5.JPG",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/bozzhyra.jpg",
-  "caption_kk": "Бозжыра, Маңғыстау",
-  "author": "IvarT",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Bozzhyra_upper_observation_deck.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/wedding-cauldron.jpg",
-  "caption_kk": "Той кезінде қазаннан ет салып жатқан қазақ әйелдері",
-  "author": "ZemSasha",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B5_%D0%B6%D0%B5%D0%BD%D1%89%D0%B8%D0%BD%D1%8B_%D0%BD%D0%B0%D0%BA%D0%BB%D0%B0%D0%B4%D1%8B%D0%B2%D0%B0%D1%8E%D1%82_%D0%B1%D0%B5%D1%88%D0%B1%D0%B0%D1%80%D0%BC%D0%B0%D0%BA_%D0%B2_%D0%B1%D0%BE%D0%BB%D1%8C%D1%88%D0%BE%D0%B5_%D0%B1%D0%BB%D1%8E%D0%B4%D0%BE.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/wedding-women.jpg",
-  "caption_kk": "Тойға бешбармақ әзірлеп жатқан қазақ әйелдері",
-  "author": "ZemSasha",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%96%D0%B5%D0%BD%D1%89%D0%B8%D0%BD%D1%8B_%D0%B3%D0%BE%D1%82%D0%BE%D0%B2%D1%8F%D1%82_%D0%B1%D0%B5%D1%88%D0%B1%D0%B0%D1%80%D0%BC%D0%B0%D0%BA_%D0%BD%D0%B0_%D0%BA%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%BE%D0%B9_%D1%81%D0%B2%D0%B0%D0%B4%D1%8C%D0%B1%D0%B5.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/winter-home.jpg",
-  "caption_kk": "ХІХ ғасыр соңындағы қазақ қысқы үйінің музейдегі көрінісі",
-  "author": "Nurken",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Winter_home_interior_of_the_end_of_the_XIX_and_beginning_of_the_XX_centuries._Akmola_Regional_Museum_of_History_and_Local_Lore_(3).jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/eagle-family.jpg",
-  "caption_kk": "Киіз үй ішіндегі қазақ бүркітші отбасы, Моңғолия",
-  "author": "Bfreeproductions",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Eagle_hunter_family_in_their_traditional_Kazakh_wardrobe_inside_a_ger_in_remote_Western_Mongolia,_2022.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/baursak-nauryz.jpg",
-  "caption_kk": "Наурызға пісірілген бауырсақ",
-  "author": "Игорь Улитин",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%91%D0%B0%D1%83%D1%8B%D1%80%D1%81%D0%B0%D0%BA%D0%B8_%D0%BD%D0%B0_%D0%9D%D0%B0%D1%83%D1%80%D1%8B%D0%B7.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/beshbarmak.jpg",
-  "caption_kk": "Қазақ табағындағы ет",
-  "author": "Muzaffar Murodovich",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Beshbarmak_in_a_traditional_Kazakh_plate.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/nauryz-table.jpg",
-  "caption_kk": "Наурыз мерекесіне киіз үйде жайылған дастарқан",
-  "author": "Symbat Bolatova",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:A_laid_table_full_of_Kazakh_national_dishes.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/kymyz-offering.jpg",
-  "caption_kk": "Наурызда қымыз ұсынып тұрған қазақтар",
-  "author": "Ken and Nyetta",
-  "license": "CC BY 2.0",
-  "license_url": "https://creativecommons.org/licenses/by/2.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Offering_Komis_on_Nowruz_in_Kazakhstan_(8578825735).jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/kazakh-bride.jpg",
-  "caption_kk": "Қыз ұзату тойындағы қазақ қалыңдығы",
-  "author": "Jamiraquaai",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_Bride.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/women-saukele.jpg",
-  "caption_kk": "Екі қазақ әйелі, сол жақтағы қалыңдық сәукеле киген, ХІХ ғасыр",
-  "author": "Miscellaneous Items in High Demand, PPOC, Library of Congress",
-  "license": "Public domain",
-  "license_url": "",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Two_Kazakh_women-the_bride_(on_the_left)_is_wearing_a_saukele_hat_LCCN99615596.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/yurt-assembling.jpg",
-  "caption_kk": "Киіз үй тігіп жатқан қазақ",
-  "author": "NuclearApples",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Setting_up_a_Ger.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/aisha-bibi.jpg",
-  "caption_kk": "Айша бибі кесенесі, Тараз маңы",
-  "author": "upyernoz",
-  "license": "CC BY 2.0",
-  "license_url": "https://creativecommons.org/licenses/by/2.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Mausoleum_of_Aisha_Bibi-closer!.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/nauryz-celebration.jpg",
-  "caption_kk": "Наурыз мерекесі",
-  "author": "Talgat Orynbayev",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Nauryz_celebration.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/kymyz-ladles.jpg",
-  "caption_kk": "Қымыз ожаулары мен тостағаны",
-  "author": "三猎",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%E5%93%88%E8%90%A8%E5%85%8B%E6%96%AF%E5%9D%A6%E5%8C%97%E9%83%A8%E5%93%88%E8%90%A8%E5%85%8B%E4%BA%BA%E9%A9%AC%E5%A5%B6%E5%8B%BA%E5%92%8C%E7%A2%97.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/alash-trio.jpg",
-  "caption_kk": "Ахмет Байтұрсынұлы, Әлихан Бөкейхан, Міржақып Дулатұлы, Орынбор",
-  "author": "Unknown photographer",
-  "license": "Public domain",
-  "license_url": "",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Baitursynuly,_Bokeikhan_and_Dulatuly.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/alash-1918.jpg",
-  "caption_kk": "Қазақ зиялылары мен Алаш партиясының мүшелері, Семей, 1918 жыл",
-  "author": "Белгісіз",
-  "license": "Public domain",
-  "license_url": "",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_intelligentsia_(1918).jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/et-nan.jpg",
-  "caption_kk": "Ет-нан, Астана",
-  "author": "Nurken",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Et-nan,_Astana,_Kazakhstan,_August_2025.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/kazakh-dress.jpg",
-  "caption_kk": "Қазақтың дәстүрлі киімі, Моңғолия Ұлттық музейі",
-  "author": "Gary Todd from Xinzheng, China",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazak_Traditional_Clothing_(35322715110).jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/khalel-dosmukhamedov.jpg",
-  "caption_kk": "Халел Досмұхамедов, 1929 жыл",
-  "author": "из фондов Атырауского областного историко-краеведческого музея",
-  "license": "Public domain",
-  "license_url": "",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%A5%D0%B0%D0%BB%D0%B5%D0%BB_%D0%94%D0%BE%D1%81%D0%BC%D1%83%D1%85%D0%B0%D0%BC%D0%B5%D0%B4%D0%BE%D0%B2.jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/alimkhan-yermekov.jpg",
-  "caption_kk": "Әлімхан Ермеков, 1925 жыл",
-  "author": "Из личного архива сына А.Ермекова – Магауи Ермекова",
-  "license": "Public domain",
-  "license_url": "",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Alimkhan_Yermekov_(cropped).jpg",
-  "use": "gallery"
- },
- {
-  "path": "assets/heritage/koshke-kemengeruly.jpg",
-  "use": "person:koshke-kemengeruly",
-  "caption_kk": "Қошке Кемеңгерұлы",
-  "author": "Iyesif Stalin II",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B5%D0%BC%D0%B5%D0%BD%D0%B3%D0%B5%D1%80%D0%BE%D0%B2.jpg"
- },
- {
-  "path": "assets/heritage/sugir-aliuly.jpg",
-  "use": "person:sugir-aliuly",
-  "caption_kk": "Сүгір Әліұлының ескерткіш тақтадағы бейнесі",
-  "author": "Нұрлан Рахымжанов",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82:%D0%A1%D2%AF%D0%B3%D1%96%D1%80.jpeg"
- },
- {
-  "path": "assets/heritage/ykhylas-dukenuly.jpg",
-  "use": "person:ykhylas-dukenuly",
-  "caption_kk": "Ықылас Дүкенұлының ескерткіш тақтадағы бейнесі",
-  "author": "Нұрлан Рахымжанов",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82:%D0%94%D2%AF%D0%BA%D0%B5%D0%BD%D2%B1%D0%BB%D1%8B_%D0%AB%D2%9B%D1%8B%D0%BB%D0%B0%D1%81.jpeg"
- },
- {
-  "path": "assets/heritage/madi-bapiuly-memorial.jpg",
-  "use": "person:madi-bapiuly",
-  "caption_kk": "Мәди Бәпиұлының зиратындағы бедерлі бейнесі",
-  "author": "Mheidegger",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Madi_Bapiuly_Grave.jpg"
- },
- {
-  "path": "assets/heritage/nazipa-kulzhanova-letter.jpg",
-  "use": "person:nazipa-kulzhanova",
-  "caption_kk": "Нәзипа Құлжанова өткізген әдеби-музыкалық кеш туралы 1914 жылғы құжат",
-  "author": "Muzaffar Turgunov",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9D._%D2%9A%D2%B1%D0%BB%D0%B6%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D1%8B%D2%A3_%D0%9E%D0%BC%D0%B1%D1%8B_%D0%B0%D1%83%D1%8B%D0%BB%D1%88%D0%B0%D1%80%D1%83%D0%B0%D1%88%D1%8B%D0%BB%D1%8B%D2%9B_%D1%83%D1%87%D0%B8%D0%BB%D0%B8%D1%89%D0%B5%D1%81%D1%96%D0%BD%D0%B5_%D0%B6%D0%B0%D0%B7%D2%93%D0%B0%D0%BD_%D1%85%D0%B0%D1%82%D1%8B._1914_%D0%B6.jpg"
- },
- {
-  "path": "assets/heritage/oyu-qus-qanaty.jpg",
-  "use": "ornament:o5",
-  "caption_kk": "Құс қанаты оюы, көрме тақтасынан",
-  "author": "Akbota Bakyt",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_ornaments.jpg"
- },
- {
-  "path": "assets/heritage/oyu-felt-carpet.jpg",
-  "use": "ornament-item",
-  "caption_kk": "Қазақтың киіз кілемі",
-  "author": "Книжная пыль",
-  "license": "CC BY 4.0",
-  "license_url": "https://creativecommons.org/licenses/by/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B9_%D0%B2%D0%BE%D0%B9%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D0%B2%D0%B5%D1%80.jpg"
- },
- {
-  "path": "assets/heritage/oyu-felt-west.jpg",
-  "use": "ornament-item",
-  "caption_kk": "Киіз кілем, Батыс Қазақстан, XX ғасырдың басы",
-  "author": "Книжная пыль",
-  "license": "CC BY 4.0",
-  "license_url": "https://creativecommons.org/licenses/by/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B9_%D0%B2%D0%BE%D0%B9%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D0%B2%D0%B5%D1%80._%D0%97%D0%B0%D0%BF%D0%B0%D0%B4%D0%BD%D1%8B%D0%B9_%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D1%82%D0%B0%D0%BD._%D0%9D%D0%B0%D1%87%D0%B0%D0%BB%D0%BE_20_%D0%B2.jpg"
- },
- {
-  "path": "assets/heritage/oyu-syrmak-kanaeva.jpg",
-  "use": "ornament-item",
-  "caption_kk": "Сырмақ: киізден сырып, оюлап жасалған төсеніш",
-  "author": "Канаева Салиха",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82%3A%D0%A1%D1%8B%D1%80%D0%BC%D0%B0%D2%9B_-_%D0%BA%D0%B8%D1%96%D0%B7%D0%B4%D0%B5%D0%BD_%D1%81%D1%8B%D1%80%D1%8B%D0%BF%2C_%D0%BE%D1%8E%D0%BB%D0%B0%D0%BF_%D0%B6%D0%B0%D1%81%D0%B0%D0%BB%D2%93%D0%B0%D0%BD_%D1%82%D3%A9%D1%81%D0%B5%D0%BD%D1%96%D1%88.jpg"
- },
- {
-  "path": "assets/heritage/oyu-yurt-door.jpg",
-  "use": "ornament-item",
-  "caption_kk": "Киіз үй есігі, Қазақстан, XIX ғасыр",
-  "author": "Книжная пыль",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_01.jpg"
- },
- {
-  "path": "assets/heritage/oyu-yurt-door-detail.jpg",
-  "use": "ornament-item",
-  "caption_kk": "Киіз үй есігінің өрнекті бөлігі, XIX ғасыр",
-  "author": "Книжная пыль",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
- },
- {
-  "path": "assets/heritage/oyu-qosmuiiz.jpg",
-  "use": "ornament:o9",
-  "caption_kk": "Қосмүйіз оюы салынған киіз бұйым",
-  "author": "Канаева Салиха",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82%3A%D0%9E%D1%8E_%D1%82%D2%AF%D1%80%D1%96-%D2%9B%D0%BE%D1%88%D2%9B%D0%B0%D1%80%D0%BC%D2%AF%D0%B9%D1%96%D0%B7.jpg"
- },
- {
-  "path": "assets/heritage/oyu-agash.jpg",
-  "use": "ornament:o10",
-  "caption_kk": "Ағаш оюы, киіз кілемнің бөлігі",
-  "author": "Книжная пыль",
-  "license": "CC BY 4.0",
-  "license_url": "https://creativecommons.org/licenses/by/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B9_%D0%B2%D0%BE%D0%B9%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D0%B2%D0%B5%D1%80.jpg"
- },
- {
-  "path": "assets/heritage/oyu-taban.jpg",
-  "use": "ornament:o11",
-  "caption_kk": "Табан оюы, киіз үй есігінің бөлігі",
-  "author": "Книжная пыль",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
- },
- {
-  "path": "assets/heritage/oyu-shiyrshyq.jpg",
-  "use": "ornament:o12",
-  "caption_kk": "Шиыршық оюы, киіз үй есігінің бөлігі",
-  "author": "Книжная пыль",
-  "license": "CC BY-SA 4.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
- }
+  {
+    "path": "assets/heritage/shanyrak.jpg",
+    "use": "hero",
+    "caption_kk": "Шаңырақ арқылы көрінген аспан",
+    "author": "Alexandr frolov",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_Shangrak.jpg"
+  },
+  {
+    "path": "assets/heritage/interior_painting.jpg",
+    "use": "banner",
+    "caption_kk": "Николай Хлудов, «Қазақ киіз үйінің іші», 1914",
+    "author": "Nikolay Khludov",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Nikolay_Khludov_%E2%80%94_Interior_of_a_Kazakh_Yurt_(1914).jpg"
+  },
+  {
+    "path": "assets/heritage/interior_museum.jpg",
+    "use": "banner",
+    "caption_kk": "Киіз үй ішінің көрмесі, Алматы, Орталық мемлекеттік музей",
+    "author": "Nurken",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Yurt_interior_replica_at_Almaty_Central_State_Museum_of_Kazakhstan.jpg"
+  },
+  {
+    "path": "assets/heritage/dombra_man.jpg",
+    "use": "banner",
+    "caption_kk": "Домбырашы, XIX ғасырдағы фото",
+    "author": "АҚШ Конгресс кітапханасының жинағы",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_man,_a_musician_with_a_dombra,_seated_LCCN99615631.tif"
+  },
+  {
+    "path": "assets/heritage/altybaqan.jpg",
+    "use": "banner",
+    "caption_kk": "Наурыздағы алтыбақан",
+    "author": "OlegShalun",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Nauryz,_Kazakh_national_swings_Altybaqan.jpg"
+  },
+  {
+    "path": "assets/heritage/syrmak.jpg",
+    "use": "banner",
+    "caption_kk": "Сырмақ",
+    "author": "Автор белгісіз",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Syrmaq._Kazakh_carpet.jpg"
+  },
+  {
+    "path": "assets/heritage/shashu.jpg",
+    "use": "tradition:shashu",
+    "caption_kk": "«Шашу» естелік монетасы, 2012",
+    "author": "National Bank of Kazakhstan",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:KZ-2017-500tenge-Shashu-b.png"
+  },
+  {
+    "path": "assets/heritage/bride.jpg",
+    "use": "tradition:betashar",
+    "caption_kk": "Қазақ қалыңдығы, тарихи фото",
+    "author": "historical public records photo",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Historical_Kazakh_wedding_garb_photo.jpg"
+  },
+  {
+    "path": "assets/heritage/mirzhakyp-dulatov.jpg",
+    "use": "person:mirzhakyp-dulatov",
+    "caption_kk": "Міржақып Дулатұлы (Міржақып Дулатов)",
+    "author": "Қазпошта",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Stamps_of_Kazakhstan,_2010-29.jpg"
+  },
+  {
+    "path": "assets/heritage/mukhamedzhan-tynyshbayev.jpg",
+    "use": "person:mukhamedzhan-tynyshbayev",
+    "caption_kk": "Мұхамеджан Тынышбаев (Мұхаметжан Тынышбайұлы)",
+    "author": "Автор белгісіз",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Tynyshpayev_M.jpg"
+  },
+  {
+    "path": "assets/heritage/zhahansha-dosmukhamedov.jpg",
+    "use": "person:zhahansha-dosmukhamedov",
+    "caption_kk": "Жаһанша Досмұхамедов",
+    "author": "Фотограф белгісіз",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%96%D0%B0%D0%BD%D1%88%D0%B0_%D0%94%D0%BE%D1%81%D0%BC%D1%83%D1%85%D0%B0%D0%BC%D0%B5%D0%B4%D0%BE%D0%B2,_1920_%D0%B3%D0%BE%D0%B4.jpg"
+  },
+  {
+    "path": "assets/heritage/akkagaz-doszhanova.jpg",
+    "use": "person:akkagaz-doszhanova",
+    "caption_kk": "Аққағаз Досжанова",
+    "author": "Фотоателье белгісіз",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%90%D0%BA%D0%BA%D0%B0%D0%B3%D0%B0%D0%B7_%D0%94%D0%BE%D1%81%D0%B6%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0_(1893-1932).png"
+  },
+  {
+    "path": "assets/heritage/gulsim-asfendiyarova.jpg",
+    "use": "person:gulsim-asfendiyarova",
+    "caption_kk": "Гүлсім Асфендиярова (Гүлсім Сейітжафарқызы Асфендиярова)",
+    "author": "Автор белгісіз",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%90%D1%81%D1%84%D0%B5%D0%BD%D0%B4%D0%B8%D0%B0%D1%80%D0%BE%D0%B2%D0%B0_%D0%93._%D0%A4._(1880-1940).png"
+  },
+  {
+    "path": "assets/heritage/telzhan-shonanuly.jpg",
+    "use": "person:telzhan-shonanuly",
+    "caption_kk": "Телжан Шонанұлы (Телжан Шонанов)",
+    "author": "Автор белгісіз",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Telzhan_Shonanuly.jpg"
+  },
+  {
+    "path": "assets/heritage/khiuaz-dospanova.jpg",
+    "use": "person:khiuaz-dospanova",
+    "caption_kk": "Хиуаз Доспанова (Хиуаз Қайырқызы Доспанова)",
+    "author": "Автор белгісіз",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Khiuaz_Dospanova.jpg"
+  },
+  {
+    "path": "assets/heritage/hero-horseman.jpg",
+    "caption_kk": "Бүркіт ұстаған атты қазақ, киіз үйлердің жанында, Алтай, 1911–1914 жылдар",
+    "author": "Sergei Ivanovich Borisov",
+    "license": "Public domain",
+    "license_url": "",
+    "source_url": "https://commons.wikimedia.org/wiki/File:SB_-_Kazakh_man_on_horse_with_golden_eagle_1911-1914.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/eagle-hunters.jpg",
+    "caption_kk": "Қазақ бүркітшілері, Баян-Өлгий, Моңғолия",
+    "author": "Altaihunters",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_Eagle_Hunters.JPG",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/mangystau-three-brothers.jpg",
+    "caption_kk": "Қарынжарық, Маңғыстау",
+    "author": "Astrobond",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:KarynZharyk_tract._Kazakhstan,_Mangistau._November_2024.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/charyn.jpg",
+    "caption_kk": "Шарын шатқалы",
+    "author": "Bgag",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Charyn_Canyon,_Kazakhstan_03.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/gold-ibex.jpg",
+    "caption_kk": "Алтын адамның бас киіміндегі қанатты тау ешкілері",
+    "author": "Zunkir",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Homme_dor_Issyk_-_bouquetins_ailes.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/syrmak-pattern.jpg",
+    "caption_kk": "Қазақ сырмағы",
+    "author": "Arnur.sarybai",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_syrmak.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/dombra-zhambyl.jpg",
+    "caption_kk": "Жамбыл Жабаев жас кезінде тартқан домбыра",
+    "author": "PlainVector",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Zhambyl_Zhabaev%27s_dombra_03.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/golden-man.jpg",
+    "caption_kk": "Алтын адам, Қазақстанның Орталық мемлекеттік музейі",
+    "author": "Nurken",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Golden_Man,_Almaty_Central_State_Museum_of_Kazakhstan.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/otrar.jpg",
+    "caption_kk": "Отырар қалашығы, әуеден түсірілген",
+    "author": "Coopypasted",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%93%D0%BE%D1%80%D0%BE%D0%B4%D0%B8%D1%89%D0%B5_%D0%9E%D1%82%D1%8B%D1%80%D0%B0%D1%80_%D1%81_%D0%B2%D0%BE%D0%B7%D0%B4%D1%83%D1%85%D0%B0.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/yasawi.jpg",
+    "caption_kk": "Қожа Ахмет Ясауи кесенесі, Түркістан",
+    "author": "Petar Milošević",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mausoleum_of_Khoja_Ahmed_Yasavi_in_Turkestan,_Kazakhstan.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/altyn-emel.jpg",
+    "caption_kk": "Ақтау таулары, Алтынемел ұлттық паркі",
+    "author": "Astrobond",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Chalk_Mountains._Aktau_Mountains._Altyn-Emel_National_Park._Kazakhstan,_April_2025_01.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/burabay.jpg",
+    "caption_kk": "Бурабай көлі мен кенті, Көкше тауынан көрінісі",
+    "author": "Kalabaha1969",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9F%D0%B0%D0%BD%D0%BE%D1%80%D0%B0%D0%BC%D0%B0_%D0%BD%D0%B0_%D0%BF%D0%BE%D1%81%D1%91%D0%BB%D0%BE%D0%BA_%D0%91%D0%BE%D1%80%D0%BE%D0%B2%D0%BE%D0%B5_%D0%B8_%D0%BE%D0%B7%D0%B5%D1%80%D0%BE_%D0%91%D0%BE%D1%80%D0%BE%D0%B2%D0%BE%D0%B5.JPG",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/bozzhyra.jpg",
+    "caption_kk": "Бозжыра, Маңғыстау",
+    "author": "IvarT",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Bozzhyra_upper_observation_deck.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/wedding-cauldron.jpg",
+    "caption_kk": "Той кезінде қазаннан ет салып жатқан қазақ әйелдері",
+    "author": "ZemSasha",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B5_%D0%B6%D0%B5%D0%BD%D1%89%D0%B8%D0%BD%D1%8B_%D0%BD%D0%B0%D0%BA%D0%BB%D0%B0%D0%B4%D1%8B%D0%B2%D0%B0%D1%8E%D1%82_%D0%B1%D0%B5%D1%88%D0%B1%D0%B0%D1%80%D0%BC%D0%B0%D0%BA_%D0%B2_%D0%B1%D0%BE%D0%BB%D1%8C%D1%88%D0%BE%D0%B5_%D0%B1%D0%BB%D1%8E%D0%B4%D0%BE.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/wedding-women.jpg",
+    "caption_kk": "Тойға бешбармақ әзірлеп жатқан қазақ әйелдері",
+    "author": "ZemSasha",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%96%D0%B5%D0%BD%D1%89%D0%B8%D0%BD%D1%8B_%D0%B3%D0%BE%D1%82%D0%BE%D0%B2%D1%8F%D1%82_%D0%B1%D0%B5%D1%88%D0%B1%D0%B0%D1%80%D0%BC%D0%B0%D0%BA_%D0%BD%D0%B0_%D0%BA%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%BE%D0%B9_%D1%81%D0%B2%D0%B0%D0%B4%D1%8C%D0%B1%D0%B5.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/winter-home.jpg",
+    "caption_kk": "ХІХ ғасыр соңындағы қазақ қысқы үйінің музейдегі көрінісі",
+    "author": "Nurken",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Winter_home_interior_of_the_end_of_the_XIX_and_beginning_of_the_XX_centuries._Akmola_Regional_Museum_of_History_and_Local_Lore_(3).jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/eagle-family.jpg",
+    "caption_kk": "Киіз үй ішіндегі қазақ бүркітші отбасы, Моңғолия",
+    "author": "Bfreeproductions",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Eagle_hunter_family_in_their_traditional_Kazakh_wardrobe_inside_a_ger_in_remote_Western_Mongolia,_2022.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/baursak-nauryz.jpg",
+    "caption_kk": "Наурызға пісірілген бауырсақ",
+    "author": "Игорь Улитин",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%91%D0%B0%D1%83%D1%8B%D1%80%D1%81%D0%B0%D0%BA%D0%B8_%D0%BD%D0%B0_%D0%9D%D0%B0%D1%83%D1%80%D1%8B%D0%B7.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/beshbarmak.jpg",
+    "caption_kk": "Қазақ табағындағы ет",
+    "author": "Muzaffar Murodovich",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Beshbarmak_in_a_traditional_Kazakh_plate.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/nauryz-table.jpg",
+    "caption_kk": "Наурыз мерекесіне киіз үйде жайылған дастарқан",
+    "author": "Symbat Bolatova",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:A_laid_table_full_of_Kazakh_national_dishes.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/kymyz-offering.jpg",
+    "caption_kk": "Наурызда қымыз ұсынып тұрған қазақтар",
+    "author": "Ken and Nyetta",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Offering_Komis_on_Nowruz_in_Kazakhstan_(8578825735).jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/kazakh-bride.jpg",
+    "caption_kk": "Қыз ұзату тойындағы қазақ қалыңдығы",
+    "author": "Jamiraquaai",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_Bride.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/women-saukele.jpg",
+    "caption_kk": "Екі қазақ әйелі, сол жақтағы қалыңдық сәукеле киген, ХІХ ғасыр",
+    "author": "Miscellaneous Items in High Demand, PPOC, Library of Congress",
+    "license": "Public domain",
+    "license_url": "",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Two_Kazakh_women-the_bride_(on_the_left)_is_wearing_a_saukele_hat_LCCN99615596.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/yurt-assembling.jpg",
+    "caption_kk": "Киіз үй тігіп жатқан қазақ",
+    "author": "NuclearApples",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Setting_up_a_Ger.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/aisha-bibi.jpg",
+    "caption_kk": "Айша бибі кесенесі, Тараз маңы",
+    "author": "upyernoz",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mausoleum_of_Aisha_Bibi-closer!.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/nauryz-celebration.jpg",
+    "caption_kk": "Наурыз мерекесі",
+    "author": "Talgat Orynbayev",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Nauryz_celebration.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/kymyz-ladles.jpg",
+    "caption_kk": "Қымыз ожаулары мен тостағаны",
+    "author": "三猎",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%E5%93%88%E8%90%A8%E5%85%8B%E6%96%AF%E5%9D%A6%E5%8C%97%E9%83%A8%E5%93%88%E8%90%A8%E5%85%8B%E4%BA%BA%E9%A9%AC%E5%A5%B6%E5%8B%BA%E5%92%8C%E7%A2%97.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/alash-trio.jpg",
+    "caption_kk": "Ахмет Байтұрсынұлы, Әлихан Бөкейхан, Міржақып Дулатұлы, Орынбор",
+    "author": "Unknown photographer",
+    "license": "Public domain",
+    "license_url": "",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Baitursynuly,_Bokeikhan_and_Dulatuly.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/alash-1918.jpg",
+    "caption_kk": "Қазақ зиялылары мен Алаш партиясының мүшелері, Семей, 1918 жыл",
+    "author": "Белгісіз",
+    "license": "Public domain",
+    "license_url": "",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_intelligentsia_(1918).jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/et-nan.jpg",
+    "caption_kk": "Ет-нан, Астана",
+    "author": "Nurken",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Et-nan,_Astana,_Kazakhstan,_August_2025.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/kazakh-dress.jpg",
+    "caption_kk": "Қазақтың дәстүрлі киімі, Моңғолия Ұлттық музейі",
+    "author": "Gary Todd from Xinzheng, China",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazak_Traditional_Clothing_(35322715110).jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/khalel-dosmukhamedov.jpg",
+    "caption_kk": "Халел Досмұхамедов, 1929 жыл",
+    "author": "из фондов Атырауского областного историко-краеведческого музея",
+    "license": "Public domain",
+    "license_url": "",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%A5%D0%B0%D0%BB%D0%B5%D0%BB_%D0%94%D0%BE%D1%81%D0%BC%D1%83%D1%85%D0%B0%D0%BC%D0%B5%D0%B4%D0%BE%D0%B2.jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/alimkhan-yermekov.jpg",
+    "caption_kk": "Әлімхан Ермеков, 1925 жыл",
+    "author": "Из личного архива сына А.Ермекова – Магауи Ермекова",
+    "license": "Public domain",
+    "license_url": "",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Alimkhan_Yermekov_(cropped).jpg",
+    "use": "gallery"
+  },
+  {
+    "path": "assets/heritage/koshke-kemengeruly.jpg",
+    "use": "person:koshke-kemengeruly",
+    "caption_kk": "Қошке Кемеңгерұлы",
+    "author": "Iyesif Stalin II",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B5%D0%BC%D0%B5%D0%BD%D0%B3%D0%B5%D1%80%D0%BE%D0%B2.jpg"
+  },
+  {
+    "path": "assets/heritage/sugir-aliuly.jpg",
+    "use": "person:sugir-aliuly",
+    "caption_kk": "Сүгір Әліұлының ескерткіш тақтадағы бейнесі",
+    "author": "Нұрлан Рахымжанов",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82:%D0%A1%D2%AF%D0%B3%D1%96%D1%80.jpeg"
+  },
+  {
+    "path": "assets/heritage/ykhylas-dukenuly.jpg",
+    "use": "person:ykhylas-dukenuly",
+    "caption_kk": "Ықылас Дүкенұлының ескерткіш тақтадағы бейнесі",
+    "author": "Нұрлан Рахымжанов",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82:%D0%94%D2%AF%D0%BA%D0%B5%D0%BD%D2%B1%D0%BB%D1%8B_%D0%AB%D2%9B%D1%8B%D0%BB%D0%B0%D1%81.jpeg"
+  },
+  {
+    "path": "assets/heritage/madi-bapiuly-memorial.jpg",
+    "use": "person:madi-bapiuly",
+    "caption_kk": "Мәди Бәпиұлының зиратындағы бедерлі бейнесі",
+    "author": "Mheidegger",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Madi_Bapiuly_Grave.jpg"
+  },
+  {
+    "path": "assets/heritage/nazipa-kulzhanova-letter.jpg",
+    "use": "person:nazipa-kulzhanova",
+    "caption_kk": "Нәзипа Құлжанова өткізген әдеби-музыкалық кеш туралы 1914 жылғы құжат",
+    "author": "Muzaffar Turgunov",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9D._%D2%9A%D2%B1%D0%BB%D0%B6%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D1%8B%D2%A3_%D0%9E%D0%BC%D0%B1%D1%8B_%D0%B0%D1%83%D1%8B%D0%BB%D1%88%D0%B0%D1%80%D1%83%D0%B0%D1%88%D1%8B%D0%BB%D1%8B%D2%9B_%D1%83%D1%87%D0%B8%D0%BB%D0%B8%D1%89%D0%B5%D1%81%D1%96%D0%BD%D0%B5_%D0%B6%D0%B0%D0%B7%D2%93%D0%B0%D0%BD_%D1%85%D0%B0%D1%82%D1%8B._1914_%D0%B6.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-qus-qanaty.jpg",
+    "use": "ornament:o5",
+    "caption_kk": "Құс қанаты оюы, көрме тақтасынан",
+    "author": "Akbota Bakyt",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kazakh_ornaments.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-felt-carpet.jpg",
+    "use": "ornament-item",
+    "caption_kk": "Қазақтың киіз кілемі",
+    "author": "Книжная пыль",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B9_%D0%B2%D0%BE%D0%B9%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D0%B2%D0%B5%D1%80.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-felt-west.jpg",
+    "use": "ornament-item",
+    "caption_kk": "Киіз кілем, Батыс Қазақстан, XX ғасырдың басы",
+    "author": "Книжная пыль",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B9_%D0%B2%D0%BE%D0%B9%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D0%B2%D0%B5%D1%80._%D0%97%D0%B0%D0%BF%D0%B0%D0%B4%D0%BD%D1%8B%D0%B9_%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D1%82%D0%B0%D0%BD._%D0%9D%D0%B0%D1%87%D0%B0%D0%BB%D0%BE_20_%D0%B2.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-syrmak-kanaeva.jpg",
+    "use": "ornament-item",
+    "caption_kk": "Сырмақ: киізден сырып, оюлап жасалған төсеніш",
+    "author": "Канаева Салиха",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82%3A%D0%A1%D1%8B%D1%80%D0%BC%D0%B0%D2%9B_-_%D0%BA%D0%B8%D1%96%D0%B7%D0%B4%D0%B5%D0%BD_%D1%81%D1%8B%D1%80%D1%8B%D0%BF%2C_%D0%BE%D1%8E%D0%BB%D0%B0%D0%BF_%D0%B6%D0%B0%D1%81%D0%B0%D0%BB%D2%93%D0%B0%D0%BD_%D1%82%D3%A9%D1%81%D0%B5%D0%BD%D1%96%D1%88.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-yurt-door.jpg",
+    "use": "ornament-item",
+    "caption_kk": "Киіз үй есігі, Қазақстан, XIX ғасыр",
+    "author": "Книжная пыль",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_01.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-yurt-door-detail.jpg",
+    "use": "ornament-item",
+    "caption_kk": "Киіз үй есігінің өрнекті бөлігі, XIX ғасыр",
+    "author": "Книжная пыль",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-qosmuiiz.jpg",
+    "use": "ornament:o9",
+    "caption_kk": "Қосмүйіз оюы салынған киіз бұйым",
+    "author": "Канаева Салиха",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source_url": "https://kk.wikipedia.org/wiki/%D0%A1%D1%83%D1%80%D0%B5%D1%82%3A%D0%9E%D1%8E_%D1%82%D2%AF%D1%80%D1%96-%D2%9B%D0%BE%D1%88%D2%9B%D0%B0%D1%80%D0%BC%D2%AF%D0%B9%D1%96%D0%B7.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-agash.jpg",
+    "use": "ornament:o10",
+    "caption_kk": "Ағаш оюы, киіз кілемнің бөлігі",
+    "author": "Книжная пыль",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%B7%D0%B0%D1%85%D1%81%D0%BA%D0%B8%D0%B9_%D0%B2%D0%BE%D0%B9%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B9_%D0%BA%D0%BE%D0%B2%D0%B5%D1%80.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-taban.jpg",
+    "use": "ornament:o11",
+    "caption_kk": "Табан оюы, киіз үй есігінің бөлігі",
+    "author": "Книжная пыль",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
+  },
+  {
+    "path": "assets/heritage/oyu-shiyrshyq.jpg",
+    "use": "ornament:o12",
+    "caption_kk": "Шиыршық оюы, киіз үй есігінің бөлігі",
+    "author": "Книжная пыль",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%B2%D0%B5%D1%80%D1%8C_%D1%8E%D1%80%D1%82%D1%8B_%D0%A4%D1%80%D0%B0%D0%B3%D0%BC%D0%B5%D0%BD%D1%82_02.jpg"
+  },
+  {
+    "path": "assets/heritage/tole-bi.jpg",
+    "use": "shezhire",
+    "caption_kk": "Төле би, Қазақстан пошта маркасы, 2003",
+    "author": "Қазпошта",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Stamp_of_Kazakhstan_442.jpg"
+  },
+  {
+    "path": "assets/heritage/kazybek-bi.jpg",
+    "use": "shezhire",
+    "caption_kk": "Қазыбек би, Қазақстан пошта маркасы, 2003",
+    "author": "Қазпошта",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Stamp_of_Kazakhstan_443.jpg"
+  },
+  {
+    "path": "assets/heritage/aiteke-bi.jpg",
+    "use": "shezhire",
+    "caption_kk": "Әйтеке би, Қазақстан пошта маркасы, 2003",
+    "author": "Қазпошта",
+    "license": "Public domain",
+    "license_url": null,
+    "source_url": "https://commons.wikimedia.org/wiki/File:Stamp_of_Kazakhstan_444.jpg"
+  }
 ]

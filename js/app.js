@@ -188,7 +188,7 @@ async function renderRoute() {
     if (typeof EXPERIENCE !== "undefined") EXPERIENCE.mount(root);
     if (route === "yurt") {
       const host = root.querySelector?.("[data-yurt]");
-      if (host) import("./yurt3d.js?v=36").then(module => {
+      if (host) import("./yurt3d.js?v=38").then(module => {
         if (version === APP.navigation && host.isConnected) {
           APP.cleanupYurt = module.mountYurt(host);
           if (YURT.find(id)) host.dispatchEvent(new CustomEvent("yurtselect", {detail:{id}}));
