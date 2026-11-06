@@ -547,3 +547,12 @@ html { font-size: 112.5%; }
   :root[data-skin] .tradition-detail > .video-panel p { display: none; }
   :root[data-skin] .tradition-detail > .tradition-text, :root[data-skin] .tradition-detail > article { grid-row: 2; }
 }
+/* Бейне басты орында: мәтін бағанасы жіңішке, бейне кең. */
+@media (min-width: 900px) {
+  :root[data-skin] .tradition-detail { grid-template-columns: minmax(300px, .62fr) minmax(0, 1fr); gap: 1.5rem; }
+  :root[data-skin] .tradition-detail > .video-panel .video-frame { border-radius: 20px; box-shadow: var(--skin-shadow); }
+  :root[data-skin] .tradition-detail > .video-panel > p { margin: .6rem 0 0; font-size: .9375rem; line-height: 1.35; }
+}
+:root[data-skin] .video-frame { overflow: hidden; }
+:root[data-skin] .video-frame .video-play { background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+:root[data-skin] button.save-material { display: inline-flex; width: auto !important; min-width: 170px; max-width: max-content; margin-bottom: 1.5rem; }
